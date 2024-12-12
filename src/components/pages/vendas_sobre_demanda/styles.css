@@ -1,0 +1,522 @@
+
+#root {
+    padding: 0 10px 0 0px;
+}
+
+.w-os-sidebarFull .p-sidebar-custom-header {
+    justify-content: flex-end;
+}
+
+.w-os-header {
+    background-color: rgb(22, 26, 45);
+    width: 100%;
+    height: 10.5rem;
+    position: absolute;
+    top: 0;
+}
+
+.w-os-body-gridInfo {
+    position: sticky;
+    padding: 10px;
+}
+
+.w-os-body-gridInfo-dados .surface-overlay {
+    background-color: transparent !important;
+}
+
+.w-os-body-gridInfo-dados .surface-overlay p {
+    color: white;
+
+}
+
+.w-os-body-gridInfo-dados .border-bottom-1 {
+    border: none !important;
+}
+
+.w-os-body-gridInfo-quadros,
+.w-os-body-gridInfo-quadros-principal {
+    background-color: white;
+    border: 2px solid rgb(22, 26, 45);
+    box-shadow:
+        0px 0px 0px 1px white
+}
+
+.w-os-body-gridInfo-quadros-titulo {
+    color: rgb(22, 26, 45) !important;
+}
+
+.w-os-body-gridInfo-quadros-icons {
+    background-color: rgb(22, 26, 45);
+    padding: 10px;
+}
+
+.w-os-body-gridInfo-quadros-icons .pi {
+    color: white;
+    font-size: 1.2rem;
+}
+
+.w-os-body-gridInfo-quadros-valores {
+    color: #2196f3;
+}
+
+.w-os-body-gridInfo-quadros-principal {
+    background-color: #2196f3;
+    ;
+}
+
+.w-os-body-gridInfo-quadros-principal .w-os-body-gridInfo-quadros-titulo {
+    color: rgb(22, 26, 45) !important;
+}
+
+.w-os-body-gridInfo-quadros-principal .w-os-body-gridInfo-quadros-valores {
+    color: #fff !important;
+}
+
+.w-os-body-gridConteudo {
+    padding: 10px;
+}
+
+.w-os-body-gridConteudo-accordion {
+    margin-top: 1rem;
+}
+
+.w-os-body-gridConteudo-accordion .p-accordion-tab {
+    margin-bottom: 1rem;
+    /*border: 1px solid rgb(22, 26, 45) */
+}
+
+.w-os-body-gridConteudo-accordion .p-accordion-tab .p-accordion-header .p-accordion-header-link {
+    height: 2.5rem;
+    /*border:1px solid rgb(22, 26, 45) !important ;*/
+    color: rgb(22, 26, 45) !important;
+    border-radius: 0px;
+}
+
+.w-os-body-gridConteudo-accordion .p-accordion-tab .p-accordion-tab-active {
+    border: 1px solid rgb(171, 172, 174);
+}
+.w-os-body-gridConteudo-accordion .p-accordion-tab .p-accordion-tab-active .p-datatable{
+   height: auto !important;
+}
+
+.w-os-body-gridForm {
+    height: 85vh;
+    position: relative;
+    background-color: #fff;
+    padding: 15px;
+}
+
+/*CARD_________________________________________________________________*/
+.w-card {
+    padding: 10px;
+    margin-top: 80px;
+}
+
+.w-card h3 {
+    padding-left: 10px;
+    font-weight: 700 !important;
+    font-size: 1.4rem;
+}
+
+.w-sidebar-right .p-sidebar-header {
+    position: absolute;
+    height: 80px;
+    width: 100%;
+    background-color: #dee2e6;
+    top: 0px;
+}
+.w-sidebar-right-caixa .p-sidebar-header{
+    background-color:#2196f3 ;
+}
+.w-sidebar-right-caixa .p-sidebar-header .p-sidebar-icons .p-sidebar-close{
+  color: white;
+}
+
+.w-sidebar-right .p-sidebar-header h3 {
+    position: relative;
+    bottom: -20px;
+    margin-left: 20px;
+}
+
+.w-sidevar-right .p-sidebar-header .p-sidebar-icons {
+    position: absolute;
+    top: 0px;
+    right: 0px
+}
+
+.w-sidevar-right .p-sidebar-content {
+    z-index: 6000;
+    margin-top: 40px;
+}
+
+/*FORMULARIOS_________________________________________________________*/
+
+.w-form {
+    padding: 10PX;
+    margin-top: 15px;
+}
+
+.w-field {
+    margin-bottom: 0px !important;
+}
+
+.p-inputgroup {
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+    padding: 0.75rem 0.75rem 0.75rem 0rem
+}
+
+.w-inputgroup-select {
+    padding: 0.3rem 0.3rem 0.3rem 0rem !important;
+}
+
+.p-inputgroup .p-inputgroup-addon {
+    background-color: transparent;
+    border: none;
+
+}
+
+.p-inputgroup .p-component {
+    border: none;
+}
+
+.p-inputgroup .p-component:focus {
+    border: none;
+}
+
+
+.p-inputgroup .css-b62m3t-container {
+    width: 100%;
+}
+
+.p-inputgroup .css-13cymwt-control {
+    border: none;
+}
+
+.p-inputgroup .css-13cymwt-control .css-1fdsijx-ValueContainer {}
+
+.p-inputgroup .css-13cymwt-control .css-1fdsijx-ValueContainer {
+    border: none;
+    padding: 0px !important;
+}
+
+.p-inputgroup .css-13cymwt-control .css-1fdsijx-ValueContainer .css-qbdosj-Input {
+    margin: 0px !important;
+    padding: 0px !important;
+}
+
+.w-form-button {
+    padding: 10PX !important;
+    margin-top: 10px !important;
+}
+
+.w-os-body-gridForm {
+    border-radius: 3px;
+}
+
+.p-password-input{
+    width: 90%;
+}
+.p-input-icon{
+   
+}
+.p-icon-field > .p-input-icon {
+    top:20%
+}
+
+
+.w-form-login-logo{
+  
+}
+/*TABLEAS ___________________________________________________________*/
+
+.p-datatable {
+    padding: 10px;
+    background-color: white;
+    height: 90vh;
+}
+
+.p-datatable-header {
+    margin-bottom: 5px !important;
+    background-color: white !important;
+    border: none !important;
+}
+
+.table-header {}
+
+.p-toolbar {
+    padding: 0px !important;
+    background-color: #dee2e6;
+}
+
+.p-toolbar .p-toolbar-group-start {
+    padding: 5px !important;
+}
+
+.p-toolbar .p-toolbar-group-start span {
+    padding: 5px !important;
+}
+
+.p-toolbar .p-toolbar-group-end {
+    padding: 5px !important;
+}
+
+.p-toolbar .p-toolbar-group-end .p-inputtext {
+    padding: 5px !important;
+}
+
+.p-toolbar .p-toolbar-group-end button {
+    padding: 5px !important;
+}
+
+.p-datatable-wrapper {}
+
+.p-datatable-table {}
+
+.p-datatable-thead tr {
+    border-radius: 3px;
+}
+
+.p-datatable-thead tr th {
+    padding: 3px;
+    background-color: #dee2e6;
+    border-right: 0.05rem solid white;
+}
+
+.p-datatable-tbody tr td {
+    padding: 3px;
+    border-right: 0.05rem solid white;
+}
+
+.p-datatable-tbody {}
+
+.p-paginator-bottom {}
+
+.p-paginator-left-content {}
+
+.p-datatable-footer {}
+
+
+/* modal------------------------------------------------------------------*/
+
+.p-dialog {}
+
+.p-dialog-header,
+.p-dialog-content {
+
+    padding: 20px;
+}
+
+.p-dialog-header {}
+
+.p-dialog-content {}
+
+.w-field .p-card {
+
+    padding: 10px;
+    border-radius: 3px;
+    border: 1px solid #ced4da;
+    box-shadow: none;
+}
+
+
+/*header _________________________________________________________________*/
+
+.w-header-page {
+    background-color: white !important;
+    border: none;
+    border-radius: 0px;
+    padding: 0px !important;
+    margin-bottom: 5px;
+    height: 8vh;
+    padding-left: 5px !important;
+}
+
+.w-header-page .p-toolbar-group-start {
+    padding: 0px !important;
+
+}
+
+.w-header-page .p-toolbar-group-start .p-inputgroup {
+    padding: 0px !important;
+    border: none;
+}
+
+.w-header-page .p-toolbar-group-start .p-inputgroup .p-calendar {
+    padding: 0px;
+}
+
+.w-header-page .p-toolbar-group-start .p-inputgroup .p-calendar .p-inputtext {
+    padding: 0px;
+    border: 0.05rem solid #dee2e6;
+    border-radius: 3px 0 0 3px;
+}
+
+.w-header-page .p-toolbar-group-start .p-inputgroup .p-calendar button {
+    color: rgb(22, 26, 45);
+    background-color: #dee2e6;
+}
+
+.w-header-page .p-toolbar-group-end {
+    padding: 0px !important;
+}
+
+.w-header-page .p-inputgroup {
+    padding: 0px;
+    border: 0.05rem solid rgb(22, 26, 45);
+    border-radius: 3px;
+    font-size: 0.9rem;
+    width: 240px;
+}
+
+.w-header-page .w-inputgroup-caixa .p-togglebutton {
+    border: 0.05rem solid #dee2e6;
+    border-radius: 3px 0 0 3px;
+    font-size: 0.9rem !important;
+}
+
+.w-header-page .w-inputgroup-caixa .p-togglebutton .p-button {
+
+    font-size: 0.9rem !important;
+}
+
+.w-header-page .p-inputgroup .p-inputgroup-addon {
+    background-color: #dee2e6;
+    color: rgb(22, 26, 45);
+
+}
+
+
+
+
+.w-header-page .p-toolbar-group-end {
+    padding: 0px !important;
+
+}
+
+.w-header-page .p-toolbar-group-end .p-inputgroup {
+    padding: 0px !important;
+    border: none;
+}
+
+.w-header-page .p-toolbar-group-end .p-inputgroup .p-calendar {
+    padding: 0px;
+}
+
+.w-header-page .p-toolbar-group-end .p-inputgroup .p-calendar .p-inputtext {
+    padding: 0px;
+    border: 0.05rem solid #dee2e6;
+    border-radius: 3px 0 0 3px;
+}
+
+.w-header-page .p-toolbar-group-end .p-inputgroup .p-calendar button {
+    color: rgb(22, 26, 45);
+    background-color: #dee2e6;
+}
+
+.w-header-page .p-toolbar-group-end {
+    padding: 0px !important;
+}
+
+.w-header-page .p-inputgroup {
+    padding: 0px;
+    border: 0.05rem solid rgb(22, 26, 45);
+    border-radius: 3px;
+    font-size: 0.9rem;
+    margin-left: 10px;
+}
+.w-header-page .w-inputgroup-caixa  {
+    justify-content: flex-end;
+    width: 160px;
+    margin-right: 10px;
+}
+
+.w-header-page .w-inputgroup-caixa .p-togglebutton {
+    border: 0.05rem solid #dee2e6;
+    border-radius: 3px 0 0 3px;
+    font-size: 0.9rem !important;
+    padding: 5px;
+}
+
+.w-header-page .w-inputgroup-caixa .p-togglebutton .p-button {
+    font-size: 0.9rem !important;
+}
+
+.w-header-page .p-inputgroup .p-inputgroup-addon {
+    background-color: #dee2e6;
+    color: rgb(22, 26, 45);
+
+}
+.w-header-page .p-inputgroup button{
+background-color:#dee2e6;
+color: rgb(22, 26, 45);;
+}
+
+
+/*TABS -----------------------------------------------------------------*/
+.w-tabe{
+}
+.w-table .p-tabview-nav-container{
+
+}
+.w-tabe .p-tabview-nav-container .pr_id_788_navcontent{
+
+}
+.p-tabview-nav{
+  
+border: none !important;
+}
+.p-tabview-nav .p-unselectable-text{
+    margin: 5px 5px 0px 5px !important;
+    background-color:#dee2e6;
+    padding: 5px 5px 0px 5px;
+}
+.p-tabview-nav .p-tabview-selected{
+background-color: white;
+border-top: 0.1rem solid #dee2e6;
+border-left: 0.1rem solid #dee2e6;
+border-right: 0.1rem solid #dee2e6;
+}
+ .p-tabview-panels{
+    border-bottom: 0.1rem solid #dee2e6;
+    border-left: 0.1rem solid #dee2e6;
+    border-right: 0.1rem solid #dee2e6;
+
+}.w-tabe .p-tabview-nav-container .p-tabview-panels .p-tabview-panel{
+
+}
+.p-tabview .p-tabview-nav li .p-tabview-nav-link {
+    border: none;
+    background-color: transparent  ;
+    padding: 10px;
+}
+
+
+.w-card-dashboard{
+
+}
+.w-card-dashboard-contents  .p-chart{
+    width: 200px;
+}
+.w-card-dashboard-contents-quadros{
+    border: 0.05rem solid #8b8e91;
+}
+
+.w-card-dashboard-stats{
+    background: #74ebd5;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #ACB6E5, #74ebd5);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #ACB6E5, #74ebd5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    border-radius: 3px;
+    
+}
+.w-card-dashboard-stats-cards{
+    
+}
+.w-card-dashboard-estatisticas-divider{
+    margin: 10px 0px 10px 0px;
+}
+
+
+.surface-card {
+    background-color: #f7f7f7 !important;
+}

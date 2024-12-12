@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/SS_icon_branco.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Web site created using create-react-app" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/SS_icon_branco.png" />
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+  <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+  <title>Gestor 1.0</title>
+  <!-- ===== BOX ICONS ===== -->
+  <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body class="body-pd expander" id="body-pd">
+
+  <div id="root"></div>
+  <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  
+
+  <style>
+    /*CARDS */
+    body {
+      background-color: #e4e5e6;
+    }
+
+    /*CARDS */
+    .line {
+      /*box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06) !important;*/
+      box-shadow: 0 1px 3px 0 rgb(11 41 72 / 0%), 0 1px 2px 0 rgb(11 41 72 / 36%) !important;
+      border: 0 !important;
+      transition: all .2s ease;
+      position: relative;
+    }
+
+    .icon-card {
+      line-height: 1.2;
+      font-size: 1.2rem;
+      color: rgb(11, 41, 72);
+    }
+
+    .link-card {
+      margin: 10px 20px 10px 0px;
+      color: none;
+      width: 300px;
+    }
+
+    .card-title {
+      color: rgb(11, 41, 72);
+      font-size: 1.25rem;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    p {
+      color: #212529c2;
+      font-size: 1rem;
+      font-weight: 100;
+    }
+
+    /*TIMELINE*/
+    .timeline {
+      position: relative;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+    }
+
+    .timeline .timeline-item {
+      position: relative;
+      left: -10px;
+      list-style: none;
+      border-left: 2px solid #0b2948;
+      margin-left: 10px;
+      padding: 0 0 1.5rem 1.5rem;
+      border-bottom: none;
+
+    }
+
+    .timeline .timeline-item .line:hover {
+      box-shadow: 0 5px 5px rgba(23, 20, 29, 0.15);
+      transform: translateX(-5px);
+    }
+
+    .timeline .timeline-item:before {
+      content: "";
+      width: 15px;
+      height: 15px;
+      background: #0b2948;
+      border: 2px solid #0b2948;
+      ;
+      border-radius: 50%;
+      position: absolute;
+      left: -10px;
+      top: 40%;
+    }
+
+    /*CCORDION*/
+    .accordion-card {
+      border-color: #0b2948;
+      border-radius: 0.37rem 0.37rem 0 0;
+    }
+
+    .accordion-card .card-title {
+      color: white;
+    }
+
+    .accordion-card button {
+      border: none;
+      background-color: #0b2948;
+      padding: 0;
+      border-radius: 0.37rem 0.37rem 0 0;
+      color: white;
+    }
+
+    /*CARD PAGINA SERVICO */
+    .card-service {
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%) !important;
+      margin-bottom: 10px;
+    }
+
+    .card-service .card-header {
+      background-color: #0b2948;
+      color: white;
+      border: none;
+      padding: 5px;
+    }
+
+    .card-service .card-header .card-title {
+      color: white;
+      line-height: 1.2;
+      margin: 0px;
+    }
+
+    .card-service .card-title-aux {
+      color: white;
+      font-size: 1rem;
+    }
+
+    .card-service .card-title-icon {
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    .td-icons {
+      color: black;
+      text-align: right;
+    }
+
+    .td-icons .icons {
+      color: black;
+
+      text-align: right;
+
+    }
+
+    .btn-icon {
+      background-color: blanchedalmond;
+    }
+
+    .icons {
+      color: white;
+      border-color: white;
+      background-color: transparent;
+      margin-left: 5px;
+
+    }
+
+    .card-service-footer {
+      background-color: white;
+      text-align: right;
+      font-size: 0.7rem;
+      padding: 0.3rem;
+    }
+
+    .card-service-btn {
+      margin: 0px 0px 0px 5px;
+      font-size: 0.9rem
+    }
+
+    .table>:not(caption)>*>* {
+      padding: 0.4rem;
+    }
+  </style>
+
+</body>
+
+</html>

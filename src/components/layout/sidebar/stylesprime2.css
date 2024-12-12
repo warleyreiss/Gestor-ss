@@ -1,0 +1,284 @@
+/* Import Google font - Poppins */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+textarea:focus, input:focus{
+  outline: none;
+}
+.p-component{
+  outline: none !important;
+}
+
+/* Pre css */
+.flex_nav {
+  display: flex;
+  align-items: center;
+}
+.nav_image_nav {
+  display: flex;
+  min-width: 40px;
+  justify-content: center;
+  margin-left: 10px;
+}
+.nav_image_nav img {
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 200px;
+  background: #fff;
+  padding: 7px 10px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+}
+.sidebar.close_nav {
+  width: calc(55px + 20px);
+}
+#body-pd{
+  transition: all 0.3s ease;
+}
+.body-pd{
+  margin-left: 85px;
+}
+
+
+.expander{
+margin-left: 210px;
+}
+.logo_items_nav {
+  gap: 3px;
+}
+.logo_name_nav {
+  font-size:0.8rem;
+  color: #fff;
+  font-weight: 500px;
+  transition: all 0.3s ease;
+}
+.sidebar.close_nav .logo_name_nav,
+.sidebar.close_nav #lock-icon,
+.sidebar.close_nav #sidebar-close_nav {
+  opacity: 0;
+  pointer-events: none;
+}
+#lock-icon,
+#sidebar-close_nav {
+  padding: 4px;
+  color: #ffffff;
+  font-size: 22px;
+  cursor: pointer;
+  margin-left: 51px;
+  transition: all 1.5s ease;
+  background-color: #161a2d;
+  border-radius: 50%;
+}
+#sidebar-close_nav {
+  display: none;
+  color: #333;
+}
+.menu_container_nav {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-top: 17px;
+  overflow-y: auto;
+  height: calc(100% - 82px);
+}
+.w-item-chart{
+  background-color: #2196f3!important;
+}
+.w-item-chart:hover{
+  background-color: #4070f4 !important;
+}
+
+.w-item-chart i,.w-item-chart span{
+  color: rgb(22, 26, 45);
+}
+.menu_container_nav::-webkit-scrollbar {
+  display: none;
+}
+.menu_title_nav {
+  position: relative;
+  height: 50px;
+  width: 55px;
+}
+.menu_title_nav .title_nav {
+  margin-left: 15px;
+  transition: all 0.3s ease;
+}
+.sidebar.close_nav .title_nav {
+  opacity: 0;
+}
+.menu_title_nav .line_nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 3px;
+  width: 20px;
+  border-radius: 25px;
+  background: #aaa;
+  transition: all 0.3s ease;
+}
+.menu_title_nav .line_nav {
+  opacity: 0;
+}
+.sidebar.close_nav .line_nav {
+  opacity: 1;
+}
+.item {
+  list-style: none !important;
+  text-decoration: none;
+}
+a{
+  list-style: none !important;
+}
+.link_nav {
+  text-decoration: none;
+  border-radius: 3px;
+  color: #707070;
+}
+.link_nav:hover {
+  color: #fff;
+  background-color: #4070f4;
+}
+.link_nav span {
+  white-space: nowrap;
+  font-size: 1rem;
+}
+.link_nav i {
+  height: 40px;
+  min-width: 55px;
+  display: flex;
+  font-size: 1.2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+}
+
+.sidebar_profile {
+  padding-top: 15px;
+  margin-top: 15px;
+  gap: 15px;
+  border-top: 2px solid rgba(0, 0, 0, 0.1);
+}
+.sidebar_profile .name {
+  font-size: 18px;
+  color: #333;
+}
+.sidebar_profile .email {
+  font-size: 15px;
+  color: #333;
+}
+
+/* Navbar */
+.navbar {
+  max-width: 500px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 60%;
+  transform: translateX(-50%);
+  background: #fff;
+  padding: 10px 20px;
+  border-radius: 0 0 8px 8px;
+  justify-content: space-between;
+}
+#sidebar-open {
+  font-size: 30px;
+  color: #333;
+  cursor: pointer;
+  margin-right: 20px;
+  display: none;
+}
+.search_box {
+  height: 46px;
+  max-width: 500px;
+  width: 100%;
+  border: 1px solid #aaa;
+  outline_nav: none;
+  border-radius: 8px;
+  padding: 0 15px;
+  font-size: 18px;
+  color: #333;
+}
+.navbar img {
+  height: 40px;
+  width: 40px;
+  margin-left: 20px;
+}
+
+/* Responsive */
+@media screen and (max-width: 1100px) {
+  .navbar {
+    left: 65%;
+  }
+}
+@media screen and (max-width: 800px) {
+  .sidebar {
+    left: 0;
+    z-index: 1000;
+  }
+  .sidebar.close_nav {
+    left: -100%;
+  }
+  #sidebar-close_nav {
+    display: block;
+  }
+  #lock-icon {
+    display: none;
+  }
+  .navbar {
+    left: 0;
+    max-width: 100%;
+    transform: translateX(0%);
+  }
+  #sidebar-open {
+    display: block;
+  }
+}
+
+
+.p-speeddial {
+  position: relative;
+  z-index: 3000;
+}
+.p-speeddial-button.p-button.p-button-icon-only {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.w-cabecalho {
+background-color: #dee2e6;
+padding: 5px;
+margin-bottom: 10px;
+}
+.w-cabecalho-caixa{
+  padding: 5px;
+}
+
+.w-cabecalho  .p-button {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 5px;
+}
+.w-cabecalho  .p-inputgroup-addon {
+  background-color: transparent;
+ border: none;
+}
+
+.w-cabecalho .p-inputtext {
+  border: none;
+padding: 5px;
+background-color: transparent;
+}
