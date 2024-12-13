@@ -15,7 +15,7 @@ import Logo from "./logo.png"
 import { useNavigate } from 'react-router-dom'
 import { useContext } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
-import './FormDemo.css';
+
 
 function Signin() {
   const navigate = useNavigate()
@@ -29,7 +29,7 @@ function Signin() {
     await signIn(formContent)
   }
   const changePassword = (value) => {
-    setValue('senha', value)
+    setValue('password', value)
   }
   //
   if (signed) {
@@ -342,11 +342,6 @@ function Signin() {
           </div>
 
         </section>
-
-
-
-
-
         </div>
       </>
     );

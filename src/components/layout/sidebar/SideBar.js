@@ -96,16 +96,6 @@ function SideBar() {
   }
   const [dataPeriodo, setDataPeriodo] = useState(periodo);
 
-  useEffect(() => {
-    const loadingStoreData = () => {
-      const date = new Date();
-      const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-      const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-      setDataPeriodo([firstDay, lastDay])
-      updatePerido([firstDay, lastDay])
-    }
-    loadingStoreData();
-  }, []);
 
   const [visibleRight, setVisibleRight] = useState(false);
   const [checkedCaixa, setCheckedCaixa] = useState(true);
@@ -236,18 +226,7 @@ let teste=''
 
   const rightContents = (
     <React.Fragment>
-      <div className="p-inputgroup">
-        <Calendar id="range" value={dataPeriodo} onChange={(e) => atualizarPeriodo(e.value)} selectionMode="range" readOnlyInput showIcon />
-      </div>
-
-      <div className="p-inputgroup" style={{ width: '40px', marginRight: '10px' }}>
-        <Button icon="pi pi-qrcode" onClick={() => showCaixa()} />
-      </div>
-      <div className="p-inputgroup" style={{ width: '40px', marginRight: '10px' }}>
-        <Link to="/configuracao" className="item">
-          <Button icon="pi pi-cog" />
-        </Link>
-      </div>
+     
     </React.Fragment>
   );
   const leftContents = (

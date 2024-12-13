@@ -20,53 +20,53 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { InputMask } from 'primereact/inputmask';
 import { Button } from 'primereact/button';
 import { mask } from 'primereact/utils';
+
+import { InputNumber } from 'primereact/inputnumber';
 import 'primeicons/primeicons.css';
 
 //IMPORTANTO RECURSOS DE FRAMEWORKS E BIBLIOTECAS
 import { useForm, Controller } from 'react-hook-form';
 import { axiosApi } from '../../../services/axios';
-import Select from 'react-select'
+import { Link } from 'react-router-dom';
 
-import { useContext } from 'react';
-import { AuthContext } from '../../../context/AuthContext';
 
-function ListaDespesasExtras() {
-
-  const { periodo } = useContext(AuthContext)
+function Clientes() {
 
   //STATES PARA FUNCIONAMENTO GERAL DA PAGINA
   const [loading, setLoading] = useState(false);
+  const nomePagina = 'Cadastros de clientes'
 
-  //REQUISIÇÃO DOS REGISTROS DO BANCO DE DADOS-------------------------------------------------------------------|
+  const toast = useRef(null);
+
+
+  //FUNÇÃO PARA BUSCAR REGISTROS DO BANCO DE DADOS-------------------------------------------------------------------|
+
   //state
   const [registros, setRegistros] = useState([]);
-
-  //requisisção 
-  useEffect(() => {
-    //inicia animacao de carregamento
+  //requisição 
+  const buscarRegistros = () => {
     setLoading(true);
-    axiosApi.get("/despesas_extras/"+JSON.parse(localStorage.getItem("@Auth:periodoInicio")) + "/" + JSON.parse(localStorage.getItem("@Auth:periodoFim")))
+    axiosApi.get("/list_client")
       .then((response) => {
         setRegistros(response.data)
-        console.log(response.data)
       })
       .catch(function (error) {
       });
-    //finaliza animacao de carregamento
     setLoading(false)
-    //inicar o recurso de pesquisa da tabela
     initFilters1();
+  }
+
+  //requisisção 
+  useEffect(() => {
+    buscarRegistros()
   }, [])
   //-------------------------------------------------------------------------------------------------------------|
 
   //OPÇÃO DE COL TOGGLE DA INTERFACE DO USUARIO------------------------------------------------------------------|
-  //colunas
+  //definição das colunas
   const columns = [
-    { field: 'id', header: 'id' },
-    { field: 'valor_pago', header: 'Valor Pago' },
-    { field: 'data_pagamento', header: 'Data pagamento' },
-    { field: 'tipos_despesa_tipo', header: 'Classificação' },
-    { field: 'forma_pagamento', header: 'Forma pagamento' }
+    { field: 'nome', header: 'Nome:' },
+    { field: 'responsavel', header: 'Padrinho:' }
   ];
 
   //state
@@ -80,7 +80,7 @@ function ListaDespesasExtras() {
   }
   //------------------------------------------------------------------------------------------------------------|
 
-  //OPÇÃO DE FILTRO POR PESQUISA -------------------------------------------------------------------------------|
+  //OPÇÃO DE FILTRO PARA PESQUISA -------------------------------------------------------------------------------|
   //states
   const [filters1, setFilters1] = useState(null);
   const [globalFilterValue1, setGlobalFilterValue1] = useState('');
@@ -112,6 +112,7 @@ function ListaDespesasExtras() {
   //OPÇÃO DE EXPORTAR REGISTROS DA TABELA FORMATO --------------------------------------------------------------|
   //csv
   const dt = useRef(null);
+  
   const exportCSV = (selectionOnly) => {
     dt.current.exportCSV({ selectionOnly });
   }
@@ -122,7 +123,7 @@ function ListaDespesasExtras() {
       const worksheet = xlsx.utils.json_to_sheet(registros);
       const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
       const excelBuffer = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
-      saveAsExcelFile(excelBuffer, 'lista_despesas_extras');
+      saveAsExcelFile(excelBuffer, nomePagina);
     });
   }
   //funcao para forçar o download
@@ -140,27 +141,12 @@ function ListaDespesasExtras() {
   }
   //-------------------------------------------------------------------------------------------------------------|
 
-  //OPÇÃO DE IMPORTAR REGISTROS DA TABELA FORMATO ---------------------------------------------------------------|
-  //states
-  const [totalSize, setTotalSize] = useState(0);
-
-  //instancias
-  const fileUploadRef = useRef(null);
-  const toast = useRef(null);
-
-  //funcao acionada ao importar
-  const onUpload = () => {
-
-    toast.current.show({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
-  }
-
-  //--------------------------------------------------------------------------------------------------------------|
 
   //ESTRUTURA DA TABELA DE DADOS ---------------------------------------------------------------------------------|
 
   //componentes a esquerda do cabeçalho
   const leftContents = (
-    <span>tebela</span>
+    <span>{nomePagina}</span>
   );
 
   //componentes a direita do cabeçalho
@@ -170,10 +156,8 @@ function ListaDespesasExtras() {
   }
 
   const [activeIndex, setActiveIndex] = useState(null);
-
   const onClick = (itemIndex) => {
     let _activeIndex = activeIndex ? [...activeIndex] : [];
-
     if (_activeIndex.length === 0) {
       _activeIndex.push(itemIndex);
     }
@@ -186,14 +170,14 @@ function ListaDespesasExtras() {
         _activeIndex.splice(index, 1);
       }
     }
-
     setActiveIndex(_activeIndex);
   }
 
   const op = useRef(null);
+
   const rightContents = (
     <React.Fragment>
-      <InputText value={globalFilterValue1} icon="pi pi-search" onChange={onGlobalFilterChange1} placeholder="Filtrar registros" />
+      <InputText value={globalFilterValue1} icon="pi pi-search" onChange={onGlobalFilterChange1} placeholder="Filtrar..." />
       <Button icon="pi pi-plus" onClick={() => openNew(true)} className='p-button-outlined p-button-success' />
       <Button type="button" icon="pi pi-chevron-down" iconPos="right" onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="p-button-outlined p-button-info " />
       <OverlayPanel ref={op} showCloseIcon id="overlay_panel" style={{ width: '450px' }} className="overlaypanel-demo">
@@ -203,16 +187,10 @@ function ListaDespesasExtras() {
             <Button type="button" label='.xls' icon="pi pi-file-excel" onClick={exportExcel} className='p-button-outlined p-button-secondary' data-pr-tooltip="XLS" />
           </AccordionTab>
           <AccordionTab header="Importar:">
-            <FileUpload name="demo" url="p" className='p-button-outlined p-button-secondary' onUpload={onUpload} accept="csv/*" maxFileSize={1000000}
-              emptyTemplate={<p >solte aqui seu arquivo formato csv.</p>} />
+           <p>Não diponível </p>
           </AccordionTab>
           <AccordionTab header="Selecionar colunas:">
             <MultiSelect value={selectedColumns} options={columns} optionLabel="header" onChange={onColumnToggle} style={{ width: '20em' }} />
-          </AccordionTab>
-          <AccordionTab header="Header III">
-            <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
-              cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
-              Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.</p>
           </AccordionTab>
         </Accordion>
 
@@ -221,15 +199,14 @@ function ListaDespesasExtras() {
 
     </React.Fragment>
   );
+
   //cabecalho
   const header = (
     <div className="table-header" >
       <Toolbar left={leftContents} right={rightContents} />
     </div>
   );
-  //colunas
-  //é definido pelo state "selectedColumns"
-
+  
   //linhas
   const columnComponents = selectedColumns.map(col => {
     return <Column key={col.field} field={col.field} header={col.header} sortable={col.sortable} />;
@@ -239,15 +216,13 @@ function ListaDespesasExtras() {
   const actionBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-
+        <Button icon="pi pi-pencil" className="p-button-outlined p-button-info" onClick={() => editregistro(rowData)} />
         <Button icon="pi pi pi-trash" className="p-button-outlined p-button-danger" onClick={() => delete confirmDeleteregistro(rowData)} />
       </React.Fragment>
     );
   }
-  //<Button icon="pi pi-pencil" className="p-button-outlined p-button-info" onClick={() => editregistro(rowData)} />
-
   //rodapé
-  const footer = `Total de ${registros ? registros.length : 0} despesas extras.`;
+  const footer = `Total de ${registros ? registros.length : 0} registros.`;
 
   //--------------------------------------------------------------------------------------------------------------|
 
@@ -261,55 +236,48 @@ function ListaDespesasExtras() {
   const [mask, setMask] = useState("999.999.999-99");
   const { register, handleSubmit, reset, setValue/*, formStates:{erros}*/ } = useForm();
 
-  //funcao alterar mascara documento e tipo de pessoa
-  const changeMsk = (value) => {
-    if (value) {
-      setMask('999.999.999-99')
-      setTipoPessoa('fisica')
-    } else {
-      setMask('99.999.999/9999-99')
-      setTipoPessoa('fisica')
-    }
-  }
 
   //envio do formulario CRUD
   const onSubmit = (formContent) => {
 
-    let _registros = [...registros];
-    let _registro = { ...formContent };
-    if (_registro.id) {
-      axiosApi.patch("/despesas_extras", formContent)
-        .then((response) => {
-          const index = findIndexById(registro.id);
-          _registros[index] = _registro;
-          setRegistros(_registros);
-          toast.current.show({ severity: 'success', summary: 'Successful', detail: 'registro Updated', life: 3000 });
-          reset()
-          setVisibleRight(false)
-        })
-        .catch(function (error) {
-          toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
-        });
+    if (formContent.nome.trim()) {
+      let _registros = [...registros];
+      let _registro = { ...formContent };
+      if (_registro.id) {
+
+        axiosApi.patch("/clientes", formContent)
+          .then((response) => {
+            _registro.data_nascimento = '---';// preciso mudr formato do date aqui, posso pegar o vindo do post
+            const index = findIndexById(registro.id);
+            _registros[index] = _registro;
+            setRegistros(_registros);
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'registro Updated', life: 3000 });
+            reset()
+            setVisibleRight(false)
+          })
+          .catch(function (error) {
+            toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
+          });
+      }
+      else {
+        axiosApi.post("/clientes", formContent)
+          .then((response) => {
+            _registro.id = response.data.id
+            _registro.data_nascimento = '---';// preciso mudr formato do date aqui, posso pegar o vindo do post
+            _registros.push(_registro);
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Cliente cadastrado', life: 3000 });
+            setRegistros(_registros);
+            setregistro(emptyregistro);
+            reset()
+            setVisibleRight(false)
+
+          })
+          .catch(function (error) {
+            toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
+          });
+
+      }
     }
-    else {
-      axiosApi.post("/despesas_extras", formContent)
-        .then((response) => {
-          _registro.id = response.data.id
-          _registro.data_pagamento = '---'
-          _registros.push(_registro);
-          toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Fornecedor cadastrado', life: 3000 });
-          setRegistros(_registros);
-          setregistro(emptyregistro);
-          reset()
-          setVisibleRight(false)
-
-        })
-        .catch(function (error) {
-          toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
-        });
-
-    }
-
   };
 
 
@@ -352,13 +320,13 @@ function ListaDespesasExtras() {
 
   //funcao que deleta o registro do banco de dados e da tabela
   const deleteregistro = () => {
-    axiosApi.delete("/despesas_extras/" + registro.id)
+    axiosApi.delete("/clientes/" + registro.id)
       .then((response) => {
         let _registros = registros.filter(val => val.id !== registro.id);
         setRegistros(_registros);
         setDeleteregistroDialog(false);
         setregistro(emptyregistro);
-        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Fornecedo deletado', life: 3000 });
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Cliente deletado', life: 3000 });
       })
       .catch(function (error) {
         toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
@@ -375,93 +343,213 @@ function ListaDespesasExtras() {
 
 
   //--------------------------------------------------------------------------------------------------------------|
-  const paginatorLeft = <Button type="button" icon="pi pi-refresh" className="p-button-text" />;
 
   //MENSAGENS AO USUARIO------------------------------------------------------------------------------------------|
   const toastBR = useRef(null);
   const showSuccess = (detail) => {
-    toast.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Fornecedo ' + detail + ' cadastrada', life: 3000 });
+    toast.current.show({ severity: 'success', summary: 'Sucesso', detail: 'cliente ' + detail + ' cadastrada', life: 3000 });
   }
 
   //--------------------------------------------------------------------------------------------------------------|
 
-  const formas = [
-    { value: 'DEBITO CONTA CORRENTE', label: 'DÉBITO CONTA CORRENTE' },
-    { value: 'DINHEIRO', label: 'DINHEIRO EM ESPÉCIE' },
-    { value: 'PIX', label: 'PIX CONTA CORRENTE' }
-  ]
-  const selecaoFormaPagamento = (value) => {
-    setValue('forma_pagamento', value)
-  }
 
-  const tipos = [
-    { value: 'ALIMENTACAO', label: 'ALIMENTAÇÃO' },
-    { value: 'INSUMOS', label: 'INSUMOS' },
-    { value: 'FRETE', label: 'FRETE' }
-  ]
-  const selecaoTipo = (value) => {
-    setValue('tipos_despesa_tipo', value)
-  }
   return (
     <>
       <Toast ref={toastBR} position="bottom-right" />
-      <Sidebar className='w-sidebar-right ' header={<h3>Registrar despesa extra:</h3>} visible={visibleRight} position="right" blockScroll onHide={() => setVisibleRight(false)} style={{ width: '30em' }}>
-        <div className="card w-card ">
-          <form onSubmit={handleSubmit(onSubmit)} className="p-fluid  w-form" >
-
+      <Sidebar className='w-sidebar-right' header={<h3>{nomePagina.toUpperCase()}</h3>} visible={visibleRight} position="right" blockScroll onHide={() => setVisibleRight(false)} style={{ width: '100em' }}>
+        <div className="card w-card" >
+          <form onSubmit={handleSubmit(onSubmit)} className="p-fluid w-form" >
+            <InputText hidden {...register("id")} />
             <div className="p-fluid grid">
 
+              <div className="field w-field col-12 md:col-6">
+                <label class="font-medium text-900">Nome/razão social:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-building"></i>
+                  </span>
+                  <InputText {...register("nome")} required/>
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-6">
+                <label class="font-medium text-900">CNPJ:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-id-card"></i>
+                  </span>
+                  <InputText {...register("cnpj")} required/>
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">Nome do responsável (padrinho):</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-user"></i>
+                  </span>
+                  <InputText {...register("responsavel")} required/>
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">Telefone pessoal:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-whatsapp"></i>
+                  </span>
+                  <InputText {...register("telefone")} required/>
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">Email pessoal:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-send"></i>
+                  </span>
+                  <InputText {...register("email")} required/>
+                </div>
+              </div>
+
+              <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">* Nome do responsável 2(padrinho):</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-user"></i>
+                  </span>
+                  <InputText {...register("responsavel2")} required/>
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">Telefone pessoal:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-whatsapp"></i>
+                  </span>
+                  <InputText {...register("telefone2")} required/>
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">Email pessoal:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-send"></i>
+                  </span>
+                  <InputText {...register("email2")} required/>
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">* Nome do responsável 3(padrinho):</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-user"></i>
+                  </span>
+                  <InputText {...register("responsavel3")} required/>
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">Telefone pessoal:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-whatsapp"></i>
+                  </span>
+                  <InputText {...register("telefone3")} required/>
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">Email pessoal:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-send"></i>
+                  </span>
+                  <InputText {...register("email3")} required/>
+                </div>
+              </div>
               <div className="field w-field col-12 md:col-12">
-                <label  class="font-medium text-900">Valor pago:</label>
+                <label class="font-medium text-900">Endereço completo:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-home"></i>
+                  </span>
+                  <InputText {...register("endereco")} required/>
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-12">
+                <label class="font-medium text-900">link GPS <Link to='https://www.google.com.br/maps/preview'>(google maps)</Link>:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-map-marker"></i>
+                  </span>
+                  <InputText {...register("gps")} required/>
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-12">
+                <label class="font-medium text-900">Distância (km):</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-truck"></i>
+                  </span>
+                  <InputText {...register("distancia")} required/>
+                </div>
+              </div>
+             
+              <div className="field w-field col-12 md:col-12">
+                <label class="font-medium text-900">vlores:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-truck"></i>
+                  </span>
+                  <InputNumber {...register("valor-iss")} name='valor' inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
+                    
+
+                </div>
+              </div>
+
+            <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">Atendimento frustado:</label>
                 <div className="p-inputgroup">
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-dollar"></i>
                   </span>
-                  <InputText {...register("valor_pago")} />
+                  <InputNumber {...register("valor_atendimento_frustado")} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
                 </div>
               </div>
-              <div className="field w-field col-12 md:col-12">
-                <label  class="font-medium text-900">Forma de pagamento:</label>
-                <div className="p-inputgroup w-inputgroup-select">
-                  <span className="p-inputgroup-addon">
-                    <i className="pi pi-money-bill"></i>
-                  </span>
-                  <Select
-                    options={formas.map(sup => ({ value: sup.value, label: sup.value }))}
-                    onChange={(e) => { selecaoFormaPagamento(e.value) }}
-                    placeholder=''
-                  />
-                </div>
-              </div>
-              <div className="field w-field col-12 md:col-12">
-                <label  class="font-medium text-900">Classificação:</label>
-                <div className="p-inputgroup w-inputgroup-select">
-                  <span className="p-inputgroup-addon">
-                    <i className="pi pi-list"></i>
-                  </span>
-                  <Select
-                    options={tipos.map(sup => ({ value: sup.value, label: sup.value }))}
-                    onChange={(e) => { selecaoTipo(e.value) }}
-                    placeholder=""
-                  />
-                </div>
-              </div>
-              <div className="field w-field col-12 md:col-12">
-                <label  class="font-medium text-900">Data do pagamento:</label>
+
+              <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">Atendimento frustado:</label>
                 <div className="p-inputgroup">
                   <span className="p-inputgroup-addon">
-                    <i className="pi pi-calendar"></i>
+                    <i className="pi pi-dollar"></i>
                   </span>
-                  <Calendar id='calendar' {...register("data_pagamento")} />
+                  <InputNumber {...register("valor_atendimento_frustado")} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
                 </div>
               </div>
-              <div className="field w-field-btn col-12 md:col-12">
-                <Button type="submit" label="Registrar despesa" className="w-form-button" icon="pi pi-save" iconPos="right" />
+              <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">Atendimento frustado:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-dollar"></i>
+                  </span>
+                  <InputNumber {...register("valor_atendimento_frustado")} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
+                </div>
+              </div>
+              
+
+             
+
+              <div className="field w-field col-12 md:col-12">
+                <label class="font-medium text-900">Observações:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-file-edit"></i>
+                  </span>
+                  <InputTextarea rows={3} cols={30} autoResize {...register("observacao")} />
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-12">
+                <Button type="submit" label="Salvar cadastro" className="w-form-button" icon="pi pi-save" iconPos='right' />
               </div>
             </div>
           </form>
-        </div >
-      </Sidebar >
+        </div>
+      </Sidebar>
       <Toast ref={toast} />
       <div className="card">
         <DataTable value={registros}
@@ -478,7 +566,6 @@ function ListaDespesasExtras() {
           paginator
           paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
           currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
-          paginatorLeft={paginatorLeft}
           rows={10}
           rowsPerPageOptions={[10, 20, 50]}>
           {columnComponents}
@@ -499,4 +586,4 @@ function ListaDespesasExtras() {
 
 }
 
-export default ListaDespesasExtras
+export default Clientes

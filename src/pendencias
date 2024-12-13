@@ -1,5 +1,0 @@
-cadastro clientes, campos de valores nao podem conter virgulas no registrar no banco de dados
-ao cadastrar novo equipamentos preencher DB movimentos
-ao cadastrar novo equipamento pegar id do usuario e do almoxarifado e salvar
-ao cadastrar novo equipamento pegar o almoxarifado do usuario e salvar
-ao listar todos equipmanetos do proprio usuario, precisa filtrar pela id dele
