@@ -62,6 +62,12 @@ function Clientes() {
   }, [])
   //-------------------------------------------------------------------------------------------------------------|
 
+
+  //FUNÇÃO PARA REFRESH DA LISTA DE CADASTRO DA PAGINA-----------------------------------------------------------|
+  const refresh =()=>{
+    buscarRegistros()
+  }
+ //--------------------------------------------------------------------------------------------------------------|
   //OPÇÃO DE COL TOGGLE DA INTERFACE DO USUARIO------------------------------------------------------------------|
   //definição das colunas
   const columns = [
@@ -112,7 +118,7 @@ function Clientes() {
   //OPÇÃO DE EXPORTAR REGISTROS DA TABELA FORMATO --------------------------------------------------------------|
   //csv
   const dt = useRef(null);
-  
+
   const exportCSV = (selectionOnly) => {
     dt.current.exportCSV({ selectionOnly });
   }
@@ -152,7 +158,7 @@ function Clientes() {
   //componentes a direita do cabeçalho
   const openNew = () => {
     setVisibleRight(true)
-    setregistro(emptyregistro);
+    setRegistro(emptyregistro);
   }
 
   const [activeIndex, setActiveIndex] = useState(null);
@@ -177,6 +183,7 @@ function Clientes() {
 
   const rightContents = (
     <React.Fragment>
+       <Button icon="pi pi-refresh" onClick={() => refresh()} className='p-button-outlined p-button-info' />
       <InputText value={globalFilterValue1} icon="pi pi-search" onChange={onGlobalFilterChange1} placeholder="Filtrar..." />
       <Button icon="pi pi-plus" onClick={() => openNew(true)} className='p-button-outlined p-button-success' />
       <Button type="button" icon="pi pi-chevron-down" iconPos="right" onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="p-button-outlined p-button-info " />
@@ -187,7 +194,7 @@ function Clientes() {
             <Button type="button" label='.xls' icon="pi pi-file-excel" onClick={exportExcel} className='p-button-outlined p-button-secondary' data-pr-tooltip="XLS" />
           </AccordionTab>
           <AccordionTab header="Importar:">
-           <p>Não diponível </p>
+            <p>Não diponível </p>
           </AccordionTab>
           <AccordionTab header="Selecionar colunas:">
             <MultiSelect value={selectedColumns} options={columns} optionLabel="header" onChange={onColumnToggle} style={{ width: '20em' }} />
@@ -206,7 +213,7 @@ function Clientes() {
       <Toolbar left={leftContents} right={rightContents} />
     </div>
   );
-  
+
   //linhas
   const columnComponents = selectedColumns.map(col => {
     return <Column key={col.field} field={col.field} header={col.header} sortable={col.sortable} />;
@@ -229,54 +236,65 @@ function Clientes() {
   //FORMULARIO CRUD ----------------------------------------------------------------------------------------------|
 
   //states
+  let emptyregistro = {
+    id: null
+  };
+  const [registro, setRegistro] = useState(emptyregistro);
   const [id, setId] = useState(false);
   const [visibleRight, setVisibleRight] = useState(false);
-  const [tipoPessoa, setTipoPessoa] = useState('fisica');
-  const [checked2, setChecked2] = useState(false);
-  const [mask, setMask] = useState("999.999.999-99");
   const { register, handleSubmit, reset, setValue/*, formStates:{erros}*/ } = useForm();
 
+  //funções de preenchimento do formulario
+  const onInputChange = (e, name) => {
+    const val = (e.target && e.target.value) || '';
+    let _registro = { ...registro };
+    _registro[`${name}`] = val;
+
+    setRegistro(_registro);
+  }
+  const onInputNumberChange = (e, name) => {
+    const val = e.value || 0;
+    let _registro = { ...registro };
+    _registro[`${name}`] = val;
+
+    setRegistro(_registro);
+  }
 
   //envio do formulario CRUD
-  const onSubmit = (formContent) => {
+  const saveRegistro = () => {
 
-    if (formContent.nome.trim()) {
+    if (registro.nome.trim()) {
       let _registros = [...registros];
-      let _registro = { ...formContent };
-      if (_registro.id) {
-
-        axiosApi.patch("/clientes", formContent)
+      let _registro = { ...registro };
+      if (registro.id) {
+        axiosApi.patch("/update_client", registro)
           .then((response) => {
-            _registro.data_nascimento = '---';// preciso mudr formato do date aqui, posso pegar o vindo do post
             const index = findIndexById(registro.id);
             _registros[index] = _registro;
-            setRegistros(_registros);
-            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'registro Updated', life: 3000 });
-            reset()
-            setVisibleRight(false)
+           
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Cliente alterado!', life: 3000 });
+
           })
           .catch(function (error) {
             toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
           });
       }
       else {
-        axiosApi.post("/clientes", formContent)
+        registro.contrato_id='1'
+        axiosApi.post("/create_client", registro)
           .then((response) => {
             _registro.id = response.data.id
-            _registro.data_nascimento = '---';// preciso mudr formato do date aqui, posso pegar o vindo do post
             _registros.push(_registro);
-            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Cliente cadastrado', life: 3000 });
-            setRegistros(_registros);
-            setregistro(emptyregistro);
-            reset()
-            setVisibleRight(false)
-
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Cliente cadastrado!', life: 3000 });
           })
           .catch(function (error) {
             toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
           });
 
       }
+      setRegistros(_registros);
+      setRegistro(emptyregistro);
+      setVisibleRight(false)
     }
   };
 
@@ -284,8 +302,7 @@ function Clientes() {
 
   //funcao preenchimento do formulario para edicao 
   const editregistro = (registro) => {
-    setregistro({ ...registro });
-    reset(registro);
+    setRegistro({ ...registro });
     setVisibleRight(true);
   }
   //funcao para retonar qual o indice do registro da tabela para alteracao
@@ -302,15 +319,11 @@ function Clientes() {
   }
 
   //delete registro
-  let emptyregistro = {
-    id: null
-  };
-  const [registro, setregistro] = useState(emptyregistro);
 
   const [deleteregistroDialog, setDeleteregistroDialog] = useState(false);
   // funcao para mostrar alerta de confimação pelo usuario
   const confirmDeleteregistro = (registro) => {
-    setregistro(registro);
+    setRegistro(registro);
     setDeleteregistroDialog(true);
   }
   //funcao ocultar/cancelar alerta de confirmação pelo usuario
@@ -320,12 +333,12 @@ function Clientes() {
 
   //funcao que deleta o registro do banco de dados e da tabela
   const deleteregistro = () => {
-    axiosApi.delete("/clientes/" + registro.id)
+    axiosApi.delete("/delete_client/" + registro.id)
       .then((response) => {
         let _registros = registros.filter(val => val.id !== registro.id);
         setRegistros(_registros);
         setDeleteregistroDialog(false);
-        setregistro(emptyregistro);
+        setRegistro(emptyregistro);
         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Cliente deletado', life: 3000 });
       })
       .catch(function (error) {
@@ -352,23 +365,21 @@ function Clientes() {
 
   //--------------------------------------------------------------------------------------------------------------|
 
-
   return (
     <>
       <Toast ref={toastBR} position="bottom-right" />
       <Sidebar className='w-sidebar-right' header={<h3>{nomePagina.toUpperCase()}</h3>} visible={visibleRight} position="right" blockScroll onHide={() => setVisibleRight(false)} style={{ width: '100em' }}>
         <div className="card w-card" >
-          <form onSubmit={handleSubmit(onSubmit)} className="p-fluid w-form" >
-            <InputText hidden {...register("id")} />
+          <div className="p-fluid w-form" >
             <div className="p-fluid grid">
-
+              <InputText value={registro.id} onChange={(e) => onInputChange(e, 'id')} hidden />
               <div className="field w-field col-12 md:col-6">
                 <label class="font-medium text-900">Nome/razão social:</label>
                 <div className="p-inputgroup">
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-building"></i>
                   </span>
-                  <InputText {...register("nome")} required/>
+                  <InputText value={registro.nome} onChange={(e) => onInputChange(e, 'name')} required />
                 </div>
               </div>
               <div className="field w-field col-12 md:col-6">
@@ -377,7 +388,7 @@ function Clientes() {
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-id-card"></i>
                   </span>
-                  <InputText {...register("cnpj")} required/>
+                  <InputMask value={registro.cnpj} onChange={(e) => onInputChange(e, 'cnpj')}mask="99.999.999/999.9-99" required></InputMask>
                 </div>
               </div>
               <div className="field w-field col-12 md:col-4">
@@ -386,7 +397,7 @@ function Clientes() {
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-user"></i>
                   </span>
-                  <InputText {...register("responsavel")} required/>
+                  <InputText value={registro.responsavel} onChange={(e) => onInputChange(e, 'responsavel')} required />
                 </div>
               </div>
               <div className="field w-field col-12 md:col-4">
@@ -395,7 +406,7 @@ function Clientes() {
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-whatsapp"></i>
                   </span>
-                  <InputText {...register("telefone")} required/>
+                  <InputMask value={registro.telefone} onChange={(e) => onInputChange(e, 'telefone')}mask="(99) 9 9999-9999" required></InputMask>
                 </div>
               </div>
               <div className="field w-field col-12 md:col-4">
@@ -404,17 +415,16 @@ function Clientes() {
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-send"></i>
                   </span>
-                  <InputText {...register("email")} required/>
+                  <InputText value={registro.email} onChange={(e) => onInputChange(e, 'email')} required />
                 </div>
               </div>
-
               <div className="field w-field col-12 md:col-4">
-                <label class="font-medium text-900">* Nome do responsável 2(padrinho):</label>
+                <label class="font-medium text-900">Nome do responsável 2 (padrinho):</label>
                 <div className="p-inputgroup">
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-user"></i>
                   </span>
-                  <InputText {...register("responsavel2")} required/>
+                  <InputText value={registro.responsavel2} onChange={(e) => onInputChange(e, 'responsavel2')} required />
                 </div>
               </div>
               <div className="field w-field col-12 md:col-4">
@@ -423,7 +433,7 @@ function Clientes() {
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-whatsapp"></i>
                   </span>
-                  <InputText {...register("telefone2")} required/>
+                  <InputMask value={registro.telefone2} onChange={(e) => onInputChange(e, 'telefone2')}mask="(99) 9 9999-9999" required></InputMask>
                 </div>
               </div>
               <div className="field w-field col-12 md:col-4">
@@ -432,34 +442,7 @@ function Clientes() {
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-send"></i>
                   </span>
-                  <InputText {...register("email2")} required/>
-                </div>
-              </div>
-              <div className="field w-field col-12 md:col-4">
-                <label class="font-medium text-900">* Nome do responsável 3(padrinho):</label>
-                <div className="p-inputgroup">
-                  <span className="p-inputgroup-addon">
-                    <i className="pi pi-user"></i>
-                  </span>
-                  <InputText {...register("responsavel3")} required/>
-                </div>
-              </div>
-              <div className="field w-field col-12 md:col-4">
-                <label class="font-medium text-900">Telefone pessoal:</label>
-                <div className="p-inputgroup">
-                  <span className="p-inputgroup-addon">
-                    <i className="pi pi-whatsapp"></i>
-                  </span>
-                  <InputText {...register("telefone3")} required/>
-                </div>
-              </div>
-              <div className="field w-field col-12 md:col-4">
-                <label class="font-medium text-900">Email pessoal:</label>
-                <div className="p-inputgroup">
-                  <span className="p-inputgroup-addon">
-                    <i className="pi pi-send"></i>
-                  </span>
-                  <InputText {...register("email3")} required/>
+                  <InputText value={registro.email2} onChange={(e) => onInputChange(e, 'email2')} required />
                 </div>
               </div>
               <div className="field w-field col-12 md:col-12">
@@ -468,86 +451,163 @@ function Clientes() {
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-home"></i>
                   </span>
-                  <InputText {...register("endereco")} required/>
+                  <InputText value={registro.endereco} onChange={(e) => onInputChange(e, 'endereco')} required />
                 </div>
               </div>
-              <div className="field w-field col-12 md:col-12">
-                <label class="font-medium text-900">link GPS <Link to='https://www.google.com.br/maps/preview'>(google maps)</Link>:</label>
+              <div className="field w-field col-12 md:col-8">
+                <label class="font-medium text-900">link GPS <Link to='https://www.google.com.br/maps/preview'> google maps</Link>:</label>
                 <div className="p-inputgroup">
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-map-marker"></i>
                   </span>
-                  <InputText {...register("gps")} required/>
+                  <InputText value={registro.gps} onChange={(e) => onInputChange(e, 'gps')} required />
                 </div>
               </div>
-              <div className="field w-field col-12 md:col-12">
+              <div className="field w-field col-12 md:col-4">
                 <label class="font-medium text-900">Distância (km):</label>
                 <div className="p-inputgroup">
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-truck"></i>
                   </span>
-                  <InputText {...register("distancia")} required/>
+                  <InputText value={registro.distancia} onChange={(e) => onInputChange(e, 'distancia')} required />
                 </div>
               </div>
-             
+
               <div className="field w-field col-12 md:col-12">
-                <label class="font-medium text-900">vlores:</label>
-                <div className="p-inputgroup">
-                  <span className="p-inputgroup-addon">
-                    <i className="pi pi-truck"></i>
-                  </span>
-                  <InputNumber {...register("valor-iss")} name='valor' inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
-                    
-
-                </div>
-              </div>
-
-            <div className="field w-field col-12 md:col-4">
-                <label class="font-medium text-900">Atendimento frustado:</label>
+                <label class="font-medium text-900">Valor alíquota ISS:</label>
                 <div className="p-inputgroup">
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-dollar"></i>
                   </span>
-                  <InputNumber {...register("valor_atendimento_frustado")} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
+                  <InputNumber value={registro.valor_iss} onValueChange={(e) => onInputNumberChange(e, 'valor_iss')} name='valor' inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-3">
+                <label class="font-medium text-900">Valor da hora PS:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-dollar"></i>
+                  </span>
+                  <InputNumber value={registro.valor_hora} onValueChange={(e) => onInputNumberChange(e, 'valor_hora')} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-3">
+                <label class="font-medium text-900">Valor ociosidade:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-dollar"></i>
+                  </span>
+                  <InputNumber value={registro.valor_ociosidade} onValueChange={(e) => onInputNumberChange(e, 'valor_ociosidade')} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-3">
+                <label class="font-medium text-900">Valor atendimento frustado:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-dollar"></i>
+                  </span>
+                  <InputNumber value={registro.valor_atendimento_frustado} onValueChange={(e) => onInputNumberChange(e, 'valor_atendimento_frustado')} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
+                </div>
+              </div>
+
+              <div className="field w-field col-12 md:col-3">
+                <label class="font-medium text-900">Valor violação (sem danos):</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-dollar"></i>
+                  </span>
+                  <InputNumber value={registro.valor_violacao} onValueChange={(e) => onInputNumberChange(e, 'valor_violacao')} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-3">
+                <label class="font-medium text-900">Valor KM rodado:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-dollar"></i>
+                  </span>
+                  <InputNumber value={registro.valor_km} onValueChange={(e) => onInputNumberChange(e, 'valor_km')} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-3">
+                <label class="font-medium text-900">Valor Hospedagem:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-dollar"></i>
+                  </span>
+                  <InputNumber value={registro.valor_hospedagem} onValueChange={(e) => onInputNumberChange(e, 'valor_hospedagem')} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-3">
+                <label class="font-medium text-900">Valor alimentação:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-dollar"></i>
+                  </span>
+                  <InputNumber value={registro.valor_alimentacao} onValueChange={(e) => onInputNumberChange(e, 'valor_alimentacao')} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
                 </div>
               </div>
 
               <div className="field w-field col-12 md:col-4">
-                <label class="font-medium text-900">Atendimento frustado:</label>
+                <label class="font-medium text-900">Valor instalação leve:</label>
                 <div className="p-inputgroup">
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-dollar"></i>
                   </span>
-                  <InputNumber {...register("valor_atendimento_frustado")} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
+                  <InputNumber value={registro.valor_instalacao_leve} onValueChange={(e) => onInputNumberChange(e, 'valor_instalacao_leve')} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
                 </div>
               </div>
               <div className="field w-field col-12 md:col-4">
-                <label class="font-medium text-900">Atendimento frustado:</label>
+                <label class="font-medium text-900">Valor remoção leve</label>
                 <div className="p-inputgroup">
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-dollar"></i>
                   </span>
-                  <InputNumber {...register("valor_atendimento_frustado")} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
+                  <InputNumber value={registro.valor_remocao_leve} onValueChange={(e) => onInputNumberChange(e, 'valor_remocao_leve')} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
                 </div>
               </div>
-              
-
-             
-
-              <div className="field w-field col-12 md:col-12">
-                <label class="font-medium text-900">Observações:</label>
+              <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">Valor substituição leve:</label>
                 <div className="p-inputgroup">
                   <span className="p-inputgroup-addon">
-                    <i className="pi pi-file-edit"></i>
+                    <i className="pi pi-dollar"></i>
                   </span>
-                  <InputTextarea rows={3} cols={30} autoResize {...register("observacao")} />
+                  <InputNumber value={registro.valor_substituicao_leve} onValueChange={(e) => onInputNumberChange(e, 'valor_substituicao_leve')} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
                 </div>
               </div>
+
+              <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">Valor instalação pesada:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-dollar"></i>
+                  </span>
+                  <InputNumber value={registro.valor_instalacao_pesada} onValueChange={(e) => onInputNumberChange(e, 'valor_instalacao_pesada')} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">Valor remoção leve</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-dollar"></i>
+                  </span>
+                  <InputNumber value={registro.valor_remocao_pesada} onValueChange={(e) => onInputNumberChange(e, 'valor_remocao_pesada')} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
+                </div>
+              </div>
+              <div className="field w-field col-12 md:col-4">
+                <label class="font-medium text-900">Valor substituição leve:</label>
+                <div className="p-inputgroup">
+                  <span className="p-inputgroup-addon">
+                    <i className="pi pi-dollar"></i>
+                  </span>
+                  <InputNumber value={registro.valor_substituicao_pesada} onValueChange={(e) => onInputNumberChange(e, 'valor_substituicao_pesada')} inputId="currency-germany" mode="currency" currency="BRL" locale="pt-BR" />
+                </div>
+              </div>
+
               <div className="field w-field col-12 md:col-12">
-                <Button type="submit" label="Salvar cadastro" className="w-form-button" icon="pi pi-save" iconPos='right' />
+                <Button  label="Salvar cadastro" className="w-form-button" icon="pi pi-save" iconPos='right' onClick={saveRegistro}/>
               </div>
             </div>
-          </form>
+          </div>
         </div>
       </Sidebar>
       <Toast ref={toast} />
@@ -569,7 +629,7 @@ function Clientes() {
           rows={10}
           rowsPerPageOptions={[10, 20, 50]}>
           {columnComponents}
-          <Column header={'Opções'} body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
+          <Column header={'Opções:'} body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
 
         </DataTable>
       </div>

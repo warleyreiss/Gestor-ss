@@ -543,6 +543,48 @@ let teste=''
                   </a>
                 </Link>
 
+              </ul> 
+              <ul className="menu_item_nav">
+                <div className="menu_title_nav flex_nav">
+                  <span className="title_nav">CADASTROS</span>
+                  <span className="line_nav"></span>
+                </div>
+                <Link to="/historico_tickets/11-01-2024/12-31-2024" className="item">
+                  <a href="#" className="link_nav flex_nav">
+                    <i className="pi pi-building"></i>
+                    <span>Tickets</span>
+                  </a>
+                </Link>
+                <Link to="/historico_servicos/11-01-2024/12-31-2024" className="item">
+                  <a href="#" className="link_nav flex_nav">
+                    <i className="pi pi-building"></i>
+                    <span>Serviços</span>
+                  </a>
+                </Link>
+                <Link to="/historico_visitas/11-01-2024/12-31-2024" className="item">
+                  <a href="#" className="link_nav flex_nav">
+                    <i className="pi pi-building"></i>
+                    <span>Visitas</span>
+                  </a>
+                </Link>
+                <Link to="/veiculos" className="item">
+                  <a href="#" className="link_nav flex_nav">
+                    <i className="pi pi-truck"></i>
+                    <span>Veículos</span>
+                  </a>
+                </Link>
+                <Link to="/usuarios" className="item">
+                  <a href="#" className="link_nav flex_nav">
+                    <i className="pi pi-users"></i>
+                    <span>Usuários</span>
+                  </a>
+                </Link>
+                <Link to="/frota_interna" className="item">
+                  <a href="#" className="link_nav flex_nav">
+                    <i className="pi pi-car"></i>
+                    <span>Frota interna</span>
+                  </a>
+                </Link>
               </ul>
               <ul className="menu_item_nav">
                 <div className="menu_title_nav flex_nav">
@@ -551,29 +593,28 @@ let teste=''
                 </div>
                 <Link to="/clientes" className="item">
                   <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-users"></i>
+                    <i className="pi pi-building"></i>
                     <span>Clientes</span>
                   </a>
                 </Link>
-                <Link to="/produtos" className="item">
+                <Link to="/veiculos" className="item">
                   <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-box"></i>
-                    <span>Produtos</span>
+                    <i className="pi pi-truck"></i>
+                    <span>Veículos</span>
                   </a>
                 </Link>
-                <Link to="/servicos" className="item">
+                <Link to="/usuarios" className="item">
                   <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-wrench"></i>
-                    <span>Servicos</span>
+                    <i className="pi pi-users"></i>
+                    <span>Usuários</span>
                   </a>
                 </Link>
-                <Link to="/fornecedores" className="item">
+                <Link to="/frota_interna" className="item">
                   <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-building"></i>
-                    <span>Fornecedores</span>
+                    <i className="pi pi-car"></i>
+                    <span>Frota interna</span>
                   </a>
                 </Link>
-
               </ul>
 
 

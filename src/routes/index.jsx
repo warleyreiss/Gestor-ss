@@ -8,7 +8,12 @@ import SideBar from '../components/layout/sidebar/SideBar'
 import Signin from '../components/pages/auth/signin'
 
 import Clientes from '../components/pages/cliente/index'
-
+import FrotaInterna from '../components/pages/frota_interna/index'
+import HistoricoServicos from '../components/pages/historicos/servicos'
+import HistoricoTickets from '../components/pages/historicos/tickets'
+import HistoricoVisitas from '../components/pages/historicos/visitas'
+import Usuarios from '../components/pages/usuarios/index'
+import Veiculos from '../components/pages/veiculos/index'
 /*
 import Home from '../components/pages/home/home_tecnica'
 
@@ -128,6 +133,24 @@ export const AppRouter = () => {
         
         <Route path="/clientes" element={<PrivateRoute />} >
           <Route path="/clientes" element={<Clientes/>} />
+        </Route>
+        <Route path="/frota_interna" element={<PrivateRoute />} >
+          <Route path="/frota_interna" element={<FrotaInterna/>} />
+        </Route>
+        <Route path="/historico_servicos/:inicio/:fim" element={<PrivateRoute />} >
+          <Route path="/historico_servicos/:inicio/:fim" element={<HistoricoServicos/>} />
+        </Route>
+        <Route path="/historico_tickets/:inicio/:fim" element={<PrivateRoute />} >
+          <Route path="/historico_tickets/:inicio/:fim" element={<HistoricoTickets/>} />
+        </Route>
+        <Route path="/historico_visitas/:inicio/:fim" element={<PrivateRoute />} >
+          <Route path="/historico_visitas/:inicio/:fim" element={<HistoricoVisitas/>} />
+        </Route>
+        <Route path="/usuarios" element={<PrivateRoute />} >
+          <Route path="/usuarios" element={<Usuarios/>} />
+        </Route>
+        <Route path="/veiculos" element={<PrivateRoute />} >
+          <Route path="/veiculos" element={<Veiculos/>} />
         </Route>
         {/*  
          <Route exact path="/" element={<PrivateRoute />} >
