@@ -28,7 +28,7 @@ import { useParams } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { axiosApi } from '../../../services/axios';
 import { Link } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 
 function HistoricoTickets() {
 
@@ -42,6 +42,8 @@ function HistoricoTickets() {
   const { inicio } = useParams();
   const { fim } = useParams();
 
+    //CRIANDO INSTANCIAS DE PAGINA
+    const navigate = useNavigate()
   const toast = useRef(null);
 
 
@@ -276,10 +278,18 @@ function HistoricoTickets() {
 
   //--------------------------------------------------------------------------------------------------------------|
 
+   //MENSAGENS AO USUARIO------------------------------------------------------------------------------------------|
+   const retornar = () => {
+    navigate(-1)
+  }
+  //--------------------------------------------------------------------------------------------------------------|
+
+
   return (
     <>
       <Toast ref={toastBR} position="bottom-right" />
       <Toast ref={toast} />
+       <Sidebar visible={true} fullScreen onHide={() => retornar()}>
       <div className="card">
         <DataTable
           value={registros}
@@ -316,6 +326,7 @@ function HistoricoTickets() {
 
         </DataTable>
       </div>
+       </Sidebar>
     </>
 
   );

@@ -231,18 +231,46 @@
 
 /*TABLEAS ___________________________________________________________*/
 
-.p-datatable {
+.p-datatable, .p-card {
     padding: 10px;
     background-color: white;
     height: 90vh;
 }
 
-.p-datatable-header {
+.p-datatable-header , .p-card-header{
     margin-bottom: 5px !important;
     background-color: white !important;
     border: none !important;
 }
-
+.p-card-header{
+    background-color: #dee2e6 !important;
+    padding: 0.5rem;
+}
+.p-card-grid-col-link{
+color:#495057;
+text-decoration: none;
+}
+.p-card-grid{
+margin: 10px !important;
+}
+.p-card-grid-col{
+    border: 1px solid #a9abad;
+    border-radius: 3px;
+    width: 250px;
+    padding: 10px;
+}
+.p-card-grid-col-link-grid{
+    margin: 0px;
+}
+.p-card-grid-col-link-grid-grid-title{
+font-size: 17px;
+}
+.p-card-grid-col-link-grid-grid-icon{
+    
+}
+.p-card-grid-col-link-grid-grid-desc{
+    font-size: 14px;
+}
 .table-header {}
 
 .p-toolbar {
@@ -298,6 +326,21 @@
 .p-datatable-footer {}
 
 
+
+.p-dataview-header{
+    padding: 10px;
+    background-color: white;
+}
+
+.p-dataview-content{
+    padding: 10px;
+}
+.p-dataview-content .p-grid .p-card{
+    border: none;
+    border-radius: 0px;
+    border-bottom: 1px solid #495057;
+    box-shadow:none;
+}
 /* modal------------------------------------------------------------------*/
 
 .p-dialog {}

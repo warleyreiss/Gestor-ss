@@ -23,27 +23,18 @@ import { mask } from 'primereact/utils';
 import Select from 'react-select'
 import { InputNumber } from 'primereact/inputnumber';
 import 'primeicons/primeicons.css';
-import { Navigate, useParams } from 'react-router-dom';
+import { Card } from 'primereact/card';
 //IMPORTANTO RECURSOS DE FRAMEWORKS E BIBLIOTECAS
 import { useForm, Controller } from 'react-hook-form';
 import { axiosApi } from '../../../services/axios';
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-
-function HistoricoServicos() {
 
 
+function MenuServicos() {
 
   //STATES PARA FUNCIONAMENTO GERAL DA PAGINA
   const [loading, setLoading] = useState(false);
-  const nomePagina = 'Extrato de tickets'
-
-  //OBTENDO VARIAVEIS PARASSADAS VIA URL
-  const { inicio } = useParams();
-  const { fim } = useParams();
-
-  //CRIANDO INSTANCIAS DE PAGINA
-  const navigate = useNavigate()
+  const nomePagina = 'Cadastros de veículos'
   const toast = useRef(null);
 
 
@@ -54,7 +45,7 @@ function HistoricoServicos() {
   //requisição 
   const buscarRegistros = () => {
     setLoading(true);
-    axiosApi.get("/history/service/" + inicio + "/" + fim)
+    axiosApi.get("/list_vehicle")
       .then((response) => {
         setRegistros(response.data)
       })
@@ -79,26 +70,11 @@ function HistoricoServicos() {
   //OPÇÃO DE COL TOGGLE DA INTERFACE DO USUARIO------------------------------------------------------------------|
   //definição das colunas
   const columns = [
-    { field: 'id', header: 'Id:' },
-    { field: 'chamado', header: 'Nº chamado:' },
-    { field: 'tipo', header: 'Tipo:' },
-    { field: 'produto', header: 'Produto:' },
-    { field: 'placa', header: 'Placa veículo:' },
-    { field: 'frota', header: 'Desc. veículo:' },
-    { field: 'nomecliente', header: 'Cliente:' },
-    { field: 'atendimento', header: 'Houve atendimento?:' },
-    { field: 'motivo_nao_atendimento', header: 'Motivo de não atendimento (*):' },
-    { field: 'efeito_falha', header: 'Efeito da falha:' },
-    { field: 'causa_falha', header: 'Causa da falha:' },
-    { field: 'deteccao_falha', header: 'Detecção da falha:' },
-    { field: 'responsavel_falha', header: 'Responsável pela falha' },
-    { field: 'solucao', header: 'Solução aplicada:' },
-    { field: 'descricao_violacao', header: 'Descrição da violação (*):' },
-    { field: 'danos', header: 'danos:' },
-    { field: 'nomeusuario', header: 'Técnico resposável pelo atendimento:' },
-    { field: 'status_descricao', header: 'Status da OS:' },
-    { field: 'data_registro', header: 'Data registro:' },
+    { field: 'placa', header: 'Placa:' },
+    { field: 'frota', header: 'Frota/descrição:' },
+    { field: 'nome', header: 'Cliente:' }
   ];
+
   //state
   const [selectedColumns, setSelectedColumns] = useState(columns);
 
@@ -179,6 +155,20 @@ function HistoricoServicos() {
     <span>{nomePagina}</span>
   );
 
+  //componentes a direita do cabeçalho
+  const [registrosClientes, setRegistrosClientes] = useState([]);
+  const openNew = () => {
+    setLoading(true);
+    axiosApi.get("/list_client_input")
+      .then((response) => {
+        setRegistrosClientes(response.data)
+      })
+      .catch(function (error) {
+      });
+    setLoading(false)
+    setVisibleRight(true)
+    setRegistro(emptyregistro);
+  }
 
   const [activeIndex, setActiveIndex] = useState(null);
   const onClick = (itemIndex) => {
@@ -204,6 +194,7 @@ function HistoricoServicos() {
     <React.Fragment>
       <Button icon="pi pi-refresh" onClick={() => refresh()} className='p-button-outlined p-button-info' />
       <InputText value={globalFilterValue1} icon="pi pi-search" onChange={onGlobalFilterChange1} placeholder="Filtrar..." />
+      <Button icon="pi pi-plus" onClick={() => openNew(true)} className='p-button-outlined p-button-success' />
       <Button type="button" icon="pi pi-chevron-down" iconPos="right" onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="p-button-outlined p-button-info " />
       <OverlayPanel ref={op} showCloseIcon id="overlay_panel" style={{ width: '450px' }} className="overlaypanel-demo">
         <Accordion activeIndex={0}>
@@ -218,7 +209,10 @@ function HistoricoServicos() {
             <MultiSelect value={selectedColumns} options={columns} optionLabel="header" onChange={onColumnToggle} style={{ width: '20em' }} />
           </AccordionTab>
         </Accordion>
+
+
       </OverlayPanel>
+
     </React.Fragment>
   );
 
@@ -233,41 +227,141 @@ function HistoricoServicos() {
   const columnComponents = selectedColumns.map(col => {
     return <Column key={col.field} field={col.field} header={col.header} sortable={col.sortable} />;
   });
-  const priceBodyTemplate = (rowData) => {
-    let value = (rowData.valor).replace('.', ',')
-    return value
-  }
-  const statusBodyTemplate = (rowData) => {
-    return <span className={`product-badge status-${rowData.status_descricao.toLowerCase().replace(/\s/g, '')}`}>{rowData.status_descricao}</span>;
-  }
-
-  const formatDate = (value) => {
-    let newValue = '---'
-    if (value) {
-      newValue = new Date(value)
-      newValue = newValue.toLocaleDateString("pt-br")
-      return newValue
-    }
-  }
-
-  const dateBodyTemplate_dataRegistro = (rowData) => {
-    return formatDate(rowData.data_registro)
-  }
 
   //linhas opçes
   const actionBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        {/*
-        <Button icon="pi pi-arrow-right-arrow-left" className="p-button-outlined p-button-info" onClick={() => editregistro(rowData)} />
+        <Button icon="pi pi-pencil" className="p-button-outlined p-button-info" onClick={() => editregistro(rowData)} />
         <Button icon="pi pi pi-trash" className="p-button-outlined p-button-danger" onClick={() => delete confirmDeleteregistro(rowData)} />
-      */}
       </React.Fragment>
     );
   }
-
   //rodapé
   const footer = `Total de ${registros ? registros.length : 0} registros.`;
+
+  //--------------------------------------------------------------------------------------------------------------|
+
+  //FORMULARIO CRUD ----------------------------------------------------------------------------------------------|
+
+  //states
+  let emptyregistro = {
+    id: null
+  };
+  const [registro, setRegistro] = useState(emptyregistro);
+  const [id, setId] = useState(false);
+  const [visibleRight, setVisibleRight] = useState(false);
+  const { register, handleSubmit, reset, setValue/*, formStates:{erros}*/ } = useForm();
+
+  //funções de preenchimento do formulario
+  const onInputChange = (e, name) => {
+    const val = (e.target && e.target.value) || '';
+    let _registro = { ...registro };
+    _registro[`${name}`] = val;
+
+    setRegistro(_registro);
+  }
+  const onInputNumberChange = (e, name) => {
+    const val = e.value || 0;
+    let _registro = { ...registro };
+    _registro[`${name}`] = val;
+
+    setRegistro(_registro);
+  }
+
+  //envio do formulario CRUD
+  const saveRegistro = () => {
+
+    if (registro.placa.trim()) {
+      let _registros = [...registros];
+      let _registro = { ...registro };
+      if (registro.id) {
+        axiosApi.patch("/update_vehicle", registro)
+          .then((response) => {
+            const index = findIndexById(registro.id);
+            _registros[index] = _registro;
+
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Veículo alterado!', life: 3000 });
+
+          })
+          .catch(function (error) {
+            toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
+          });
+      }
+      else {
+        axiosApi.post("/create_vehicle", registro)
+          .then((response) => {
+            _registro.id = response.data.id
+            _registros.push(_registro);
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Veículo cadastrado!', life: 3000 });
+          })
+          .catch(function (error) {
+            toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
+          });
+      }
+      setRegistros(_registros);
+      setRegistro(emptyregistro);
+      setVisibleRight(false)
+
+    }
+  };
+
+
+
+  //funcao preenchimento do formulario para edicao 
+  const editregistro = (registro) => {
+    setRegistro({ ...registro });
+    setVisibleRight(true);
+  }
+  //funcao para retonar qual o indice do registro da tabela para alteracao
+  const findIndexById = (id) => {
+    let index = -1;
+    for (let i = 0; i < registros.length; i++) {
+      if (registros[i].id === id) {
+        index = i;
+        break;
+      }
+    }
+
+    return index;
+  }
+
+  //delete registro
+
+  const [deleteregistroDialog, setDeleteregistroDialog] = useState(false);
+  // funcao para mostrar alerta de confimação pelo usuario
+  const confirmDeleteregistro = (registro) => {
+    setRegistro(registro);
+    setDeleteregistroDialog(true);
+  }
+  //funcao ocultar/cancelar alerta de confirmação pelo usuario
+  const hideDeleteregistroDialog = () => {
+    setDeleteregistroDialog(false);
+  }
+
+  //funcao que deleta o registro do banco de dados e da tabela
+  const deleteregistro = () => {
+    axiosApi.delete("/delete_client/" + registro.id)
+      .then((response) => {
+        let _registros = registros.filter(val => val.id !== registro.id);
+        setRegistros(_registros);
+        setDeleteregistroDialog(false);
+        setRegistro(emptyregistro);
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Veículo deletado', life: 3000 });
+      })
+      .catch(function (error) {
+        toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
+      });
+  }
+
+  //botoes de acao do alerta de confirmacao pelo usuario
+  const deleteregistroDialogFooter = (
+    <React.Fragment>
+      <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteregistroDialog} />
+      <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={deleteregistro} />
+    </React.Fragment>
+  );
+
 
   //--------------------------------------------------------------------------------------------------------------|
 
@@ -279,47 +373,43 @@ function HistoricoServicos() {
 
   //--------------------------------------------------------------------------------------------------------------|
 
-  //MENSAGENS AO USUARIO------------------------------------------------------------------------------------------|
-  const retornar = () => {
-    navigate(-1)
-  }
-  //--------------------------------------------------------------------------------------------------------------|
-
   return (
     <>
       <Toast ref={toastBR} position="bottom-right" />
-      <Toast ref={toast} />
-      <Sidebar visible={true} fullScreen onHide={() => retornar()}>
-        <div className="card">
-          <DataTable
-            value={registros}
-            filters={filters1}
-            ref={dt}
-            stateStorage="local" stateKey="dt-state-demo-local"
-            scrollable scrollHeight="400px"
-            loading={loading} scrollDirection="both"
-            size="small"
-            stripedRows
-            responsiveLayout="stack" breakpoint="960px"
-            resizableColumns columnResizeMode="fit"
-            header={header} footer={footer}
-            paginator
-            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
-            rows={10}
-            rowsPerPageOptions={[10, 20, 50]}>
-            {columnComponents}
-            <Column header="status_descricao" body={statusBodyTemplate}></Column>
-            <Column header="data_registro" body={dateBodyTemplate_dataRegistro}></Column>
-            <Column header={'Opções:'} body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
 
-          </DataTable>
+      <div className="card">
+        <div className='p-card'>
+          <div className="p-card-header" >
+            Criar algo
+          </div>
+          <div className="grid p-card-grid">
+            <div className="col-fixed p-card-grid-col">
+              <Link className='p-card-grid-col-link' to="/service/form" >
+                <div className="grid nested-grid p-card-grid-col-link-grid">
+                  <div className="grid p-card-grid-col-link-grid-grid">
+                    <div className="col-10 p-card-grid-col-link-grid-grid-title">
+                      Serviço interno
+                    </div>
+                    <div className="col-2 p-card-grid-col-link-grid-grid-icon">
+                    <i className="pi pi-plus"></i>
+                    </div>
+                    <div className="col-12 p-card-grid-col-link-grid-grid-desc">
+                     Cadastre um novo serviço para sua equipe interna
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          </div>
         </div>
-      </Sidebar>
+
+
+      </div>
+
     </>
 
   );
 
 }
 
-export default HistoricoServicos
+export default MenuServicos

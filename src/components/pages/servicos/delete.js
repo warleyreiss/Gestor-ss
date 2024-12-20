@@ -22,6 +22,9 @@ import { Button } from 'primereact/button';
 import { mask } from 'primereact/utils';
 import Select from 'react-select'
 import { InputNumber } from 'primereact/inputnumber';
+import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
+
+import { Rating } from 'primereact/rating';
 import 'primeicons/primeicons.css';
 
 //IMPORTANTO RECURSOS DE FRAMEWORKS E BIBLIOTECAS
@@ -30,7 +33,7 @@ import { axiosApi } from '../../../services/axios';
 import { Link } from 'react-router-dom';
 
 
-function Veiculos() {
+function Servicos() {
 
   //STATES PARA FUNCIONAMENTO GERAL DA PAGINA
   const [loading, setLoading] = useState(false);
@@ -46,7 +49,7 @@ function Veiculos() {
   //requisição 
   const buscarRegistros = () => {
     setLoading(true);
-    axiosApi.get("/list_vehicle")
+    axiosApi.get("/list_service")
       .then((response) => {
         setRegistros(response.data)
       })
@@ -64,15 +67,20 @@ function Veiculos() {
 
 
   //FUNÇÃO PARA REFRESH DA LISTA DE CADASTRO DA PAGINA-----------------------------------------------------------|
-  const refresh =()=>{
+  const refresh = () => {
     buscarRegistros()
   }
- //--------------------------------------------------------------------------------------------------------------|
+  //--------------------------------------------------------------------------------------------------------------|
+
+
+
+  const [visibleMenuRight, setVisibleMenuRight] = useState(false);
+
   //OPÇÃO DE COL TOGGLE DA INTERFACE DO USUARIO------------------------------------------------------------------|
   //definição das colunas
   const columns = [
-    { field: 'placa', header: 'Placa:' },
-    { field: 'frota', header: 'Frota/descrição:' },
+    { field: 'id', header: 'Placa:' },
+    { field: 'inicio', header: 'Frota/descrição:' },
     { field: 'nome', header: 'Cliente:' }
   ];
 
@@ -170,6 +178,10 @@ function Veiculos() {
     setVisibleRight(true)
     setRegistro(emptyregistro);
   }
+  const closedNew = () => {
+    setVisibleRight(false)
+    setVisibleMenuRight(false)
+  }
 
   const [activeIndex, setActiveIndex] = useState(null);
   const onClick = (itemIndex) => {
@@ -193,27 +205,9 @@ function Veiculos() {
 
   const rightContents = (
     <React.Fragment>
-       <Button icon="pi pi-refresh" onClick={() => refresh()} className='p-button-outlined p-button-info' />
+      <Button icon="pi pi-refresh" onClick={() => refresh()} className='p-button-outlined p-button-info' />
       <InputText value={globalFilterValue1} icon="pi pi-search" onChange={onGlobalFilterChange1} placeholder="Filtrar..." />
-      <Button icon="pi pi-plus" onClick={() => openNew(true)} className='p-button-outlined p-button-success' />
-      <Button type="button" icon="pi pi-chevron-down" iconPos="right" onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="p-button-outlined p-button-info " />
-      <OverlayPanel ref={op} showCloseIcon id="overlay_panel" style={{ width: '450px' }} className="overlaypanel-demo">
-        <Accordion activeIndex={0}>
-          <AccordionTab header="Exportar:">
-            <Button type="button" label='.csv' icon="pi pi-file-excel" onClick={() => exportCSV(false)} className='p-button-outlined p-button-secondary' data-pr-tooltip="CSV" />
-            <Button type="button" label='.xls' icon="pi pi-file-excel" onClick={exportExcel} className='p-button-outlined p-button-secondary' data-pr-tooltip="XLS" />
-          </AccordionTab>
-          <AccordionTab header="Importar:">
-            <p>Não diponível </p>
-          </AccordionTab>
-          <AccordionTab header="Selecionar colunas:">
-            <MultiSelect value={selectedColumns} options={columns} optionLabel="header" onChange={onColumnToggle} style={{ width: '20em' }} />
-          </AccordionTab>
-        </Accordion>
-
-
-      </OverlayPanel>
-
+        <Button icon="pi pi-th-large" onClick={() => setVisibleMenuRight(true)} className='p-button-outlined p-button-success' />
     </React.Fragment>
   );
 
@@ -226,7 +220,7 @@ function Veiculos() {
 
   //linhas
   const columnComponents = selectedColumns.map(col => {
-    return <Column key={col.field} field={col.field} header={col.header} sortable={col.sortable} />;
+    return <Column key={col.field} field={col.field} header={col.header} sortable={col.sortable} />
   });
 
   //linhas opçes
@@ -281,7 +275,7 @@ function Veiculos() {
           .then((response) => {
             const index = findIndexById(registro.id);
             _registros[index] = _registro;
-           
+
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Veículo alterado!', life: 3000 });
 
           })
@@ -299,11 +293,11 @@ function Veiculos() {
           .catch(function (error) {
             toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
           });
-        }
+      }
       setRegistros(_registros);
       setRegistro(emptyregistro);
       setVisibleRight(false)
-      
+
     }
   };
 
@@ -377,7 +371,30 @@ function Veiculos() {
   return (
     <>
       <Toast ref={toastBR} position="bottom-right" />
-      <Sidebar className='w-sidebar-right' header={<h3>{nomePagina.toUpperCase()}</h3>} visible={visibleRight} position="right" blockScroll onHide={() => setVisibleRight(false)} style={{ width: '100em' }}>
+      <Sidebar className='w-sidebar-right' header={<h3>O que gostaria de fazer?</h3>} visible={visibleMenuRight} position="right" blockScroll onHide={() => setVisibleMenuRight(false)} style={{ width: '550px' }}>
+        <div className="card w-card" >
+          <div className="grid p-card-grid">
+            <div className="col-fixed p-card-grid-col">
+              <Link className='p-card-grid-col-link' onClick={() => openNew(true)} >
+                <div className="grid nested-grid p-card-grid-col-link-grid">
+                  <div className="grid p-card-grid-col-link-grid-grid">
+                    <div className="col-10 p-card-grid-col-link-grid-grid-title">
+                      Serviço interno
+                    </div>
+                    <div className="col-2 p-card-grid-col-link-grid-grid-icon">
+                      <i className="pi pi-plus"></i>
+                    </div>
+                    <div className="col-12 p-card-grid-col-link-grid-grid-desc">
+                      Cadastre um novo serviço para sua equipe interna
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </Sidebar>
+      <Sidebar className='w-sidebar-right' header={<h3>{nomePagina.toUpperCase()}</h3>} visible={visibleRight} position="right" blockScroll onHide={() => closedNew()} style={{ width: '100em' }}>
         <div className="card w-card" >
           <div className="p-fluid w-form" >
             <div className="p-fluid grid">
@@ -388,7 +405,7 @@ function Veiculos() {
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-credit-card"></i>
                   </span>
-                  <InputMask value={registro.placa} onChange={(e) => onInputChange(e, 'placa')}mask="aaa-9*99" required></InputMask>
+                  <InputMask value={registro.placa} onChange={(e) => onInputChange(e, 'placa')} mask="aaa-9*99" required></InputMask>
                 </div>
               </div>
               <div className="field w-field col-12 md:col-12">
@@ -407,7 +424,6 @@ function Veiculos() {
                     <i className="pi pi-building"></i>
                   </span>
                   <Select
-                   defaultValue={ {value: registro.cliente_id, label: registro.nome }}
                     options={registrosClientes.map(sup => ({ value: sup.id, label: sup.nome }))}
                     onChange={(e) => { onInputNumberChange(e, 'cliente_id') }}
                     placeholder=''
@@ -415,13 +431,14 @@ function Veiculos() {
                 </div>
               </div>
               <div className="field w-field col-12 md:col-12">
-                <Button label="Salvar cadastro" className="w-form-button" icon="pi pi-save" iconPos='right' onClick={saveRegistro}/>
+                <Button label="Salvar cadastro" className="w-form-button" icon="pi pi-save" iconPos='right' onClick={saveRegistro} />
               </div>
             </div>
           </div>
         </div>
       </Sidebar>
       <Toast ref={toast} />
+
       <div className="card">
         <DataTable value={registros}
           filters={filters1}
@@ -440,8 +457,7 @@ function Veiculos() {
           rows={10}
           rowsPerPageOptions={[10, 20, 50]}>
           {columnComponents}
-          <Column header={'Opções:'} body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
-
+         
         </DataTable>
       </div>
 
@@ -457,4 +473,4 @@ function Veiculos() {
 
 }
 
-export default Veiculos
+export default Servicos

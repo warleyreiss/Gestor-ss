@@ -490,13 +490,13 @@ let teste=''
               </Link>
               <ul className="menu_item_nav">
                 <div className="menu_title_nav flex_nav">
-                  <span className="title_nav">VENDAS</span>
+                  <span className="title_nav">TÉCNICO</span>
                   <span className="line_nav"></span>
                 </div>
-                <Link to="/vendas_balcao" className="item">
+                <Link to="/servicos" className="item">
                   <a href="#" className="link_nav flex_nav">
                     <i className="pi pi-shopping-cart"></i>
-                    <span>Balção</span>
+                    <span>BAbertos</span>
                   </a>
                 </Link>
                 <Link to="/vendas_sob_demanda" className="item">
@@ -505,10 +505,10 @@ let teste=''
                     <span>Sob demanda</span>
                   </a>
                 </Link>
-                <Link to="/vendas/menu" className="item">
+                <Link to="/servicos/menu" className="item">
                   <a href="#" className="link_nav flex_nav">
                     <i className="pi pi-th-large"></i>
-                    <span>Mais opçoes</span>
+                    <span>Mais opçoes</span>  
                   </a>
                 </Link>
               </ul>
