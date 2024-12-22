@@ -24,16 +24,20 @@ import Select from 'react-select'
 import { InputNumber } from 'primereact/inputnumber';
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { Card } from 'primereact/card';
-import { Rating } from 'primereact/rating';
+import { Panel } from 'primereact/panel';
+import { Divider } from 'primereact/divider';
+
+import { Inplace, InplaceDisplay, InplaceContent } from 'primereact/inplace';
 import 'primeicons/primeicons.css';
 
 //IMPORTANTO RECURSOS DE FRAMEWORKS E BIBLIOTECAS
 import { useForm, Controller } from 'react-hook-form';
 import { axiosApi } from '../../../services/axios';
 import { Link } from 'react-router-dom';
-
-
 import ServicosCru from './form-cru';
+import DataviewConteudo from './dataview-conteudo';
+import { Spa } from '@mui/icons-material';
+
 const Servicos = () => {
   const [visibleMenuRight, setVisibleMenuRight] = useState(false);
   const nomePagina = 'Serviços em Aberto'
@@ -42,6 +46,7 @@ const Servicos = () => {
   const [loading, setLoading] = useState(true);
   const [first, setFirst] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(null);
   const rows = useRef(10);
   const datasource = useRef(null);
   const isMounted = useRef(false);
@@ -85,37 +90,61 @@ const Servicos = () => {
   }
 
   //LAYOUT DOS DATAVIEW/CARDS ---------------------------------------------------------------------------------------
+  const onClick = (itemIndex) => {
+    let _activeIndex = activeIndex ? [...activeIndex] : [];
 
+    if (_activeIndex.length === 0) {
+      _activeIndex.push(itemIndex);
+    }
+    else {
+      const index = _activeIndex.indexOf(itemIndex);
+      if (index === -1) {
+        _activeIndex.push(itemIndex);
+      }
+      else {
+        _activeIndex.splice(index, 1);
+      }
+    }
+
+    setActiveIndex(_activeIndex);
+  }
+  const headerCard = (data) => {
+    console.log(data)
+    return (
+      <div>
+        <span className='p-card-title card-dataview-header-title'>{data.nome}</span>
+        <span className='p-card-subtitle card-dataview-header-subtitle'>{new Date(data.inicio).toLocaleDateString("pt-br") + " - " + new Date(data.termino).toLocaleDateString("pt-br")}</span>
+      </div>
+    )
+  }
   const renderListItem = (data) => {
     return (
-      <Card title={data.nome} subTitle={data.inicio + " - " + data.termino} style={{ width: '100em', height: 'auto' }} >
-        <div class="grid">
-          <div class="col-12 md:col-9 lg:col-9">
-            <div class="text-left ">nome</div>
+      <Card className='relative card-dataview' title={headerCard(data)} style={{ width: '100em', height: 'auto' }} >
+
+        <div class="absolute top-0 right-0 flex align-items-center justify-content-center card-dataview-content ">
+          <div class="text-right card-dataview-buttons" style={{ marginTop: '5px' }}>
+            <Button icon="pi pi-chart-line" className="p-button-rounded p-button-success p-button-outlined p-button-sm" aria-label="Editar" />
+            <Button icon="pi pi-pencil" className="p-button-rounded p-button-outlined p-button-sm" aria-label="Editar" onClick={e => { editeRegistro(data) }} />
           </div>
-          <div class="col-12 md:col-3 lg:col-3">
-            <div class="text-right ">
-              <Button icon="pi pi-chart-line" className="p-button-rounded p-button-success p-button-outlined p-button-sm" aria-label="Editar" />
-              <Button icon="pi pi-pencil" className="p-button-rounded p-button-outlined p-button-sm" aria-label="Editar" onClick={e => { editeRegistro(data) }} />
-            </div>
-          </div>
-          <div class="col-12 md:col-12 lg:col-12">
-            <div class="text-center ">conteudo</div>
-          </div>
-          <div class="col-12 md:col-12 lg:col-12">
-            <div class="text-center">
-              <div class="flex justify-content-end flex-wrap">
-                <div class="flex align-items-center justify-content-center ">
-                  <span className="p-buttonset">
-                    <Button label="Save" icon="pi pi-check" />
-                    <Button label="Delete" icon="pi pi-trash" />
-                    <Button label="Cancel" icon="pi pi-times" />
-                  </span>
-                </div>
-              </div>
+        </div>
+        <Panel className='flex flex-column-reverse card-dataview-body-panel-os' toggleable collapsed>
+          <DataviewConteudo data={data} />
+        </Panel>
+        <div class="text-left card-dataview-body-obs">
+          {data.observacoes ? data.observacoes : "Sem orientações"}
+        </div>
+        <div class="text-center card-dataview-footer-opcoes">
+          <div class="flex justify-content-end flex-wrap">
+            <div class="flex align-items-center justify-content-center">
+              <span className="p-buttonset">
+                <Button label="Cancelar" className='p-button-danger card-dataview-footer-opcoes-btn' icon="pi pi-times" onClick={() => delete confirmDeleteregistro(data)} />
+                <Button label="Finalizar" className='p-button-success card-dataview-footer-opcoes-btn' icon="pi pi-check" onClick={() => finalizar(data)} />
+              </span>
             </div>
           </div>
         </div>
+
+
       </Card>
     );
   }
@@ -155,14 +184,14 @@ const Servicos = () => {
   };
   const [registro, setRegistro] = useState(emptyregistro);
   const [id, setId] = useState(false);
-  const [visibleRight, setVisibleRight] = useState(false);
+  const [visibleCRUD, setVisibleCRUD] = useState(false);
 
   const openNew = () => {
     setRegistro(emptyregistro);
-    setVisibleRight(true)
+    setVisibleCRUD(true)
   }
   const closedNew = () => {
-    setVisibleRight(false)
+    setVisibleCRUD(false)
     setVisibleMenuRight(false)
   }
   const editeRegistro = (registro) => {
@@ -170,23 +199,27 @@ const Servicos = () => {
     _registro.inicio = new Date(_registro.inicio)
     _registro.termino = new Date(_registro.termino)
     setRegistro(_registro)
-    setVisibleRight(true)
+    setVisibleCRUD(true)
   }
-  const RecebidoDoFilhoPost = (registro) => {
+  const recebidoDoFilhoPost = (registro) => {
+    console.log(registro)
     let _registros = [...registros];
     let _registro = { ...registro };
     _registro.id = registro.id
     _registros.push(_registro);
     setRegistro(emptyregistro);
+    setVisibleCRUD(false)
+    setVisibleMenuRight(false)
   }
-  const RecebidoDoFilhoPatch = (registro) => {
+  const recebidoDoFilhoPatch = (registro) => {
     let _registros = [...registros];
     let _registro = { ...registro };
     const index = findIndexById(registro.id);
     _registros[index] = _registro;
-    setRegistro(emptyregistro);
     setRegistros(_registros);
     setRegistro(emptyregistro);
+    setVisibleCRUD(false)
+    setVisibleMenuRight(false)
   }
 
   //funcao para retonar qual o indice do registro da tabela para alteracao
@@ -202,6 +235,21 @@ const Servicos = () => {
     return index;
   }
 
+  // finalizar registro
+
+  //funcao que deleta o registro do banco de dados e da tabela
+  const finalizar = (data) => {
+    axiosApi.patch("/service_finalized", data)
+      .then((response) => {
+        let _registros = registros.filter(val => val.id !== data.id);
+        setRegistros(_registros);
+        setDeleteregistroDialog(false);
+        setRegistro(emptyregistro);
+      })
+      .catch(function (error) {
+        console.log(error)
+      });
+  }
   //delete registro
 
   const [deleteregistroDialog, setDeleteregistroDialog] = useState(false);
@@ -217,24 +265,33 @@ const Servicos = () => {
 
   //funcao que deleta o registro do banco de dados e da tabela
   const deleteregistro = () => {
-    axiosApi.delete("/delete_client/" + registro.id)
+    axiosApi.patch("/service_cancel/", registro)
       .then((response) => {
         let _registros = registros.filter(val => val.id !== registro.id);
         setRegistros(_registros);
         setDeleteregistroDialog(false);
         setRegistro(emptyregistro);
-        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Usuáriodeletado', life: 3000 });
       })
       .catch(function (error) {
-        toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
+        console.log(error)
       });
   }
 
+
   //botoes de acao do alerta de confirmacao pelo usuario
+
+  const onInputChangeDelete = (e, name) => {
+    const val = (e.target && e.target.value) || '';
+    let _registro = { ...registro };
+    _registro[`${name}`] = val;
+    setRegistro(_registro);
+  }
+
   const deleteregistroDialogFooter = (
     <React.Fragment>
-      <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteregistroDialog} />
-      <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={deleteregistro} />
+
+      <Button label="Cancelar" icon="pi pi-times" className="p-button-text" onClick={hideDeleteregistroDialog} />
+      <Button label="Confirmar" icon="pi pi-check" className="p-button-text" onClick={deleteregistro} />
     </React.Fragment>
   );
 
@@ -260,13 +317,16 @@ const Servicos = () => {
       </div>
       <Sidebar className='w-sidebar-right' header={<h3>O que gostaria de fazer?</h3>} visible={visibleMenuRight} position="right" blockScroll onHide={() => setVisibleMenuRight(false)} style={{ width: '550px' }}>
         <div className="card w-card" >
+          <Divider align="right" type="dashed">
+            <b>Tarefas rápidas</b>
+          </Divider>
           <div className="grid p-card-grid">
             <div className="col-fixed p-card-grid-col">
               <Link className='p-card-grid-col-link' onClick={() => openNew(true)} >
                 <div className="grid nested-grid p-card-grid-col-link-grid">
                   <div className="grid p-card-grid-col-link-grid-grid">
                     <div className="col-10 p-card-grid-col-link-grid-grid-title">
-                      Serviço interno
+                      Novo Serviço
                     </div>
                     <div className="col-2 p-card-grid-col-link-grid-grid-icon">
                       <i className="pi pi-plus"></i>
@@ -278,16 +338,144 @@ const Servicos = () => {
                 </div>
               </Link>
             </div>
+            <div className="col-fixed p-card-grid-col">
+              <Link className='p-card-grid-col-link' onClick={() => openNew(true)} >
+                <div className="grid nested-grid p-card-grid-col-link-grid">
+                  <div className="grid p-card-grid-col-link-grid-grid">
+                    <div className="col-10 p-card-grid-col-link-grid-grid-title">
+                      Historico de serviços
+                    </div>
+                    <div className="col-2 p-card-grid-col-link-grid-grid-icon">
+                      <i className="pi pi-history"></i>
+                    </div>
+                    <div className="col-12 p-card-grid-col-link-grid-grid-desc">
+                      Visualize todos serviços já executados por sua equipe
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          </div>
+          <Divider align="right" type="dashed">
+            <b>Históricos e registros</b>
+          </Divider>
+          <div className="grid p-card-grid">
+            <div className="col-fixed p-card-grid-col">
+
+              <div className="grid nested-grid p-card-grid-col-link-grid">
+                <div className="grid p-card-grid-col-link-grid-grid">
+                  <div className="col-10 p-card-grid-col-link-grid-grid-title">
+                    Tickets pendentes
+                  </div>
+                  <div className="col-2 p-card-grid-col-link-grid-grid-icon">
+                    <i className="pi pi-stopwatch"></i>
+                  </div>
+                  <div className="col-12 p-card-grid-col-link-grid-grid-desc">
+                    <Inplace closable>
+                      <InplaceDisplay>
+                        {' Veja os tickets pendentes de aprovação ou retornados'}
+                      </InplaceDisplay>
+                      <InplaceContent>
+                        <InputText autoFocus />
+                        <InputText  />
+                        <InputText  />
+                        <InputText  />
+                        <InputText  />
+                        <InputText  />
+                        
+                      </InplaceContent>
+                    </Inplace>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+            <div className="col-fixed p-card-grid-col">
+              <Link className='p-card-grid-col-link' onClick={() => openNew(true)} >
+                <div className="grid nested-grid p-card-grid-col-link-grid">
+                  <div className="grid p-card-grid-col-link-grid-grid">
+                    <div className="col-10 p-card-grid-col-link-grid-grid-title">
+                      Meu estoque
+                    </div>
+                    <div className="col-2 p-card-grid-col-link-grid-grid-icon">
+                      <i className="pi pi-th-large"></i>
+                    </div>
+                    <div className="col-12 p-card-grid-col-link-grid-grid-desc">
+                      Controle os equipamentos que estão em sua posse
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          </div>
+
+
+          <Divider align="right" type="dashed">
+            <b>Atalhos úteis</b>
+          </Divider>
+          <div className="grid p-card-grid">
+            <div className="col-fixed p-card-grid-col">
+              <Link className='p-card-grid-col-link' onClick={() => openNew(true)} >
+                <div className="grid nested-grid p-card-grid-col-link-grid">
+                  <div className="grid p-card-grid-col-link-grid-grid">
+                    <div className="col-10 p-card-grid-col-link-grid-grid-title">
+                      Tickets pendentes
+                    </div>
+                    <div className="col-2 p-card-grid-col-link-grid-grid-icon">
+                      <i className="pi pi-stopwatch"></i>
+                    </div>
+                    <div className="col-12 p-card-grid-col-link-grid-grid-desc">
+                      Veja os tickets pendentes de aprovação ou retornados
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+            <div className="col-fixed p-card-grid-col">
+              <Link className='p-card-grid-col-link' onClick={() => openNew(true)} >
+                <div className="grid nested-grid p-card-grid-col-link-grid">
+                  <div className="grid p-card-grid-col-link-grid-grid">
+                    <div className="col-10 p-card-grid-col-link-grid-grid-title">
+                      Meu estoque
+                    </div>
+                    <div className="col-2 p-card-grid-col-link-grid-grid-icon">
+                      <i className="pi pi-th-large"></i>
+                    </div>
+                    <div className="col-12 p-card-grid-col-link-grid-grid-desc">
+                      Controle os equipamentos que estão em sua posse
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
           </div>
         </div>
       </Sidebar>
-      <Sidebar className='w-sidebar-right' header={<h3>{nomePagina.toUpperCase()}</h3>} visible={visibleRight} position="right" blockScroll onHide={() => closedNew()} style={{ width: '100em' }}>
-        <ServicosCru registro={registro} filhoParaPaiPost={RecebidoDoFilhoPost} filhoParaPaiPatch={RecebidoDoFilhoPatch} />
+      <Sidebar className='w-sidebar-right' header={<h3>{nomePagina.toUpperCase()}</h3>} visible={visibleCRUD} position="right" blockScroll onHide={() => closedNew()} style={{ width: '100em' }}>
+        <ServicosCru registro={registro} filhoParaPaiPost={recebidoDoFilhoPost} filhoParaPaiPatch={recebidoDoFilhoPatch} />
       </Sidebar>
-      <Dialog visible={deleteregistroDialog} style={{ width: '450px' }} header="Confirm  " modal footer={deleteregistroDialogFooter} onHide={hideDeleteregistroDialog}>
+
+      <Dialog visible={deleteregistroDialog} style={{ width: '450px' }} modal footer={deleteregistroDialogFooter} onHide={hideDeleteregistroDialog}>
         <div className="confirmation-content">
           <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-          {registro && <span>Are you sure you want to delete <b>{registro.name}</b>?</span>}
+          <h3>Descreva o motivo do caneclamento deste serviço</h3>
+          <div className="card w-card" style={{ padding: '10px' }} >
+            <div className="p-fluid w-form" >
+              <div className="p-fluid grid">
+
+                <div className="field w-field col-12 md:col-12">
+                  <label class="font-medium text-900">Motivo do cancelamento:</label>
+                  <div className="p-inputgroup w-inputgroup-select" style={{ marginTop: '0px' }}>
+                    <span className="p-inputgroup-addon">
+                      <i className="pi pi-tag"></i>
+                    </span>
+                    <InputText value={registro.motivo} onChange={(e) => onInputChangeDelete(e, 'motivo')} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </Dialog>
     </>

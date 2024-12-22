@@ -13,7 +13,6 @@ import HistoricoServicos from '../components/pages/historicos/servicos'
 import HistoricoTickets from '../components/pages/historicos/tickets'
 import HistoricoVisitas from '../components/pages/historicos/visitas'
 import Servicos from '../components/pages/servicos/index'
-import MenuServicos from '../components/pages/servicos/menu'
 import Usuarios from '../components/pages/usuarios/index'
 import Veiculos from '../components/pages/veiculos/index'
 /*
@@ -148,9 +147,7 @@ export const AppRouter = () => {
         <Route path="/historico_visitas/:inicio/:fim" element={<PrivateRoute />} >
           <Route path="/historico_visitas/:inicio/:fim" element={<HistoricoVisitas/>} />
         </Route>
-        <Route path="/servicos/menu" element={<PrivateRoute />} >
-          <Route path="/servicos/menu" element={<MenuServicos/>} />
-        </Route>
+       
         <Route path="/servicos" element={<PrivateRoute />} >
           <Route path="/servicos" element={<Servicos/>} />
         </Route>

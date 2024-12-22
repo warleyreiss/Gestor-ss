@@ -33,13 +33,13 @@ import { axiosApi } from '../../../services/axios';
 import { Link } from 'react-router-dom';
 
 
-function ServicosCru(props,{filhoParaPaiPost,filhoParaPaiPatch}) {
+function ServicosCru(props) {
 
   //STATES PARA FUNCIONAMENTO GERAL DA PAGINA
   const [loading, setLoading] = useState(false);
   const nomePagina = 'Cadastros de Servços'
 
-  
+
   const toast = useRef(null);
 
   //FUNÇÃO PARA BUSCAR REGISTROS DO BANCO DE DADOS-------------------------------------------------------------------|
@@ -47,23 +47,23 @@ function ServicosCru(props,{filhoParaPaiPost,filhoParaPaiPatch}) {
   //state
   const [registrosClientes, setRegistrosClientes] = useState([]);
   const [registrosTecnicos, setRegistrosTecnicos] = useState([]);
-  
+
   const [registro, setRegistro] = useState(props.registro);
-console.log(props.registro)
+  //console.log(props.registro)
 
   //requisição 
   const buscarRegistros = () => {
     setLoading(true);
-      axiosApi.get("/list_client_input")
+    axiosApi.get("/list_client_input")
       .then((response) => {
         setRegistrosClientes(response.data)
       })
       .catch(function (error) {
       });
-      axiosApi.get("/list_user_input")
+    axiosApi.get("/list_user_input")
       .then((response) => {
         setRegistrosTecnicos(response.data)
-        console.log(response.data)
+        //aqui preciso criar um array que preencha a lista de tecnicos
       })
       .catch(function (error) {
       });
@@ -86,30 +86,47 @@ console.log(props.registro)
     setRegistro(_registro);
   }
   const onInputNumberChange = (e, name) => {
+    console.log(e)
     const val = e.value || 0;
     let _registro = { ...registro };
     _registro[`${name}`] = val;
-
+    console.log(_registro)
+    setRegistro(_registro);
+  }
+  const onInputSimpleSelectChange = (e, name) => {
+    console.log(e)
+    const val = e['value'] || 0;
+    let _registro = { ...registro };
+    _registro[`${name}`] = val;
+    console.log(_registro)
     setRegistro(_registro);
   }
 
-    //array de opções dos inputs selects
-    const turnos= [
-      { label: 'DIURNO - DIA UTIL', value: 'DIURNO - DIA UTIL' },
-      { label: 'NOTURNO - DIA UTIL', value: 'NOTURNO - DIA UTIL' },
-      { label: 'DIURNO - FIM DE SEMANA', value: 'DIURNO - FIM DE SEMANA' },
-      { label: 'NOTURNO - FIM DE SEMANA', value: 'NOTURNO - FIM DE SEMANA' }
+  const onInputMultiSelectChange = (e, name) => {
+    
+const val = e.map(c => c.value)
+    let _registro = { ...registro };
+    _registro[`${name}`] = val;
+    console.log(_registro)
+    setRegistro(_registro);
+  }
+  //array de opções dos inputs selects
+  const turnos = [
+    { label: 'DIURNO - DIA UTIL', value: 'DIURNO - DIA UTIL' },
+    { label: 'NOTURNO - DIA UTIL', value: 'NOTURNO - DIA UTIL' },
+    { label: 'DIURNO - FIM DE SEMANA', value: 'DIURNO - FIM DE SEMANA' },
+    { label: 'NOTURNO - FIM DE SEMANA', value: 'NOTURNO - FIM DE SEMANA' }
   ];
 
   //envio do formulario CRUD
   const saveRegistro = () => {
-
-    if (registro.cliente_id.trim()) {
+    if (registro.cliente_id) {
       if (registro.id) {
+
         axiosApi.patch("/update_service", registro)
           .then((response) => {
             console.log('editado')
-            filhoParaPaiPatch(response.data)
+            props.filhoParaPaiPatch(response.data)
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Veículo alterado!', life: 3000 });
           })
           .catch(function (error) {
@@ -117,16 +134,18 @@ console.log(props.registro)
           });
       }
       else {
-        axiosApi.post("/create_service", registro)
+       axiosApi.post("/create_service", registro)
           .then((response) => {
-            filhoParaPaiPost(response.data)//enviar novo registro aqui
-            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Veículo cadastrado!', life: 3000 });
+            console.log(response.data)
+            props.filhoParaPaiPost(response.data)
+
           })
           .catch(function (error) {
-            toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
+            console.log(error)
           });
+      
       }
-    
+
     }
   };
 
@@ -134,89 +153,99 @@ console.log(props.registro)
   return (
     <>
       <div className="card w-card" >
-          <div className="p-fluid w-form" >
-            <div className="p-fluid grid">
-              <InputText value={registro.id} onChange={(e) => onInputChange(e, 'id')} hidden />
-             
-              <div className="field w-field col-12 md:col-9">
-                <label class="font-medium text-900">Cliente:</label>
-                <div className="p-inputgroup w-inputgroup-select">
-                  <span className="p-inputgroup-addon">
-                    <i className="pi pi-building"></i>
-                  </span>
-                  <Select
-                    defaultValue={ {value: registro.cliente_id, label: registro.nome }}
-                    options={registrosClientes.map(sup => ({ value: sup.id, label: sup.nome }))}
-                    onChange={(e) => { onInputNumberChange(e, 'cliente_id') }}
-                    placeholder=''
-                  />
-                </div>
+        <div className="p-fluid w-form" >
+          <div className="p-fluid grid">
+            <InputText value={registro.id} onChange={(e) => onInputChange(e, 'id')} hidden />
+            <div className="field w-field col-12 md:col-12">
+              <label class="font-medium text-900">Chamado nº:</label>
+              <div className="p-inputgroup w-inputgroup-select">
+                <span className="p-inputgroup-addon">
+                  <i className="pi pi-tag"></i>
+                </span>
+                <InputText value={registro.chamado} onChange={(e) => onInputChange(e, 'chamado')} />
               </div>
-              <div className="field w-field col-12 md:col-3">
-                <label class="font-medium text-900">KM previsto:</label>
-                <div className="p-inputgroup">
-                  <span className="p-inputgroup-addon">
-                    <i className="pi pi-map-marker"></i>
-                  </span>
-                  <InputNumber value={registro.km} onChange={(e) => onInputChange(e, 'km')}  mode="decimal" useGrouping={false} />
-                </div>
-              </div> 
-              <div className="field w-field col-12 md:col-4">
-                <label class="font-medium text-900">Início previsto:</label>
-                <div className="p-inputgroup">
-                  <span className="p-inputgroup-addon">
-                    <i className="pi pi-calendar-plus"></i>
-                  </span>
-                  <Calendar value={registro.inicio} onChange={(e) => onInputChange(e, 'inicio')}/>
-                </div>
+            </div>
+            <div className="field w-field col-12 md:col-9">
+              <label class="font-medium text-900">Cliente:</label>
+              <div className="p-inputgroup w-inputgroup-select">
+                <span className="p-inputgroup-addon">
+                  <i className="pi pi-building"></i>
+                </span>
+                <Select
+                  defaultValue={{ value: registro.cliente_id, label: registro.nome }}
+                  options={registrosClientes.map(sup => ({ value: sup.id, label: sup.nome }))}
+                  onChange={(e) => { onInputSimpleSelectChange(e, 'cliente_id') }}
+                  placeholder=''
+                />
               </div>
-              <div className="field w-field col-12 md:col-4">
-                <label class="font-medium text-900">Término previsto:</label>
-                <div className="p-inputgroup">
-                  <span className="p-inputgroup-addon">
-                    <i className="pi pi-calendar-times"></i>
-                  </span>
-                  <Calendar value={registro.termino} onChange={(e) => onInputChange(e, 'termino')}/>
-                </div>
-              </div> 
-              <div className="field w-field col-12 md:col-4">
-                <label class="font-medium text-900">Turno de operação:</label>
-                <div className="p-inputgroup">
-                  <span className="p-inputgroup-addon">
-                    <i className="pi pi-sun"></i>
-                  </span>
-                  <Dropdown value={registro.turno} options={turnos} onChange={(e) => onInputChange(e, 'turno')}/>
-                </div>
+            </div>
+            <div className="field w-field col-12 md:col-3">
+              <label class="font-medium text-900">KM previsto:</label>
+              <div className="p-inputgroup">
+                <span className="p-inputgroup-addon">
+                  <i className="pi pi-map-marker"></i>
+                </span>
+                <InputNumber value={registro.km} onChange={(e) => onInputChange(e, 'km')} mode="decimal" useGrouping={false} />
               </div>
-              <div className="field w-field col-12 md:col-12">
-                <label class="font-medium text-900">Técnicos relacionados:</label>
-                <div className="p-inputgroup w-inputgroup-select">
-                  <span className="p-inputgroup-addon">
-                    <i className="pi pi-users"></i>
-                  </span>
-                  <Select
-                  //  defaultValue={registrosTecnicos.usuario_id.map(sup => ({ value: sup.id, label: sup.nome }))}
-                    options={registrosTecnicos.map(sup => ({ value: sup.id, label: sup.nome }))}
-                    onChange={(e) => { onInputNumberChange(e, 'usuario_id[]') }}
-                    placeholder=''
-                  />
-                </div>
+            </div>
+            <div className="field w-field col-12 md:col-4">
+              <label class="font-medium text-900">Início previsto:</label>
+              <div className="p-inputgroup">
+                <span className="p-inputgroup-addon">
+                  <i className="pi pi-calendar-plus"></i>
+                </span>
+                <Calendar value={registro.inicio} onChange={(e) => onInputChange(e, 'inicio')} />
               </div>
-              <div className="field w-field col-12 md:col-12">
-                <label class="font-medium text-900">Observações/orientações referente ao serviço:</label>
-                <div className="p-inputgroup w-inputgroup-select">
-                  <span className="p-inputgroup-addon">
-                    <i className="pi pi-building"></i>
-                  </span>
-                  <InputTextarea value={registro.observacoes} onChange={(e) => onInputChange(e, 'observacoes')}rows={2} cols={30} />
-                </div>
+            </div>
+            <div className="field w-field col-12 md:col-4">
+              <label class="font-medium text-900">Término previsto:</label>
+              <div className="p-inputgroup">
+                <span className="p-inputgroup-addon">
+                  <i className="pi pi-calendar-times"></i>
+                </span>
+                <Calendar value={registro.termino} onChange={(e) => onInputChange(e, 'termino')} />
               </div>
-              <div className="field w-field col-12 md:col-12">
-                <Button label="Salvar cadastro" className="w-form-button" icon="pi pi-save" iconPos='right' onClick={saveRegistro} />
+            </div>
+            <div className="field w-field col-12 md:col-4">
+              <label class="font-medium text-900">Turno de operação:</label>
+              <div className="p-inputgroup">
+                <span className="p-inputgroup-addon">
+                  <i className="pi pi-sun"></i>
+                </span>
+                <Dropdown value={registro.turno} options={turnos} onChange={(e) => onInputChange(e, 'turno')} />
               </div>
+            </div>
+            <div className="field w-field col-12 md:col-12">
+              <label class="font-medium text-900">Técnicos relacionados:</label>
+              <div className="p-inputgroup w-inputgroup-select">
+                <span className="p-inputgroup-addon">
+                  <i className="pi pi-users"></i>
+                </span>
+                <Select
+
+                  //  defaultValue={registro.usuario_id.map(sup => ({ value: sup }))}
+                  options={registrosTecnicos.map(sup => ({ value: sup.id, label: sup.nome }))}
+                  onChange={(e) => { onInputMultiSelectChange(e, 'usuario_id') }}
+                  placeholder=''
+                  isMulti
+                />
+              </div>
+            </div>
+            <div className="field w-field col-12 md:col-12">
+              <label class="font-medium text-900">Observações/orientações referente ao serviço:</label>
+              <div className="p-inputgroup w-inputgroup-select">
+                <span className="p-inputgroup-addon">
+                  <i className="pi pi-building"></i>
+                </span>
+                <InputTextarea value={registro.observacoes} onChange={(e) => onInputChange(e, 'observacoes')} rows={2} cols={30} />
+              </div>
+            </div>
+            <div className="field w-field col-12 md:col-12">
+              <Button label="Salvar cadastro" className="w-form-button" icon="pi pi-save" iconPos='right' onClick={saveRegistro} />
             </div>
           </div>
         </div>
+      </div>
     </>
 
   );
