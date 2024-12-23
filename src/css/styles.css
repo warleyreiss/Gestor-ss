@@ -334,12 +334,15 @@ font-size: 17px;
 }
 
 .p-dataview-content{
-    padding: 10px;
+    padding: 5px;
+    margin: 10px;
+    background-color: #e4e5e69a;
+
 }
 .p-dataview-content .p-grid .p-card{
     border: none;
     border-radius: 0px;
-    border-bottom: 1px solid #495057;
+    margin-bottom: 10px;
     box-shadow:none;
 }
 /* modal------------------------------------------------------------------*/
@@ -610,7 +613,10 @@ font-size: 17px;
     color: black;
     border-radius: 5px;
 }
-
+.dataview-card{
+    background-color: white;
+    
+}
 .card-dataview{
 
 }
@@ -618,20 +624,35 @@ font-size: 17px;
     font-size:  1.2rem !important;
 }
 .card-dataview-header-subtitle{
+    font-size:  0.9rem !important;
 margin-left: 30px;
 }
 .card-dataview-buttons{
-
+    margin: 10px;
+}
+.card-dataview-buttons button{
+    padding: 0px;
+    width: 2em;
+    height: 1.8rem;
+}
+.card-dataview-buttons button span{
+    font-size:  0.8rem !important;
 }
 .card-dataview-content{
     
 }
+.p-toggleable-content .p-panel-content{
+    border: none;
+}
 
 .card-dataview-body-panel-os {
-    margin: 1rem 0rem;
+    margin: 0.5rem 0rem;
+}
+.card-dataview-body-panel-os .p-panel-header {
+    background-color: #f0f0f19f;
 }
 .card-dataview-body-obs{
-
+    font-size:  0.8rem !important;
 }
 .card-dataview-footer-opcoes{
 
@@ -639,6 +660,7 @@ margin-left: 30px;
 .card-dataview-footer-opcoes-btn{
 padding: 0.2rem;
 margin-left: 0.2rem;
+font-size: 0.8rem;
 }
 .card-dataview-body-panel-os .p-panel-header{
     justify-content: center !important;
@@ -647,11 +669,43 @@ margin-left: 0.2rem;
 .data-table-os{
     height: auto !important
 }
-
+.data-table-os .p-datatable-wrapper table thead{
+    font-size: 0.9rem;
+}
+.data-table-os .p-datatable-wrapper table tbody{
+    font-size: 0.9rem;
+}
 .p-divider-content{
     margin: 0.5rem;
 }
 .p-divider.p-divider-horizontal:before {
     border-top: 1px #8e9298 !important;
     border-top-style: dashed !important;
+}
+.p-inplace-mini-form .p-inplace-content .p-inplace-content-close{
+    bottom: 32px;
+    left: 186px;
+}
+
+.w-sidebar-right-menu .p-sidebar-header{
+background-color: #2196f3;
+z-index: 3000;
+color: white;
+}
+.w-sidebar-right-menu .p-sidebar-icons .p-sidebar-close{
+   
+    color: white;
+    }
+.p-divider-content b{
+    font-size: 0.9rem;
+}
+.w-dialog-delete .p-dialog-header{
+    padding: 10px;
+}
+.w-dialog-delete .p-dialog-footer{
+    padding: 10px;
+}
+.w-dialog-delete .p-dialog-footer button{
+    padding: 5px;
+    margin-right: 10px;
 }

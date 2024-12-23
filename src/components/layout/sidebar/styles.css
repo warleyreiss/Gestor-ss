@@ -111,7 +111,7 @@ margin-left: 210px;
 .menu_title_nav {
   position: relative;
   height: 50px;
-  width: 55px;
+ /* width: 55px;*/
 }
 .menu_title_nav .title_nav {
   margin-left: 15px;

@@ -490,102 +490,35 @@ let teste=''
               </Link>
               <ul className="menu_item_nav">
                 <div className="menu_title_nav flex_nav">
-                  <span className="title_nav">TÉCNICO</span>
+                  <span className="title_nav">Menu_Pricipal</span>
                   <span className="line_nav"></span>
                 </div>
                 <Link to="/servicos" className="item">
                   <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-shopping-cart"></i>
-                    <span>BAbertos</span>
+                    <i className="pi pi-wrench"></i>
+                    <span>Serviços</span> 
                   </a>
                 </Link>
                 <Link to="/vendas_sob_demanda" className="item">
                   <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-cart-plus"></i>
-                    <span>Sob demanda</span>
+                    <i className="pi pi-box"></i>
+                    <span>Materiais</span>
                   </a>
                 </Link>
                 <Link to="/servicos/menu" className="item">
                   <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-th-large"></i>
-                    <span>Mais opçoes</span>  
+                    <i className="pi pi-android"></i>
+                    <span>Hardware</span>  
+                  </a>
+                </Link>
+                <Link to="/servicos/menu" className="item">
+                  <a href="#" className="link_nav flex_nav">
+                    <i className="pi pi-dollar"></i>
+                    <span>Fincanceiro</span>  
                   </a>
                 </Link>
               </ul>
 
-              <ul className="menu_item_nav">
-                <div className="menu_title_nav flex_nav">
-                  <span className="title_nav">ENTRADAS/SAÍDAS</span>
-                  <span className="line_nav"></span>
-                </div>
-                <Link to="/ordens_pagamento" className="item">
-                  <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-stopwatch"></i>
-                    <span>Programadas</span>
-                  </a>
-                </Link>
-                <Link to="/despesas" className="item">
-                  <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-upload"></i>
-                    <span>Despesas</span>
-                  </a>
-                </Link>
-                <Link to="/entradas" className="item">
-                  <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-download"></i>
-                    <span>Entradas</span>
-                  </a>
-                </Link>
-                <Link to="/despesas/menu" className="item">
-                  <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-th-large"></i>
-                    <span>Mais opçoes</span>
-                  </a>
-                </Link>
-
-              </ul> 
-              <ul className="menu_item_nav">
-                <div className="menu_title_nav flex_nav">
-                  <span className="title_nav">CADASTROS</span>
-                  <span className="line_nav"></span>
-                </div>
-                <Link to="/historico_tickets/11-01-2024/12-31-2024" className="item">
-                  <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-building"></i>
-                    <span>Tickets</span>
-                  </a>
-                </Link>
-                <Link to="/historico_servicos/11-01-2024/12-31-2024" className="item">
-                  <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-building"></i>
-                    <span>Serviços</span>
-                  </a>
-                </Link>
-                <Link to="/historico_visitas/11-01-2024/12-31-2024" className="item">
-                  <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-building"></i>
-                    <span>Visitas</span>
-                  </a>
-                </Link>
-                <Link to="/veiculos" className="item">
-                  <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-truck"></i>
-                    <span>Veículos</span>
-                  </a>
-                </Link>
-                <Link to="/usuarios" className="item">
-                  <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-users"></i>
-                    <span>Usuários</span>
-                  </a>
-                </Link>
-                <Link to="/frota_interna" className="item">
-                  <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-car"></i>
-                    <span>Frota interna</span>
-                  </a>
-                </Link>
-              </ul>
               <ul className="menu_item_nav">
                 <div className="menu_title_nav flex_nav">
                   <span className="title_nav">CADASTROS</span>

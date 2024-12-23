@@ -35,8 +35,9 @@ import { useForm, Controller } from 'react-hook-form';
 import { axiosApi } from '../../../services/axios';
 import { Link } from 'react-router-dom';
 import ServicosCru from './form-cru';
+import FormHistorico from './form-historico';
 import DataviewConteudo from './dataview-conteudo';
-import { Spa } from '@mui/icons-material';
+import { CalendarToday, Spa } from '@mui/icons-material';
 
 const Servicos = () => {
   const [visibleMenuRight, setVisibleMenuRight] = useState(false);
@@ -71,6 +72,7 @@ const Servicos = () => {
         })
         .catch(function (error) {
         });
+        initFilters();
       setLoading(false)
     }, 1000);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -88,6 +90,34 @@ const Servicos = () => {
       setLoading(false);
     }, 1000);
   }
+ //OPÇÃO DE FILTRO PARA PESQUISA -------------------------------------------------------------------------------|
+  //states
+  const [filters, setFilters] = useState(null);
+  const [globalFilterValue, setGlobalFilterValue] = useState('');
+
+  //funcao de iniciar filtro acionado na requisicao dos registro no banco de dados
+  const initFilters = () => {
+    setFilters({
+      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    });
+    setGlobalFilterValue('');
+  }
+
+  //funcao ao mudar o campo do filtro
+  const onGlobalFilterChange1 = (e) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+    _filters['global'].value = value;
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  }
+
+  //funcao para reinicar o filtro tabela
+  const clearFilter1 = () => {
+    initFilters();
+  }
+
+  //------------------------------------------------------------------------------------------------------------|
 
   //LAYOUT DOS DATAVIEW/CARDS ---------------------------------------------------------------------------------------
   const onClick = (itemIndex) => {
@@ -109,7 +139,6 @@ const Servicos = () => {
     setActiveIndex(_activeIndex);
   }
   const headerCard = (data) => {
-    console.log(data)
     return (
       <div>
         <span className='p-card-title card-dataview-header-title'>{data.nome}</span>
@@ -122,13 +151,13 @@ const Servicos = () => {
       <Card className='relative card-dataview' title={headerCard(data)} style={{ width: '100em', height: 'auto' }} >
 
         <div class="absolute top-0 right-0 flex align-items-center justify-content-center card-dataview-content ">
-          <div class="text-right card-dataview-buttons" style={{ marginTop: '5px' }}>
+          <div class="text-right card-dataview-buttons" >
             <Button icon="pi pi-chart-line" className="p-button-rounded p-button-success p-button-outlined p-button-sm" aria-label="Editar" />
             <Button icon="pi pi-pencil" className="p-button-rounded p-button-outlined p-button-sm" aria-label="Editar" onClick={e => { editeRegistro(data) }} />
           </div>
         </div>
-        <Panel className='flex flex-column-reverse card-dataview-body-panel-os' toggleable collapsed>
-          <DataviewConteudo data={data} />
+        <Panel className='flex flex-column-reverse card-dataview-body-panel-os' toggleable collapsed style={{border:'none'}}>
+          <DataviewConteudo data={data}  className='card-dataview-body-panel-os-content' style={{border:'none'}}/>
         </Panel>
         <div class="text-left card-dataview-body-obs">
           {data.observacoes ? data.observacoes : "Sem orientações"}
@@ -164,7 +193,8 @@ const Servicos = () => {
 
   const rightContents = (
     <React.Fragment>
-      <Button icon="pi pi-th-large" onClick={() => setVisibleMenuRight(true)} className='p-button-outlined p-button-success' />
+      <InputText value={globalFilterValue} icon="pi pi-search" onChange={onGlobalFilterChange1} placeholder="Filtrar..." style={{marginLeft:'10px'}}/>
+      <Button icon="pi pi-th-large" onClick={() => setVisibleMenuRight(true)} className='p-button-outlined p-button-primary' />
     </React.Fragment>
   );
 
@@ -290,8 +320,8 @@ const Servicos = () => {
   const deleteregistroDialogFooter = (
     <React.Fragment>
 
-      <Button label="Cancelar" icon="pi pi-times" className="p-button-text" onClick={hideDeleteregistroDialog} />
-      <Button label="Confirmar" icon="pi pi-check" className="p-button-text" onClick={deleteregistro} />
+      <Button label="Cancelar" icon="pi pi-times" className="p-button-outlined p-button-danger" onClick={hideDeleteregistroDialog} />
+      <Button label="Confirmar" icon="pi pi-check" className="p-button-outlined p-button-success" onClick={deleteregistro} />
     </React.Fragment>
   );
 
@@ -309,13 +339,13 @@ const Servicos = () => {
     <>
       <Toast ref={toastBR} position="bottom-right" />
       <div className="dataview">
-        <div className="card">
-          <DataView value={registros} layout={layout} header={header}
+        <div className="card dataview-card" style={{backgroundColor:'withe'}}>
+          <DataView value={registros} filters={filters} layout={layout} header={header}
             itemTemplate={itemTemplate} lazy paginator rows={rows.current}
             totalRecords={totalRecords} first={first} onPage={onPage} loading={loading} />
         </div>
       </div>
-      <Sidebar className='w-sidebar-right' header={<h3>O que gostaria de fazer?</h3>} visible={visibleMenuRight} position="right" blockScroll onHide={() => setVisibleMenuRight(false)} style={{ width: '550px' }}>
+      <Sidebar className='w-sidebar-right w-sidebar-right-menu ' header={<h3>O que gostaria de fazer?</h3>} visible={visibleMenuRight} position="right" blockScroll onHide={() => setVisibleMenuRight(false)} style={{ width: '550px' }}>
         <div className="card w-card" >
           <Divider align="right" type="dashed">
             <b>Tarefas rápidas</b>
@@ -338,75 +368,56 @@ const Servicos = () => {
                 </div>
               </Link>
             </div>
-            <div className="col-fixed p-card-grid-col">
-              <Link className='p-card-grid-col-link' onClick={() => openNew(true)} >
-                <div className="grid nested-grid p-card-grid-col-link-grid">
-                  <div className="grid p-card-grid-col-link-grid-grid">
-                    <div className="col-10 p-card-grid-col-link-grid-grid-title">
-                      Historico de serviços
-                    </div>
-                    <div className="col-2 p-card-grid-col-link-grid-grid-icon">
-                      <i className="pi pi-history"></i>
-                    </div>
-                    <div className="col-12 p-card-grid-col-link-grid-grid-desc">
-                      Visualize todos serviços já executados por sua equipe
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            </div>
-          </div>
+           </div>
           <Divider align="right" type="dashed">
             <b>Históricos e registros</b>
           </Divider>
           <div className="grid p-card-grid">
-            <div className="col-fixed p-card-grid-col">
-
+            <div className="col-fixed p-card-grid-col" style={{height:'150px'}}>
               <div className="grid nested-grid p-card-grid-col-link-grid">
                 <div className="grid p-card-grid-col-link-grid-grid">
                   <div className="col-10 p-card-grid-col-link-grid-grid-title">
-                    Tickets pendentes
+                    Histórico serviços
                   </div>
                   <div className="col-2 p-card-grid-col-link-grid-grid-icon">
-                    <i className="pi pi-stopwatch"></i>
+                    <i className="pi pi-history"></i>
                   </div>
-                  <div className="col-12 p-card-grid-col-link-grid-grid-desc">
-                    <Inplace closable>
+                 
+                    <Inplace closable className='p-inplace-mini-form'>
                       <InplaceDisplay>
-                        {' Veja os tickets pendentes de aprovação ou retornados'}
+                        { <div className="col-12 p-card-grid-col-link-grid-grid-desc" >
+                        Liste todo extrato de informações referente aos serviços realizados
+                        </div>}
                       </InplaceDisplay>
-                      <InplaceContent>
-                        <InputText autoFocus />
-                        <InputText  />
-                        <InputText  />
-                        <InputText  />
-                        <InputText  />
-                        <InputText  />
-                        
+                      <InplaceContent className='ola'>
+                        <FormHistorico url={'/historico_servicos'}/>
                       </InplaceContent>
                     </Inplace>
-                  </div>
-
                 </div>
               </div>
-
             </div>
-            <div className="col-fixed p-card-grid-col">
-              <Link className='p-card-grid-col-link' onClick={() => openNew(true)} >
-                <div className="grid nested-grid p-card-grid-col-link-grid">
-                  <div className="grid p-card-grid-col-link-grid-grid">
-                    <div className="col-10 p-card-grid-col-link-grid-grid-title">
-                      Meu estoque
-                    </div>
-                    <div className="col-2 p-card-grid-col-link-grid-grid-icon">
-                      <i className="pi pi-th-large"></i>
-                    </div>
-                    <div className="col-12 p-card-grid-col-link-grid-grid-desc">
-                      Controle os equipamentos que estão em sua posse
-                    </div>
+            <div className="col-fixed p-card-grid-col" style={{height:'150px'}}>
+              <div className="grid nested-grid p-card-grid-col-link-grid">
+                <div className="grid p-card-grid-col-link-grid-grid">
+                  <div className="col-10 p-card-grid-col-link-grid-grid-title">
+                    Histórico visitas
                   </div>
+                  <div className="col-2 p-card-grid-col-link-grid-grid-icon">
+                    <i className="pi pi-history"></i>
+                  </div>
+                 
+                    <Inplace closable className='p-inplace-mini-form'>
+                      <InplaceDisplay>
+                        { <div className="col-12 p-card-grid-col-link-grid-grid-desc" style={{height:'100px'}}>
+                        Liste todo extrato de informações referente as visitas realziadas
+                        </div>}
+                      </InplaceDisplay>
+                      <InplaceContent className='ola'>
+                        <FormHistorico url={'/historico_visitas'}/>
+                      </InplaceContent>
+                    </Inplace>
                 </div>
-              </Link>
+              </div>
             </div>
           </div>
 
@@ -456,12 +467,12 @@ const Servicos = () => {
         <ServicosCru registro={registro} filhoParaPaiPost={recebidoDoFilhoPost} filhoParaPaiPatch={recebidoDoFilhoPatch} />
       </Sidebar>
 
-      <Dialog visible={deleteregistroDialog} style={{ width: '450px' }} modal footer={deleteregistroDialogFooter} onHide={hideDeleteregistroDialog}>
+      <Dialog className='w-dialog-delete' visible={deleteregistroDialog} style={{ width: '450px' }} modal footer={deleteregistroDialogFooter} onHide={hideDeleteregistroDialog}>
         <div className="confirmation-content">
           <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
           <h3>Descreva o motivo do caneclamento deste serviço</h3>
-          <div className="card w-card" style={{ padding: '10px' }} >
-            <div className="p-fluid w-form" >
+          <div className="card w-card" style={{margin:'0px',padding:"0px" }} >
+            <div className="p-fluid w-form" style={{margin:'0px',padding:"0px" }}>
               <div className="p-fluid grid">
 
                 <div className="field w-field col-12 md:col-12">
@@ -470,7 +481,7 @@ const Servicos = () => {
                     <span className="p-inputgroup-addon">
                       <i className="pi pi-tag"></i>
                     </span>
-                    <InputText value={registro.motivo} onChange={(e) => onInputChangeDelete(e, 'motivo')} />
+                    <InputTextarea value={registro.motivo} onChange={(e) => onInputChangeDelete(e, 'motivo')} />
                   </div>
                 </div>
               </div>

@@ -35,27 +35,27 @@ export default function DataviewConteudo(props) {
         let button
         switch (rowData.status) {
             case '1':
-                button = < Link to={{ pathname: `/ordem-de-servico/assess/${rowData.id}` }} > <Button icon="pi pi-step-forward" /></Link >//teste
+                button = <div class="text-right" >< Link to={{ pathname: `/ordem-de-servico/assess/${rowData.id}` }} > <Button icon="pi pi-step-forward" /></Link ></div>
                 break;
             case '2':
                 switch (rowData.tipo) {
                     case 'INSTALACAO':
-                        button = < Link to={{ pathname: `/ordem-de-servico/installation/${rowData.id}` }} > <Button icon="pi pi-fast-forward" /></Link >//teste
+                        button = <div class="text-right" >< Link to={{ pathname: `/ordem-de-servico/installation/${rowData.id}` }} > <Button icon="pi pi-fast-forward" /></Link ></div>
                         break;
                     case 'MANUTENCAO':
-                        button = < Link to={{ pathname: `/ordem-de-servico/maintenance/${rowData.id}` }} > <Button icon="pi pi-fast-forward" /></Link >
+                        button = <div class="text-right" >< Link to={{ pathname: `/ordem-de-servico/maintenance/${rowData.id}` }} > <Button icon="pi pi-fast-forward" /></Link ></div>
                         break;
                     case 'REMOCAO':
-                        button = < Link to={{ pathname: `ordem-de-servico/removal/${rowData.id}` }} > <Button icon="pi pi-fast-forward" /></Link >
+                        button = <div class="text-right" >< Link to={{ pathname: `ordem-de-servico/removal/${rowData.id}` }} > <Button icon="pi pi-fast-forward" /></Link ></div>
                         break;
                 }
 
                 break;
             case '3':
-                button = < Link to={{ pathname: `/ordem-de-servico/signature/${rowData.id}` }} > <Button icon="pi pi-file-edit" /></Link >
+                button = <div class="text-right" >< Link to={{ pathname: `/ordem-de-servico/signature/${rowData.id}` }} > <Button icon="pi pi-file-edit" /></Link ></div>
                 break;
             case '4':
-                button = < Link to={{ pathname: `/ordem-de-servico/show${rowData.id}` }} > <Button icon="pi pi-thumbs-up" /></Link >
+                button =  <div class="text-right" >< Link to={{ pathname: `/ordem-de-servico/show${rowData.id}` }} > <Button icon="pi pi-thumbs-up" /></Link ></div>
                 break;
             default:
                 //Instruções executadas quando o valor da expressão é diferente de todos os cases
