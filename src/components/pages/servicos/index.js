@@ -26,23 +26,26 @@ import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { Card } from 'primereact/card';
 import { Panel } from 'primereact/panel';
 import { Divider } from 'primereact/divider';
-
 import { Inplace, InplaceDisplay, InplaceContent } from 'primereact/inplace';
 import 'primeicons/primeicons.css';
 
 //IMPORTANTO RECURSOS DE FRAMEWORKS E BIBLIOTECAS
-import { useForm, Controller } from 'react-hook-form';
 import { axiosApi } from '../../../services/axios';
 import { Link } from 'react-router-dom';
+
+
+//IMPORTANDO COMPONENTES PERSONALIZADOS
 import ServicosCru from './form-cru';
 import FormHistorico from './form-historico';
 import DataviewConteudo from './dataview-conteudo';
-import { CalendarToday, Spa } from '@mui/icons-material';
 
 const Servicos = () => {
+
+  //STATES E INSTANCIAS DA PAGINA -----------------------------------------------------------------------------|
   const [visibleMenuRight, setVisibleMenuRight] = useState(false);
   const nomePagina = 'Serviços em Aberto'
   const [registros, setRegistros] = useState(null);
+  const [registrosSemFiltros, setRegistrosSemFiltros] = useState(null);
   const [layout, setLayout] = useState('list');
   const [loading, setLoading] = useState(true);
   const [first, setFirst] = useState(0);
@@ -52,6 +55,10 @@ const Servicos = () => {
   const datasource = useRef(null);
   const isMounted = useRef(false);
   const toast = useRef(null);
+  //------------------------------------------------------------------------------------------------------------|
+
+
+  //CHAMADA DE REQUISIÇÃO E CARREGAMENTO DAS FUNCOES DO DATAVIEW DO FRAMEWORK ----------------------------------|
   useEffect(() => {
     if (isMounted.current) {
       setTimeout(() => {
@@ -65,6 +72,7 @@ const Servicos = () => {
       isMounted.current = true;
       axiosApi.get("/list_service")
         .then((response) => {
+          setRegistrosSemFiltros(response.data)
           datasource.current = response.data
           setTotalRecords(response.data.length)
           setRegistros(datasource.current.slice(0, rows.current))
@@ -72,7 +80,6 @@ const Servicos = () => {
         })
         .catch(function (error) {
         });
-        initFilters();
       setLoading(false)
     }, 1000);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -90,54 +97,50 @@ const Servicos = () => {
       setLoading(false);
     }, 1000);
   }
- //OPÇÃO DE FILTRO PARA PESQUISA -------------------------------------------------------------------------------|
+  //------------------------------------------------------------------------------------------------------------|
+
+  //OPÇÃO DE FILTRO/PESQUISA -----------------------------------------------------------------------------------|
   //states
-  const [filters, setFilters] = useState(null);
-  const [globalFilterValue, setGlobalFilterValue] = useState('');
-
-  //funcao de iniciar filtro acionado na requisicao dos registro no banco de dados
-  const initFilters = () => {
-    setFilters({
-      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    });
-    setGlobalFilterValue('');
-  }
-
+  const [filterValue, setFilterValue] = useState(null);
   //funcao ao mudar o campo do filtro
-  const onGlobalFilterChange1 = (e) => {
-    const value = e.target.value;
-    let _filters = { ...filters };
-    _filters['global'].value = value;
-    setFilters(_filters);
-    setGlobalFilterValue(value);
-  }
-
-  //funcao para reinicar o filtro tabela
-  const clearFilter1 = () => {
-    initFilters();
+  const filterChange = (e) => {
+    let value = e.target.value;
+    let _registros = { ...registrosSemFiltros };
+    const _filtro = Object.values(_registros).filter((item => item.nome.toLowerCase().includes(value.toLowerCase())))
+    datasource.current = Object.values(_filtro)
+    setTotalRecords(_filtro.length)
+    setRegistros(datasource.current.slice(0, rows.current))
   }
 
   //------------------------------------------------------------------------------------------------------------|
 
-  //LAYOUT DOS DATAVIEW/CARDS ---------------------------------------------------------------------------------------
-  const onClick = (itemIndex) => {
-    let _activeIndex = activeIndex ? [...activeIndex] : [];
 
-    if (_activeIndex.length === 0) {
-      _activeIndex.push(itemIndex);
-    }
-    else {
-      const index = _activeIndex.indexOf(itemIndex);
-      if (index === -1) {
-        _activeIndex.push(itemIndex);
-      }
-      else {
-        _activeIndex.splice(index, 1);
-      }
-    }
+  //LAYOUT DA PAGINA -------------------------------------------------------------------------------------------|
 
-    setActiveIndex(_activeIndex);
-  }
+  //cabecalho
+  const op = useRef(null);
+  const leftContents = (
+    <span>{nomePagina}</span>
+  );
+
+  const rightContents = (
+    <React.Fragment>
+      <InputText value={filterValue} icon="pi pi-search" onChange={filterChange} placeholder="Filtrar..." style={{ marginLeft: '10px' }} />
+      <Button icon="pi pi-th-large" onClick={() => setVisibleMenuRight(true)} className='p-button-outlined p-button-primary' />
+    </React.Fragment>
+  );
+
+  const header = (
+    <div className="table-header" >
+      <Toolbar left={leftContents} right={rightContents} />
+    </div>
+  );
+
+  //------------------------------------------------------------------------------------------------------------|
+
+  //LAYOUT DOS DATAVIEW/CARDS ----------------------------------------------------------------------------------|
+
+  //cabeçalho dataview
   const headerCard = (data) => {
     return (
       <div>
@@ -146,18 +149,19 @@ const Servicos = () => {
       </div>
     )
   }
+
+  //conteúdo dataview
   const renderListItem = (data) => {
     return (
       <Card className='relative card-dataview' title={headerCard(data)} style={{ width: '100em', height: 'auto' }} >
-
         <div class="absolute top-0 right-0 flex align-items-center justify-content-center card-dataview-content ">
           <div class="text-right card-dataview-buttons" >
             <Button icon="pi pi-chart-line" className="p-button-rounded p-button-success p-button-outlined p-button-sm" aria-label="Editar" />
             <Button icon="pi pi-pencil" className="p-button-rounded p-button-outlined p-button-sm" aria-label="Editar" onClick={e => { editeRegistro(data) }} />
           </div>
         </div>
-        <Panel className='flex flex-column-reverse card-dataview-body-panel-os' toggleable collapsed style={{border:'none'}}>
-          <DataviewConteudo data={data}  className='card-dataview-body-panel-os-content' style={{border:'none'}}/>
+        <Panel className='flex flex-column-reverse card-dataview-body-panel-os' toggleable collapsed style={{ border: 'none' }}>
+          <DataviewConteudo data={data} className='card-dataview-body-panel-os-content' style={{ border: 'none' }} />
         </Panel>
         <div class="text-left card-dataview-body-obs">
           {data.observacoes ? data.observacoes : "Sem orientações"}
@@ -172,12 +176,11 @@ const Servicos = () => {
             </div>
           </div>
         </div>
-
-
       </Card>
     );
   }
 
+  //template do dataview
   const itemTemplate = (product) => {
     if (!product) {
       return;
@@ -185,28 +188,8 @@ const Servicos = () => {
     return renderListItem(product);
   }
 
-  const leftContents = (
-    <span>{nomePagina}</span>
-  );
-
-  const op = useRef(null);
-
-  const rightContents = (
-    <React.Fragment>
-      <InputText value={globalFilterValue} icon="pi pi-search" onChange={onGlobalFilterChange1} placeholder="Filtrar..." style={{marginLeft:'10px'}}/>
-      <Button icon="pi pi-th-large" onClick={() => setVisibleMenuRight(true)} className='p-button-outlined p-button-primary' />
-    </React.Fragment>
-  );
-
-  //cabecalho
-  const header = (
-    <div className="table-header" >
-      <Toolbar left={leftContents} right={rightContents} />
-    </div>
-  );
-
-
   //FORMULARIO CRUD ----------------------------------------------------------------------------------------------|
+  //OBS: FORMULARIO É IMPORTADO COMO COMPONENTE PERSONALIZADO
 
   //states
   let emptyregistro = {
@@ -216,14 +199,17 @@ const Servicos = () => {
   const [id, setId] = useState(false);
   const [visibleCRUD, setVisibleCRUD] = useState(false);
 
+  //função para novo adastro
   const openNew = () => {
     setRegistro(emptyregistro);
     setVisibleCRUD(true)
   }
+  //função para cancelar um novo cadastro ou edição
   const closedNew = () => {
     setVisibleCRUD(false)
     setVisibleMenuRight(false)
   }
+  //função para editar dados de um cadastro existente
   const editeRegistro = (registro) => {
     let _registro = { ...registro };
     _registro.inicio = new Date(_registro.inicio)
@@ -231,6 +217,7 @@ const Servicos = () => {
     setRegistro(_registro)
     setVisibleCRUD(true)
   }
+  //função que recebe os dados de um novo cadastro
   const recebidoDoFilhoPost = (registro) => {
     console.log(registro)
     let _registros = [...registros];
@@ -241,6 +228,7 @@ const Servicos = () => {
     setVisibleCRUD(false)
     setVisibleMenuRight(false)
   }
+  //função que recebi os dados de um cadastro editado
   const recebidoDoFilhoPatch = (registro) => {
     let _registros = [...registros];
     let _registro = { ...registro };
@@ -252,7 +240,7 @@ const Servicos = () => {
     setVisibleMenuRight(false)
   }
 
-  //funcao para retonar qual o indice do registro da tabela para alteracao
+  //função para retonar qual o indice do registro da tabela para alteracao
   const findIndexById = (id) => {
     let index = -1;
     for (let i = 0; i < registros.length; i++) {
@@ -261,13 +249,11 @@ const Servicos = () => {
         break;
       }
     }
-
     return index;
   }
+  //--------------------------------------------------------------------------------------------------------------|
 
-  // finalizar registro
-
-  //funcao que deleta o registro do banco de dados e da tabela
+  //FINALIZAÇÃO DE UM SERVIÇO -----------------------------------------------------------------------------|
   const finalizar = (data) => {
     axiosApi.patch("/service_finalized", data)
       .then((response) => {
@@ -280,9 +266,11 @@ const Servicos = () => {
         console.log(error)
       });
   }
-  //delete registro
-
+  //--------------------------------------------------------------------------------------------------------------|
+  //CANCELAMENTO DE UM SERVIÇO -----------------------------------------------------------------------------------|
+  //states
   const [deleteregistroDialog, setDeleteregistroDialog] = useState(false);
+
   // funcao para mostrar alerta de confimação pelo usuario
   const confirmDeleteregistro = (registro) => {
     setRegistro(registro);
@@ -292,7 +280,13 @@ const Servicos = () => {
   const hideDeleteregistroDialog = () => {
     setDeleteregistroDialog(false);
   }
-
+  //função para popular state registro com o motivo do cancelamento do serviço
+  const onInputChangeDelete = (e, name) => {
+    const val = (e.target && e.target.value) || '';
+    let _registro = { ...registro };
+    _registro[`${name}`] = val;
+    setRegistro(_registro);
+  }
   //funcao que deleta o registro do banco de dados e da tabela
   const deleteregistro = () => {
     axiosApi.patch("/service_cancel/", registro)
@@ -306,41 +300,30 @@ const Servicos = () => {
         console.log(error)
       });
   }
-
-
-  //botoes de acao do alerta de confirmacao pelo usuario
-
-  const onInputChangeDelete = (e, name) => {
-    const val = (e.target && e.target.value) || '';
-    let _registro = { ...registro };
-    _registro[`${name}`] = val;
-    setRegistro(_registro);
-  }
-
-  const deleteregistroDialogFooter = (
-    <React.Fragment>
-
-      <Button label="Cancelar" icon="pi pi-times" className="p-button-outlined p-button-danger" onClick={hideDeleteregistroDialog} />
-      <Button label="Confirmar" icon="pi pi-check" className="p-button-outlined p-button-success" onClick={deleteregistro} />
-    </React.Fragment>
-  );
-
-
   //--------------------------------------------------------------------------------------------------------------|
+
+  //LAYOUT RODAPÉ MODAL CANCELAMENTO -----------------------------------------------------------------------------|
+    const deleteregistroDialogFooter = (
+      <React.Fragment>
+        <Button label="Cancelar" icon="pi pi-times" className="p-button-outlined p-button-danger" onClick={hideDeleteregistroDialog} />
+        <Button label="Confirmar" icon="pi pi-check" className="p-button-outlined p-button-success" onClick={deleteregistro} />
+      </React.Fragment>
+    );
+  //--------------------------------------------------------------------------------------------------------------|
+
   //MENSAGENS AO USUARIO------------------------------------------------------------------------------------------|
   const toastBR = useRef(null);
   const showSuccess = (detail) => {
     toast.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Usuário' + detail + ' cadastrada', life: 3000 });
   }
-
   //--------------------------------------------------------------------------------------------------------------|
 
   return (
     <>
       <Toast ref={toastBR} position="bottom-right" />
       <div className="dataview">
-        <div className="card dataview-card" style={{backgroundColor:'withe'}}>
-          <DataView value={registros} filters={filters} layout={layout} header={header}
+        <div className="card dataview-card" style={{ backgroundColor: 'withe' }}>
+          <DataView value={registros} layout={layout} header={header}
             itemTemplate={itemTemplate} lazy paginator rows={rows.current}
             totalRecords={totalRecords} first={first} onPage={onPage} loading={loading} />
         </div>
@@ -368,12 +351,12 @@ const Servicos = () => {
                 </div>
               </Link>
             </div>
-           </div>
+          </div>
           <Divider align="right" type="dashed">
             <b>Históricos e registros</b>
           </Divider>
           <div className="grid p-card-grid">
-            <div className="col-fixed p-card-grid-col" style={{height:'150px'}}>
+            <div className="col-fixed p-card-grid-col" style={{ height: '150px' }}>
               <div className="grid nested-grid p-card-grid-col-link-grid">
                 <div className="grid p-card-grid-col-link-grid-grid">
                   <div className="col-10 p-card-grid-col-link-grid-grid-title">
@@ -382,21 +365,21 @@ const Servicos = () => {
                   <div className="col-2 p-card-grid-col-link-grid-grid-icon">
                     <i className="pi pi-history"></i>
                   </div>
-                 
-                    <Inplace closable className='p-inplace-mini-form'>
-                      <InplaceDisplay>
-                        { <div className="col-12 p-card-grid-col-link-grid-grid-desc" >
+
+                  <Inplace closable className='p-inplace-mini-form'>
+                    <InplaceDisplay>
+                      {<div className="col-12 p-card-grid-col-link-grid-grid-desc" >
                         Liste todo extrato de informações referente aos serviços realizados
-                        </div>}
-                      </InplaceDisplay>
-                      <InplaceContent className='ola'>
-                        <FormHistorico url={'/historico_servicos'}/>
-                      </InplaceContent>
-                    </Inplace>
+                      </div>}
+                    </InplaceDisplay>
+                    <InplaceContent className='ola'>
+                      <FormHistorico url={'/historico_servicos'} />
+                    </InplaceContent>
+                  </Inplace>
                 </div>
               </div>
             </div>
-            <div className="col-fixed p-card-grid-col" style={{height:'150px'}}>
+            <div className="col-fixed p-card-grid-col" style={{ height: '150px' }}>
               <div className="grid nested-grid p-card-grid-col-link-grid">
                 <div className="grid p-card-grid-col-link-grid-grid">
                   <div className="col-10 p-card-grid-col-link-grid-grid-title">
@@ -405,17 +388,17 @@ const Servicos = () => {
                   <div className="col-2 p-card-grid-col-link-grid-grid-icon">
                     <i className="pi pi-history"></i>
                   </div>
-                 
-                    <Inplace closable className='p-inplace-mini-form'>
-                      <InplaceDisplay>
-                        { <div className="col-12 p-card-grid-col-link-grid-grid-desc" style={{height:'100px'}}>
+
+                  <Inplace closable className='p-inplace-mini-form'>
+                    <InplaceDisplay>
+                      {<div className="col-12 p-card-grid-col-link-grid-grid-desc" style={{ height: '100px' }}>
                         Liste todo extrato de informações referente as visitas realziadas
-                        </div>}
-                      </InplaceDisplay>
-                      <InplaceContent className='ola'>
-                        <FormHistorico url={'/historico_visitas'}/>
-                      </InplaceContent>
-                    </Inplace>
+                      </div>}
+                    </InplaceDisplay>
+                    <InplaceContent className='ola'>
+                      <FormHistorico url={'/historico_visitas'} />
+                    </InplaceContent>
+                  </Inplace>
                 </div>
               </div>
             </div>
@@ -471,8 +454,8 @@ const Servicos = () => {
         <div className="confirmation-content">
           <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
           <h3>Descreva o motivo do caneclamento deste serviço</h3>
-          <div className="card w-card" style={{margin:'0px',padding:"0px" }} >
-            <div className="p-fluid w-form" style={{margin:'0px',padding:"0px" }}>
+          <div className="card w-card" style={{ margin: '0px', padding: "0px" }} >
+            <div className="p-fluid w-form" style={{ margin: '0px', padding: "0px" }}>
               <div className="p-fluid grid">
 
                 <div className="field w-field col-12 md:col-12">

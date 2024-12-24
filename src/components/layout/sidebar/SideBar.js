@@ -499,7 +499,7 @@ let teste=''
                     <span>Serviços</span> 
                   </a>
                 </Link>
-                <Link to="/vendas_sob_demanda" className="item">
+                <Link to="/materiais" className="item">
                   <a href="#" className="link_nav flex_nav">
                     <i className="pi pi-box"></i>
                     <span>Materiais</span>
