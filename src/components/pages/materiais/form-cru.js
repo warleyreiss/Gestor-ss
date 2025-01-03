@@ -33,7 +33,7 @@ import { axiosApi } from '../../../services/axios';
 import { Link } from 'react-router-dom';
 
 
-function ServicosCru(props) {
+function FormCru(props) {
 
   //STATES PARA FUNCIONAMENTO GERAL DA PAGINA
   const [loading, setLoading] = useState(false);
@@ -206,4 +206,4 @@ function ServicosCru(props) {
 
 }
 
-export default ServicosCru
+export default FormCru
