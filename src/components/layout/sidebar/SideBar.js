@@ -511,12 +511,7 @@ let teste=''
                     <span>Hardware</span>  
                   </a>
                 </Link>
-                <Link to="/servicos/menu" className="item">
-                  <a href="#" className="link_nav flex_nav">
-                    <i className="pi pi-dollar"></i>
-                    <span>Fincanceiro</span>  
-                  </a>
-                </Link>
+               
               </ul>
 
               <ul className="menu_item_nav">

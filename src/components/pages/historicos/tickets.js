@@ -57,6 +57,7 @@ function HistoricoTickets() {
     axiosApi.get("/history/ticket/" + inicio + "/" + fim)
       .then((response) => {
         setRegistros(response.data)
+        console.log(response.data)
       })
       .catch(function (error) {
       });
@@ -80,6 +81,8 @@ function HistoricoTickets() {
   //definição das colunas
   const columns = [
     { field: 'id', header: 'Id:' },
+    { field: 'servico_id', header: 'Servico:' },
+    { field: 'ordem_servico_id', header: 'OS(*):' },
     { field: 'tipo', header: 'Tipo:' },
     { field: 'descricao', header: 'Descrição:' },
     { field: 'setor', header: 'Setor origem:' },
@@ -87,9 +90,10 @@ function HistoricoTickets() {
     { field: 'valor', header: 'Valor R$:' },
     { field: 'nome', header: 'cliente:' },
     { field: 'data_registro', header: 'Criado em:' },
-    { field: 'data_liberacao', header: 'Aprovado em:' },
-    { field: 'data_faturamento', header: 'Faturado em:' },
+    { field: 'data_liberacao', header: 'Aprovado em(*):' },
+    { field: 'data_faturamento', header: 'Faturado em(*):' },
     { field: 'status descricao', header: 'Status:' },
+    { field: 'observacao', header: 'Observações(*):' }
   ];
 
   //state
@@ -310,6 +314,10 @@ function HistoricoTickets() {
           rowsPerPageOptions={[10, 20, 50]}>
 
           <Column field="id" header="Id:"></Column>
+          <Column field="servico_id" header="Serviço(*):"></Column>
+          <Column field="ordem_servico_id" header="OS(*):"></Column>
+          <Column field="hardware_ordem_servico_id" header="Serviço Hardware(*):"></Column>
+          <Column field="visita_id" header="OS(*):"></Column>
           <Column field="tipo" header="Tipo:"></Column>
           <Column field="descricao" header="Descrição:"></Column>
           <Column field="setor" header="Setor origem:"></Column>
@@ -318,6 +326,7 @@ function HistoricoTickets() {
           <Column header="valor" body={priceBodyTemplate}></Column>
           <Column header="status" body={statusBodyTemplate}></Column>
           <Column field="nome" header="Cliente:"></Column>
+          <Column field="observacao" header="Observações:"></Column>
           <Column header="data_liberacao" body={dateBodyTemplate_dataRegistro}></Column>
           <Column header="data_liberacao" body={dateBodyTemplate_dataLiberacao}></Column>
           <Column header="data_liberacao" body={dateBodyTemplate_dataFaturamento}></Column>
