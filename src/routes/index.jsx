@@ -8,9 +8,11 @@ import SideBar from '../components/layout/sidebar/SideBar'
 import Signin from '../components/pages/auth/signin'
 
 import Clientes from '../components/pages/cliente/index'
+import Financeiro from '../components/pages/financeiro'
 import FrotaInterna from '../components/pages/frota_interna/index'
 import HistoricoServicos from '../components/pages/historicos/servicos'
 import HistoricoTickets from '../components/pages/historicos/tickets'
+import HistoricoTicketsOpen from '../components/pages/historicos/tickets-open'
 import HistoricoVisitas from '../components/pages/historicos/visitas'
 import Materiais from '../components/pages/materiais/index'
 import Servicos from '../components/pages/servicos/index'
@@ -122,6 +124,7 @@ import { AuthProvider } from '../context/AuthContext';
 import { PrivateRoute } from '../components/layout/sidebar/privateRoutes'
 
 
+
 export const AppRouter = () => {
   return (
     <Router>
@@ -136,14 +139,21 @@ export const AppRouter = () => {
         <Route path="/clientes" element={<PrivateRoute />} >
           <Route path="/clientes" element={<Clientes/>} />
         </Route>
+        <Route path="/financeiro" element={<PrivateRoute />} >
+          <Route path="/financeiro" element={<Financeiro/>} />
+        </Route>
         <Route path="/frota_interna" element={<PrivateRoute />} >
           <Route path="/frota_interna" element={<FrotaInterna/>} />
         </Route>
+       
         <Route path="/historico_servicos/:inicio/:fim" element={<PrivateRoute />} >
           <Route path="/historico_servicos/:inicio/:fim" element={<HistoricoServicos/>} />
         </Route>
         <Route path="/historico_tickets/:inicio/:fim" element={<PrivateRoute />} >
           <Route path="/historico_tickets/:inicio/:fim" element={<HistoricoTickets/>} />
+        </Route>
+        <Route path="/historico_tickets_open" element={<PrivateRoute />} >
+          <Route path="/historico_tickets_open" element={<HistoricoTicketsOpen/>} />
         </Route>
         <Route path="/historico_visitas/:inicio/:fim" element={<PrivateRoute />} >
           <Route path="/historico_visitas/:inicio/:fim" element={<HistoricoVisitas/>} />
