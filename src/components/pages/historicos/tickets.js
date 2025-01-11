@@ -317,7 +317,7 @@ function HistoricoTickets() {
           <Column field="servico_id" header="Serviço(*):"></Column>
           <Column field="ordem_servico_id" header="OS(*):"></Column>
           <Column field="hardware_ordem_servico_id" header="Serviço Hardware(*):"></Column>
-          <Column field="visita_id" header="OS(*):"></Column>
+          <Column field="visita_id" header="visita_id(*):"></Column>
           <Column field="tipo" header="Tipo:"></Column>
           <Column field="descricao" header="Descrição:"></Column>
           <Column field="setor" header="Setor origem:"></Column>
