@@ -40,7 +40,7 @@ function ServicosCru(props) {
   const nomePagina = 'Cadastros de Servços'
 
 
-  const toast = useRef(null);
+  const toastBR = useRef(null);
 
   //FUNÇÃO PARA BUSCAR REGISTROS DO BANCO DE DADOS-------------------------------------------------------------------|
 
@@ -125,12 +125,13 @@ const val = e.map(c => c.value)
 
         axiosApi.patch("/update_service", registro)
           .then((response) => {
-            console.log('editado')
+            console.log(registro)
+            console.log(response.data)
             props.filhoParaPaiPatch(response.data)
-            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Veículo alterado!', life: 3000 });
+            toastBR.current.show({ severity: 'success', summary: 'Successo', detail: 'Serviço editado', life: 3000 });
           })
           .catch(function (error) {
-            toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
+            toastBR.current.show({ severity: 'error', summary: 'Erro', detail: 'Tente novamente!', life: 3000 });
           });
       }
       else {
@@ -138,10 +139,10 @@ const val = e.map(c => c.value)
           .then((response) => {
             console.log(response.data)
             props.filhoParaPaiPost(response.data)
-
+            toastBR.current.show({ severity: 'success', summary: 'Successo', detail: 'Serviço criado', life: 3000 });
           })
           .catch(function (error) {
-            console.log(error)
+            toastBR.current.show({ severity: 'error', summary: 'Erro', detail: 'Tente novamente!', life: 3000 });
           });
       
       }
@@ -152,6 +153,7 @@ const val = e.map(c => c.value)
 
   return (
     <>
+     <Toast ref={toastBR}  position="bottom-right"/>
       <div className="card w-card" >
         <div className="p-fluid w-form" >
           <div className="p-fluid grid">
@@ -237,7 +239,7 @@ const val = e.map(c => c.value)
                 <span className="p-inputgroup-addon">
                   <i className="pi pi-building"></i>
                 </span>
-                <InputTextarea value={registro.observacoes} onChange={(e) => onInputChange(e, 'observacoes')} rows={2} cols={30} />
+                <InputTextarea value={registro.observacao} onChange={(e) => onInputChange(e, 'observacao')} rows={2} cols={30} />
               </div>
             </div>
             <div className="field w-field col-12 md:col-12">

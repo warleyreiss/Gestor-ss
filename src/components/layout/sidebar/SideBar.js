@@ -505,7 +505,7 @@ let teste=''
                     <span>Financeiro</span>
                   </a>
                 </Link>
-                <Link to="/servicos/menu" className="item">
+                <Link to="/servicos" className="item">
                   <a href="#" className="link_nav flex_nav">
                     <i className="pi pi-android"></i>
                     <span>Hardware</span>  

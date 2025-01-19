@@ -54,7 +54,7 @@ const Servicos = () => {
   const rows = useRef(10);
   const datasource = useRef(null);
   const isMounted = useRef(false);
-  const toast = useRef(null);
+  const toastBR = useRef(null);
   //------------------------------------------------------------------------------------------------------------|
 
 
@@ -81,7 +81,7 @@ const Servicos = () => {
         .catch(function (error) {
         });
       setLoading(false)
-    }, 1000);
+    }, 2000);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onPage = (event) => {
@@ -95,7 +95,7 @@ const Servicos = () => {
       setFirst(startIndex);
       setRegistros(newregistros);
       setLoading(false);
-    }, 1000);
+    }, 2000);
   }
   //------------------------------------------------------------------------------------------------------------|
 
@@ -211,6 +211,7 @@ const Servicos = () => {
   }
   //função para editar dados de um cadastro existente
   const editeRegistro = (registro) => {
+    console.log(registro)
     let _registro = { ...registro };
     _registro.inicio = new Date(_registro.inicio)
     _registro.termino = new Date(_registro.termino)
@@ -261,9 +262,10 @@ const Servicos = () => {
         setRegistros(_registros);
         setDeleteregistroDialog(false);
         setRegistro(emptyregistro);
+        toastBR.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Serviço finalizado', life: 3000 });
       })
       .catch(function (error) {
-        console.log(error)
+        toastBR.current.show({ severity: 'warn', summary: 'Pendência', detail: error.response.data.msg, life: 3000 });
       });
   }
   //--------------------------------------------------------------------------------------------------------------|
@@ -291,13 +293,15 @@ const Servicos = () => {
   const deleteregistro = () => {
     axiosApi.patch("/service_cancel/", registro)
       .then((response) => {
-        let _registros = registros.filter(val => val.id !== registro.id);
+        let _registros = registros.filter(val => val.id == registro.id);
         setRegistros(_registros);
         setDeleteregistroDialog(false);
         setRegistro(emptyregistro);
+        toastBR.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Serviço cancelado', life: 3000 });
+  
       })
       .catch(function (error) {
-        console.log(error)
+        toastBR.current.show({ severity: 'warn', summary: 'Pendência', detail: error.response.data.msg, life: 3000 });
       });
   }
   //--------------------------------------------------------------------------------------------------------------|
@@ -312,15 +316,15 @@ const Servicos = () => {
   //--------------------------------------------------------------------------------------------------------------|
 
   //MENSAGENS AO USUARIO------------------------------------------------------------------------------------------|
-  const toastBR = useRef(null);
+
   const showSuccess = (detail) => {
-    toast.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Usuário' + detail + ' cadastrada', life: 3000 });
+    toastBR.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Usuário' + detail + ' cadastrada', life: 3000 });
   }
   //--------------------------------------------------------------------------------------------------------------|
 
   return (
-    <>
-      <Toast ref={toastBR} position="bottom-right" />
+    <> 
+      <Toast ref={toastBR}  position="bottom-right"/>
       <div className="dataview">
         <div className="card dataview-card" style={{ backgroundColor: 'withe' }}>
           <DataView value={registros} layout={layout} header={header}
@@ -410,7 +414,7 @@ const Servicos = () => {
           </Divider>
           <div className="grid p-card-grid">
             <div className="col-fixed p-card-grid-col">
-              <Link className='p-card-grid-col-link' onClick={() => openNew(true)} >
+              <Link className='p-card-grid-col-link' to={'/servicos/tickets_pendentes'}>
                 <div className="grid nested-grid p-card-grid-col-link-grid">
                   <div className="grid p-card-grid-col-link-grid-grid">
                     <div className="col-10 p-card-grid-col-link-grid-grid-title">
@@ -427,17 +431,17 @@ const Servicos = () => {
               </Link>
             </div>
             <div className="col-fixed p-card-grid-col">
-              <Link className='p-card-grid-col-link' onClick={() => openNew(true)} >
+              <Link className='p-card-grid-col-link' to={'/financeiro/extratos'}>
                 <div className="grid nested-grid p-card-grid-col-link-grid">
                   <div className="grid p-card-grid-col-link-grid-grid">
                     <div className="col-10 p-card-grid-col-link-grid-grid-title">
-                      Meu estoque
+                      Extratos de faturamento
                     </div>
                     <div className="col-2 p-card-grid-col-link-grid-grid-icon">
-                      <i className="pi pi-th-large"></i>
+                      <i className="pi pi-file"></i>
                     </div>
                     <div className="col-12 p-card-grid-col-link-grid-grid-desc">
-                      Controle os equipamentos que estão em sua posse
+                      Veja Extratos já criados
                     </div>
                   </div>
                 </div>

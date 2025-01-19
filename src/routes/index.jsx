@@ -9,6 +9,8 @@ import Signin from '../components/pages/auth/signin'
 
 import Clientes from '../components/pages/cliente/index'
 import Financeiro from '../components/pages/financeiro'
+import FinanceiroExtratos from '../components/pages/financeiro/extratos'
+import VisualizarTicket from '../components/pages/financeiro/view-ticket'
 import FrotaInterna from '../components/pages/frota_interna/index'
 import HistoricoServicos from '../components/pages/historicos/servicos'
 import HistoricoTickets from '../components/pages/historicos/tickets'
@@ -16,112 +18,12 @@ import HistoricoTicketsOpen from '../components/pages/historicos/tickets-open'
 import HistoricoVisitas from '../components/pages/historicos/visitas'
 import Materiais from '../components/pages/materiais/index'
 import Servicos from '../components/pages/servicos/index'
+import ListaTicketsPendentes from '../components/pages/servicos/list-tickets-pendentes'
 import Usuarios from '../components/pages/usuarios/index'
 import Veiculos from '../components/pages/veiculos/index'
-/*
-import Home from '../components/pages/home/home_tecnica'
-
-
-import ContratcMenu from '../components/pages/contract/menu'
-import ContractCRU from '../components/pages/contract/form-cru'
-import ContractView from '../components/pages/contract/view'
-
-import EquipmentMenu from '../components/pages/equipment/menu'
-import EquipmentCRU from '../components/pages/equipment/form-cru'
-import EquipmentCompulsory from '../components/pages/equipment/form-compulsory'
-import EquipmentCompulsoryUnworn from '../components/pages/equipment/form-compulsory-unworn'
-import EquipmentDelete from '../components/pages/equipment/form-delete'
-import EquipmentFormTracking from '../components/pages/equipment/form-tracking'//rastreio
-import EquipmentTransfer from '../components/pages/equipment/form-transfer'
-//import EquipmentTransferSmart from './components/pages/equipment/form-transfer-smart'
-import EquipmentAccept from '../components/pages/equipment/view-accept'
-import EquipmentStocks from '../components/pages/equipment/view-stocks'//todos estoques
-import EquipmentWarehouse from '../components/pages/equipment/view-warehouse'
-import EquipmentMe from '../components/pages/equipment/view-me'
-import EquipmentAll from '../components/pages/equipment/view-all'
-import EquipmentUser from '../components/pages/equipment/view-user'
-import EquipmentTracking from '../components/pages/equipment/view-tracking'
-import EquipmentReturn from '../components/pages/equipment/form-return'
-import EquipmentAdjust from '../components/pages/equipment/form-adjust'
-import RequestShow from '../components/pages/equipment/view-request-show'
-import RequestList from '../components/pages/equipment/view-request-list'
-import ErrorView from '../components/pages/error/view'
-
-import HardwareMenu from '../components/pages/hardware/menu'
-import HardwareListInspection from '../components/pages/hardware/view-order-service-inspection'
-import HardwareInspection from '../components/pages/hardware/view-inspection'
-import HardwareListMaintenance from '../components/pages/hardware/view-order-service-maintenance'
-import HardwareMaintenance from '../components/pages/hardware/view-maintenance'
-import HardwareListView from '../components/pages/hardware/view'
-import HardwareServiceShow from '../components/pages/hardware/view-service-show'
-import HardwareOrderOfServiceShow from '../components/pages/hardware/view-order-service-show'
-
-import HistoryService from '../components/pages/history/view-service'
-import HistoryVisite from '../components/pages/history/view-visite'
-import HistoryTicket from '../components/pages/history/view-ticket'
-import HistoryServiceHardware from '../components/pages/history/view-hardware'
-import HistoryInternalFleetMaintenance from '../components/pages/history/view-internal-fleet-maintenance'
-import HistoryInternalFleetMaintenanceId from '../components/pages/history/view-internal-fleet-maintenance-Id'
-import HistoryInternalFleetFuel from '../components/pages/history/view-internal-fleet-fuel'
-import HistoryInternalFleetFuelId from '../components/pages/history/view-internal-fleet-fuel-id'
-
-import InternalFleetCRU from '../components/pages/internal-fleet/form-cru'
-import InternalFleetTrasnfer from '../components/pages/internal-fleet/form-transfer'
-import InternalFleetView from '../components/pages/internal-fleet/view'
-import InternalFleetMenu from '../components/pages/internal-fleet/menu'
-import InternalFleetTracking from '../components/pages/internal-fleet/view-tracking'
-import InternalFleetTransferShow from '../components/pages/internal-fleet/view-transfer-show'
-import VehicleFuel from '../components/pages/internal-fleet/form-fuel'
-
-import OrderServiceCRU from '../components/pages/order-service/form-cru'
-import OrderServiceAssess from '../components/pages/order-service/form-assess' //avaliação
-import OrderServiceInstallation from '../components/pages/order-service/form-installation'
-import OrderServiceMaintenance from '../components/pages/order-service/form-maintenance'
-import OrderServiceTraining from '../components/pages/order-service/form-training'
-import OrderServiceRemoval from '../components/pages/order-service/form-removal'
-import OrderServiceSignature from '../components/pages/order-service/form-signature'//assiantura
-import OrderServiceShow from '../components/pages/order-service/view-show'
-import OrderOfServiceCancel from '../components/pages/order-service/form-cancel'
-
-import ServiceMenu from '../components/pages/service/menu'
-import ServiceCRU from '../components/pages/service/form-cru'
-import ServiceFormSearch from '../components/pages/service/form-search'
-import ServiceAll from '../components/pages/service/view-all'
-import ServiceShow from '../components/pages/service/view-show'
-import ServiceView from '../components/pages/service/view'
-import ServiceCancel from '../components/pages/service/form-cancel'
-import ServiceFinalize from '../components/pages/service/form-finalize'
-
-import TicketMenu from '../components/pages/ticket/menu'
-import TicketAccept from '../components/pages/ticket/view-accept'
-import TicketExtract from '../components/pages/ticket/view-extract2'
-import TicketConsolidatedOpen from '../components/pages/ticket/view-consolidated-open'
-import TicketConsolidated from '../components/pages/ticket/view-consolidated'
-import TicketFaturamento from '../components/pages/ticket/view-faturamento'
-import TicketShow from '../components/pages/ticket/view-show'
-import TicketReturn from '../components/pages/ticket/form-return'
-import TicketEdite from '../components/pages/ticket/form-edite'
-import TicketTracking from '../components/pages/ticket/view-tracking'
-import TicketCancel from '../components/pages/ticket/form-cancel'
-import TicketCancelExtract from '../components/pages/ticket/form-cancel-extract'
-import TicketAcceptReturn from '../components/pages/ticket/view-return'
-import TicketReaccept from '../components/pages/ticket/form-reaccept'
-
-import UserMenu from '../components/pages/user/menu'
-import UserCRU from '../components/pages/user/form-cru'
-import UserView from '../components/pages/user/view'
-import PerfilUser from '../components/pages/user/view-perfil'
-
-import VehicleCRU from '../components/pages/vehicle/form-cru'
-import VehicleView from '../components/pages/vehicle/view'
-import VisitShow from '../components/pages/visit/view-show'
-
-import JustificationVisit from '../components/pages/visit/form-justification'
-import CorrectionVisit from '../components/pages/visit/form-correction'
-*/
-
 import { AuthProvider } from '../context/AuthContext';
 import { PrivateRoute } from '../components/layout/sidebar/privateRoutes'
+
 
 
 
@@ -141,6 +43,12 @@ export const AppRouter = () => {
         </Route>
         <Route path="/financeiro" element={<PrivateRoute />} >
           <Route path="/financeiro" element={<Financeiro/>} />
+        </Route>
+        <Route path="/financeiro/extratos" element={<PrivateRoute />} >
+          <Route path="/financeiro/extratos" element={<FinanceiroExtratos/>} />
+        </Route>
+        <Route path="/financeiro/visualizar_ticket" element={<PrivateRoute />} >
+          <Route path="/financeiro/visualizar_ticket" element={<VisualizarTicket/>} />
         </Route>
         <Route path="/frota_interna" element={<PrivateRoute />} >
           <Route path="/frota_interna" element={<FrotaInterna/>} />
@@ -163,6 +71,9 @@ export const AppRouter = () => {
         </Route>
         <Route path="/servicos" element={<PrivateRoute />} >
           <Route path="/servicos" element={<Servicos/>} />
+        </Route>
+        <Route path="/servicos/tickets_pendentes" element={<PrivateRoute />} >
+          <Route path="/servicos/tickets_pendentes" element={<ListaTicketsPendentes/>} />
         </Route>
         
         <Route path="/usuarios" element={<PrivateRoute />} >

@@ -34,14 +34,14 @@ import { axiosApi } from '../../../services/axios';
 import { Link } from 'react-router-dom';
 
 //IMPORTANDO COMPONENTES PERSONALIZADOS
-import FormHistorico from './form-historico';
+import Extrato from './extrato';
 
-function ListaTickets(props) {
+function FinanceiroExtratos() {
 
   //STATES PARA FUNCIONAMENTO GERAL DA PAGINA
   const [visibleMenuRight, setVisibleMenuRight] = useState(false);
   const [loading, setLoading] = useState(false);
-  const nomePagina = 'Tickets disponíveis :'+ props.registro.nome
+  const nomePagina = 'Faturamentos em aberto'
   const toast = useRef(null);
 
   //FUNÇÃO PARA BUSCAR REGISTROS DO BANCO DE DADOS-------------------------------------------------------------------|
@@ -52,7 +52,7 @@ function ListaTickets(props) {
   //requisição 
   const buscarRegistros = () => {
     setLoading(true);
-    axiosApi.get("/ticket/consolidated/" + props.registro.cliente_id)
+    axiosApi.get("/list_ticket_open")
       .then((response) => {
         setRegistros(response.data)
       })
@@ -61,7 +61,7 @@ function ListaTickets(props) {
     setLoading(false)
     initFilters1();
   }
-  
+
   //requisisção 
   useEffect(() => {
     buscarRegistros()
@@ -77,8 +77,9 @@ function ListaTickets(props) {
   //OPÇÃO DE COL TOGGLE DA INTERFACE DO USUARIO------------------------------------------------------------------|
   //definição das colunas
   const columns = [
-    { field: 'tipo', header: 'Tipo:' },
-    { field: 'descricao', header: 'Descrição:' }
+    { field: 'id', header: 'Fatramento nº:' },
+    { field: 'nome', header: 'Cliente:' },
+    { field: 'vencimento', header: 'Vencimento:' },
   ];
 
   //state
@@ -202,7 +203,7 @@ function ListaTickets(props) {
           </AccordionTab>
         </Accordion>
       </OverlayPanel>
-      <Button icon="pi pi-th-large" onClick={() => setVisibleMenuRight(true)} className='p-button-outlined p-button-primary' />
+
 
     </React.Fragment>
   );
@@ -222,13 +223,17 @@ function ListaTickets(props) {
   const statusBodyTemplate = (rowData) => {
     return <span className={`product-badge status-${rowData.status_descricao.toLowerCase().replace(/\s/g, '')}`}>{rowData.status_descricao}</span>;
   }
+  const qddadeBodyTemplate = (rowData) => {
+    return <span >{rowData.faturamento_id.length}</span>;
+  }
 
   //linhas opçes
   const actionBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <Button icon="pi pi-pencil" className="p-button-outlined p-button-info" onClick={e => { viewRegistro(rowData) }} />
-        <Button icon="pi pi pi-trash" className="p-button-outlined p-button-danger" onClick={() => delete confirmDeleteregistro(rowData)}/>
+        <Button icon="pi pi-file" className="p-button-outlined p-button-info" onClick={e => { viewRegistro(rowData) }} />
+        <Button icon="pi pi-check" className="p-button-outlined p-button-info" onClick={e => { finalziarRegistro(rowData) }} />
+        <Button icon="pi pi pi-trash" className="p-button-outlined p-button-danger" onClick={() => delete confirmDeleteregistro(rowData)} />
       </React.Fragment>
     );
   }
@@ -238,140 +243,139 @@ function ListaTickets(props) {
   //--------------------------------------------------------------------------------------------------------------|
 
   //FORMULARIO CRUD ----------------------------------------------------------------------------------------------|
-    //OBS: FORMULARIO É IMPORTADO COMO COMPONENTE PERSONALIZADO
-  
-    //states
-    let emptyregistro = {
-      id: null
-    };
-    
-    const [selectedProducts, setSelectedProducts] = useState([]);
-    const [registro, setRegistro] = useState(emptyregistro);
-    const [id, setId] = useState(false);
-    const [visibleCRUD, setVisibleCRUD] = useState(false);
-  
-    const setSelectedRow=(value)=>{
-      console.log(value['id'])
-      setVisibleCRUD(true)
-      setSelectedProducts(value)
-    }
-    //função para novo adastro
-    const openNew = () => {
-      setRegistro(emptyregistro);
-      setVisibleCRUD(true)
-    }
-    //função para cancelar um novo cadastro ou edição
-    const closedNew = () => {
-      setVisibleCRUD(false)
-      setVisibleMenuRight(false)
-    }
-    //função para editar dados de um cadastro existente
-    const viewRegistro = (registro) => {
-      setRegistro(emptyregistro);
-      let _registro = { ...registro };
-      setRegistro(_registro)
-      setVisibleCRUD(true)
-    }
-    //função que recebe os dados de um novo cadastro
-    const recebidoDoFilhoPost = (registro) => {
-      console.log(registro)
-      let _registros = [...registros];
-      let _registro = { ...registro };
-      _registro.id = registro.id
-      _registros.push(_registro);
-      setRegistro(emptyregistro);
-      setVisibleCRUD(false)
-      setVisibleMenuRight(false)
-    }
-    //função que recebi os dados de um cadastro editado
-    const recebidoDoFilhoPatch = (registro) => {
-      let _registros = [...registros];
-      let _registro = { ...registro };
-      const index = findIndexById(registro.id);
-      _registros[index] = _registro;
-      setRegistros(_registros);
-      setRegistro(emptyregistro);
-      setVisibleCRUD(false)
-      setVisibleMenuRight(false)
-    }
-  
-    //função para retonar qual o indice do registro da tabela para alteracao
-    const findIndexById = (id) => {
-      let index = -1;
-      for (let i = 0; i < registros.length; i++) {
-        if (registros[i].id === id) {
-          index = i;
-          break;
-        }
-      }
-      return index;
-    }
-    //--------------------------------------------------------------------------------------------------------------|
-  
-    //FINALIZAÇÃO DE UM SERVIÇO -----------------------------------------------------------------------------|
-    const finalizar = (data) => {
-      axiosApi.patch("/service_finalized", data)
-        .then((response) => {
-          let _registros = registros.filter(val => val.id !== data.id);
-          setRegistros(_registros);
-          setDeleteregistroDialog(false);
-          setRegistro(emptyregistro);
-        })
-        .catch(function (error) {
-          console.log(error)
-        });
-    }
-    //--------------------------------------------------------------------------------------------------------------|
-    //CANCELAMENTO DE UM SERVIÇO -----------------------------------------------------------------------------------|
-    //states
-    const [deleteregistroDialog, setDeleteregistroDialog] = useState(false);
-  
-    //array de opções dos inputs selects
-    const motivos = [
-      { label: 'PERCA/EXTRAVIO CLIENTE', value: 'PERCA/EXTRAVIO CLIENTE' },
-      { label: 'PERCA/EXTRAVIO INTERNO', value: 'PERCA/EXTRAVIO INTERNO' },
-      { label: 'DANO IRREPARAVEL CLIENTE', value: 'DANO IRREPARAVEL CLIENTE' },
-      { label: 'DANO IRREPARAVEL INTERNO', value: 'DANO IRREPARAVEL INTERNO' }
-    ];
+  //OBS: FORMULARIO É IMPORTADO COMO COMPONENTE PERSONALIZADO
 
-    const onInputChange = (e, name) => {
-      const val = (e.target && e.target.value) || '';
-      let _registro = { ...registro };
-      _registro[`${name}`] = val;
-  
-      setRegistro(_registro);
+  //states
+  let emptyregistro = {
+    id: null
+  };
+
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [registro, setRegistro] = useState(emptyregistro);
+  const [id, setId] = useState(false);
+  const [visibleExtrato, setVisibleExtrato] = useState(false);
+
+  const setSelectedRow = (value) => {
+    console.log(value['id'])
+    setVisibleExtrato(true)
+    setSelectedProducts(value)
+  }
+  //função para novo adastro
+  const openNew = () => {
+    setRegistro(emptyregistro);
+    setVisibleExtrato(true)
+  }
+  //função para cancelar um novo cadastro ou edição
+  const closedExtrato = () => {
+    setVisibleExtrato(false)
+    setVisibleMenuRight(false)
+  }
+  //função para editar dados de um cadastro existente
+  const viewRegistro = (registro) => {
+    setRegistro(emptyregistro);
+    let _registro = { ...registro };
+    setRegistro(_registro)
+    setVisibleExtrato(true)
+  }
+  //função que recebe os dados de um novo cadastro
+  const recebidoDoFilhoPost = (registro) => {
+    console.log(registro)
+    let _registros = [...registros];
+    let _registro = { ...registro };
+    _registro.id = registro.id
+    _registros.push(_registro);
+    setRegistro(emptyregistro);
+    setVisibleExtrato(false)
+    setVisibleMenuRight(false)
+  }
+  //função que recebi os dados de um cadastro editado
+  const recebidoDoFilhoPatch = (registro) => {
+    let _registros = [...registros];
+    let _registro = { ...registro };
+    const index = findIndexById(registro.id);
+    _registros[index] = _registro;
+    setRegistros(_registros);
+    setRegistro(emptyregistro);
+    setVisibleExtrato(false)
+    setVisibleMenuRight(false)
+  }
+
+  //função para retonar qual o indice do registro da tabela para alteracao
+  const findIndexById = (id) => {
+    let index = -1;
+    for (let i = 0; i < registros.length; i++) {
+      if (registros[i].id === id) {
+        index = i;
+        break;
+      }
     }
-    // funcao para mostrar alerta de confimação pelo usuario
-    const confirmDeleteregistro = (registro) => {
-      setRegistro(registro);
-      setDeleteregistroDialog(true);
-    }
-    //funcao ocultar/cancelar alerta de confirmação pelo usuario
-    const hideDeleteregistroDialog = () => {
-      setDeleteregistroDialog(false);
-    }
-    //função para popular state registro com o motivo do cancelamento do serviço
-    const onInputChangeDelete = (e, name) => {
-      const val = (e.target && e.target.value) || '';
-      let _registro = { ...registro };
-      _registro[`${name}`] = val;
-      setRegistro(_registro);
-    }
-    //funcao que deleta o registro do banco de dados e da tabela
-    const deleteregistro = () => {
-      axiosApi.patch("/service_cancel/", registro)
-        .then((response) => {
-          let _registros = registros.filter(val => val.id !== registro.id);
-          setRegistros(_registros);
-          setDeleteregistroDialog(false);
-          setRegistro(emptyregistro);
-        })
-        .catch(function (error) {
-          console.log(error)
-        });
-    }
-    //--------------------------------------------------------------------------------------------------------------|
-  
+    return index;
+  }
+  //--------------------------------------------------------------------------------------------------------------|
+
+  //FINALIZAÇÃO DE UM SERVIÇO -----------------------------------------------------------------------------|
+  const finalziarRegistro = (data) => {
+    axiosApi.patch("/ticket_confirm", data)
+      .then((response) => {
+        let _registros = registros.filter(val => val.id !== data.id);
+        setRegistros(_registros);
+        setRegistro(emptyregistro);
+      })
+      .catch(function (error) {
+        console.log(error)
+      });
+  }
+  //--------------------------------------------------------------------------------------------------------------|
+  //CANCELAMENTO DE UM SERVIÇO -----------------------------------------------------------------------------------|
+  //states
+  const [deleteregistroDialog, setDeleteregistroDialog] = useState(false);
+
+  //array de opções dos inputs selects
+  const motivos = [
+    { label: 'PERCA/EXTRAVIO CLIENTE', value: 'PERCA/EXTRAVIO CLIENTE' },
+    { label: 'PERCA/EXTRAVIO INTERNO', value: 'PERCA/EXTRAVIO INTERNO' },
+    { label: 'DANO IRREPARAVEL CLIENTE', value: 'DANO IRREPARAVEL CLIENTE' },
+    { label: 'DANO IRREPARAVEL INTERNO', value: 'DANO IRREPARAVEL INTERNO' }
+  ];
+
+  const onInputChange = (e, name) => {
+    const val = (e.target && e.target.value) || '';
+    let _registro = { ...registro };
+    _registro[`${name}`] = val;
+
+    setRegistro(_registro);
+  }
+  // funcao para mostrar alerta de confimação pelo usuario
+  const confirmDeleteregistro = (registro) => {
+    setRegistro(registro);
+    setDeleteregistroDialog(true);
+  }
+  //funcao ocultar/cancelar alerta de confirmação pelo usuario
+  const hideDeleteregistroDialog = () => {
+    setDeleteregistroDialog(false);
+  }
+  //função para popular state registro com o motivo do cancelamento do serviço
+  const onInputChangeDelete = (e, name) => {
+    const val = (e.target && e.target.value) || '';
+    let _registro = { ...registro };
+    _registro[`${name}`] = val;
+    setRegistro(_registro);
+  }
+  //funcao que deleta o registro do banco de dados e da tabela
+  const deleteregistro = () => {
+    axiosApi.patch("/extract_cancel", registro)
+      .then((response) => {
+        let _registros = registros.filter(val => val.id !== registro.id);
+        setRegistros(_registros);
+        setDeleteregistroDialog(false);
+        setRegistro(emptyregistro);
+      })
+      .catch(function (error) {
+        console.log(error)
+      });
+  }
+  //--------------------------------------------------------------------------------------------------------------|
+
   //LAYOUT RODAPÉ MODAL CANCELAMENTO -----------------------------------------------------------------------------|
   const deleteregistroDialogFooter = (
     <React.Fragment>
@@ -390,15 +394,27 @@ function ListaTickets(props) {
 
   //--------------------------------------------------------------------------------------------------------------|
 
+  const customIcons = (
+    <React.Fragment>
+        <button className="p-sidebar-icon p-link mr-1">
+            <span className="pi pi-print" />
+        </button>
+        <button className="p-sidebar-icon p-link mr-1">
+            <span className="pi pi-cloud-download" />
+        </button>
+    </React.Fragment>
+);
   return (
     <>
       <Toast ref={toastBR} position="bottom-right" />
- 
+      <Sidebar visible={visibleExtrato} fullScreen onHide={() => closedExtrato()} icons={customIcons}>
+        <Extrato registro={registro} filhoParaPaiPost={recebidoDoFilhoPost} filhoParaPaiPatch={recebidoDoFilhoPatch} />
+      </Sidebar>
+
       <Toast ref={toast} />
       <div className="card">
         <DataTable value={registros}
           filters={filters1}
-          selection={selectedProducts} onSelectionChange={e => setSelectedRow(e.value)} dataKey="id"
           ref={dt}
           stateStorage="local" stateKey="dt-state-demo-local"
           scrollable scrollHeight="400px"
@@ -413,12 +429,12 @@ function ListaTickets(props) {
           currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
           rows={10}
           rowsPerPageOptions={[10, 20, 50]}>
-            <Column selectionMode="multiple" headerStyle={{width: '3em'}}></Column>
           {columnComponents}
+          <Column header={'qdade. tickets:'} body={qddadeBodyTemplate}></Column>
           <Column header={'Opções:'} body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
         </DataTable>
       </div>
-     
+
       <Dialog className='w-dialog-delete' visible={deleteregistroDialog} style={{ width: '450px' }} modal footer={deleteregistroDialogFooter} onHide={hideDeleteregistroDialog}>
         <div className="confirmation-content">
           <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
@@ -426,15 +442,7 @@ function ListaTickets(props) {
           <div className="card w-card" style={{ margin: '0px', padding: "0px" }} >
             <div className="p-fluid w-form" style={{ margin: '0px', padding: "0px" }}>
               <div className="p-fluid grid">
-                <div className="field w-field col-12 md:col-12">
-                  <label class="font-medium text-900">Motivo:</label>
-                  <div className="p-inputgroup">
-                    <span className="p-inputgroup-addon">
-                      <i className="pi pi-user"></i>
-                    </span>
-                    <Dropdown value={registro.motivo} options={motivos} onChange={(e) => onInputChange(e, 'motivo')} />
-                  </div>
-                </div>
+
                 <div className="field w-field col-12 md:col-12">
                   <label class="font-medium text-900">Justificativa/descrição do ocorrido:</label>
                   <div className="p-inputgroup w-inputgroup-select" style={{ marginTop: '0px' }}>
@@ -455,4 +463,4 @@ function ListaTickets(props) {
 
 }
 
-export default ListaTickets
+export default FinanceiroExtratos

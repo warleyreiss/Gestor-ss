@@ -16,6 +16,7 @@ export default function DataviewConteudo(props) {
         axiosApi.get("/list_order_service_filter/" + props.data.id)
             .then((response) => {
                 setRegistros(response.data)
+                console.log(response.data)
             })
             .catch(function (error) {
             });
@@ -32,37 +33,14 @@ export default function DataviewConteudo(props) {
         return <span>{rowData.placa + "/ " + rowData.frota}</span>
     }
     const statusBodyTemplate = (rowData) => {
-        let button
-        switch (rowData.status) {
-            case '1':
-                button = <div class="text-right" >< Link to={{ pathname: `/ordem-de-servico/assess/${rowData.id}` }} > <Button icon="pi pi-step-forward" /></Link ></div>
-                break;
-            case '2':
-                switch (rowData.tipo) {
-                    case 'INSTALACAO':
-                        button = <div class="text-right" >< Link to={{ pathname: `/ordem-de-servico/installation/${rowData.id}` }} > <Button icon="pi pi-fast-forward" /></Link ></div>
-                        break;
-                    case 'MANUTENCAO':
-                        button = <div class="text-right" >< Link to={{ pathname: `/ordem-de-servico/maintenance/${rowData.id}` }} > <Button icon="pi pi-fast-forward" /></Link ></div>
-                        break;
-                    case 'REMOCAO':
-                        button = <div class="text-right" >< Link to={{ pathname: `ordem-de-servico/removal/${rowData.id}` }} > <Button icon="pi pi-fast-forward" /></Link ></div>
-                        break;
-                }
 
-                break;
-            case '3':
-                button = <div class="text-right" >< Link to={{ pathname: `/ordem-de-servico/signature/${rowData.id}` }} > <Button icon="pi pi-file-edit" /></Link ></div>
-                break;
-            case '4':
-                button =  <div class="text-right" >< Link to={{ pathname: `/ordem-de-servico/show${rowData.id}` }} > <Button icon="pi pi-thumbs-up" /></Link ></div>
-                break;
-            default:
-                //Instruções executadas quando o valor da expressão é diferente de todos os cases
-                break;
-        }
-
-        return button
+        return(
+        <div className="text-right" >
+            < Link to={{ pathname: `/ordem-de-servico/show/${rowData.id}` }} >
+                <span className={`text-right product-badge status-${rowData.status_descricao.toLowerCase().replace(/\s/g, '')}`}>{rowData.status_descricao}</span>
+            </Link >
+        </div>
+        )
     }
     return (
         <>

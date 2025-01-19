@@ -587,7 +587,7 @@ font-size: 17px;
     border-radius: 3px;
 }
 
-.status-emuso, .status-emaberto, .status-sim {
+.status-emuso, .status-emaberto, .status-sim ,.status-pendente{
     background-color: rgb(232, 113, 113);
     padding: 0rem 0.5rem 0rem 0.5rem;
     color: black;
@@ -708,4 +708,13 @@ color: white;
 .w-dialog-delete .p-dialog-footer button{
     padding: 5px;
     margin-right: 10px;
+}
+.p-inputgroup-divider{
+    padding: 0px;
+}
+.p-inputgroup-divider button{
+    margin: 0px !important;
+}
+.w-card-ticket-detalhes{
+    overflow: auto;
 }

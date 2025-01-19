@@ -34,15 +34,16 @@ import { axiosApi } from '../../../services/axios';
 import { Link } from 'react-router-dom';
 
 //IMPORTANDO COMPONENTES PERSONALIZADOS
-import FormHistorico from './form-historico';
+import ListaDetalhadaTicketsPendentes from './list-tickets-detalhada';
 
-function ListaTickets(props) {
+function ListaTicketsPendentes() {
 
   //STATES PARA FUNCIONAMENTO GERAL DA PAGINA
   const [visibleMenuRight, setVisibleMenuRight] = useState(false);
   const [loading, setLoading] = useState(false);
-  const nomePagina = 'Tickets disponíveis :'+ props.registro.nome
+  const nomePagina = 'Tickets Pendetes por cliente'
   const toast = useRef(null);
+
 
   //FUNÇÃO PARA BUSCAR REGISTROS DO BANCO DE DADOS-------------------------------------------------------------------|
 
@@ -52,9 +53,10 @@ function ListaTickets(props) {
   //requisição 
   const buscarRegistros = () => {
     setLoading(true);
-    axiosApi.get("/ticket/consolidated/" + props.registro.cliente_id)
+    axiosApi.get("/list_ticket_pendente_tecnico")
       .then((response) => {
         setRegistros(response.data)
+        console.log(response.data)
       })
       .catch(function (error) {
       });
@@ -77,10 +79,11 @@ function ListaTickets(props) {
   //OPÇÃO DE COL TOGGLE DA INTERFACE DO USUARIO------------------------------------------------------------------|
   //definição das colunas
   const columns = [
-    { field: 'tipo', header: 'Tipo:' },
-    { field: 'descricao', header: 'Descrição:' }
+    { field: 'servico_id', header: 'Nº: Serviço' },
+    { field: 'nome', header: 'Nome do Cliente:' },
+    { field: 'count', header: 'Qdade Tickets:' }
   ];
-
+  
   //state
   const [selectedColumns, setSelectedColumns] = useState(columns);
 
@@ -202,7 +205,6 @@ function ListaTickets(props) {
           </AccordionTab>
         </Accordion>
       </OverlayPanel>
-      <Button icon="pi pi-th-large" onClick={() => setVisibleMenuRight(true)} className='p-button-outlined p-button-primary' />
 
     </React.Fragment>
   );
@@ -227,8 +229,7 @@ function ListaTickets(props) {
   const actionBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <Button icon="pi pi-pencil" className="p-button-outlined p-button-info" onClick={e => { viewRegistro(rowData) }} />
-        <Button icon="pi pi pi-trash" className="p-button-outlined p-button-danger" onClick={() => delete confirmDeleteregistro(rowData)}/>
+        <Button icon="pi pi-eye" className="p-button-outlined p-button-info" onClick={e => { viewRegistro(rowData) }} />
       </React.Fragment>
     );
   }
@@ -244,25 +245,18 @@ function ListaTickets(props) {
     let emptyregistro = {
       id: null
     };
-    
-    const [selectedProducts, setSelectedProducts] = useState([]);
     const [registro, setRegistro] = useState(emptyregistro);
     const [id, setId] = useState(false);
-    const [visibleCRUD, setVisibleCRUD] = useState(false);
+    const [visibleList, setVsibleList] = useState(false);
   
-    const setSelectedRow=(value)=>{
-      console.log(value['id'])
-      setVisibleCRUD(true)
-      setSelectedProducts(value)
-    }
     //função para novo adastro
     const openNew = () => {
       setRegistro(emptyregistro);
-      setVisibleCRUD(true)
+      setVsibleList(true)
     }
     //função para cancelar um novo cadastro ou edição
     const closedNew = () => {
-      setVisibleCRUD(false)
+      setVsibleList(false)
       setVisibleMenuRight(false)
     }
     //função para editar dados de um cadastro existente
@@ -270,18 +264,15 @@ function ListaTickets(props) {
       setRegistro(emptyregistro);
       let _registro = { ...registro };
       setRegistro(_registro)
-      setVisibleCRUD(true)
+      setVsibleList(true)
     }
     //função que recebe os dados de um novo cadastro
     const recebidoDoFilhoPost = (registro) => {
-      console.log(registro)
-      let _registros = [...registros];
-      let _registro = { ...registro };
-      _registro.id = registro.id
-      _registros.push(_registro);
-      setRegistro(emptyregistro);
-      setVisibleCRUD(false)
-      setVisibleMenuRight(false)
+     
+      let _registros = registros.filter(val => val.servico_id !== registro);
+      setRegistros(_registros);
+      
+      setVsibleList(false)
     }
     //função que recebi os dados de um cadastro editado
     const recebidoDoFilhoPatch = (registro) => {
@@ -291,7 +282,7 @@ function ListaTickets(props) {
       _registros[index] = _registro;
       setRegistros(_registros);
       setRegistro(emptyregistro);
-      setVisibleCRUD(false)
+      setVsibleList(false)
       setVisibleMenuRight(false)
     }
   
@@ -393,12 +384,14 @@ function ListaTickets(props) {
   return (
     <>
       <Toast ref={toastBR} position="bottom-right" />
- 
+     <Sidebar className='w-sidebar-right' header={'Aprovação de tickets'}style={{width:'50em'}} visible={visibleList} position="right"  onHide={() => closedNew()}>
+        <ListaDetalhadaTicketsPendentes registro={registro} filhoParaPaiPost={recebidoDoFilhoPost} filhoParaPaiPatch={recebidoDoFilhoPatch}/>
+     
+      </Sidebar>
       <Toast ref={toast} />
       <div className="card">
         <DataTable value={registros}
           filters={filters1}
-          selection={selectedProducts} onSelectionChange={e => setSelectedRow(e.value)} dataKey="id"
           ref={dt}
           stateStorage="local" stateKey="dt-state-demo-local"
           scrollable scrollHeight="400px"
@@ -413,12 +406,11 @@ function ListaTickets(props) {
           currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
           rows={10}
           rowsPerPageOptions={[10, 20, 50]}>
-            <Column selectionMode="multiple" headerStyle={{width: '3em'}}></Column>
           {columnComponents}
           <Column header={'Opções:'} body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
         </DataTable>
       </div>
-     
+ 
       <Dialog className='w-dialog-delete' visible={deleteregistroDialog} style={{ width: '450px' }} modal footer={deleteregistroDialogFooter} onHide={hideDeleteregistroDialog}>
         <div className="confirmation-content">
           <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
@@ -455,4 +447,4 @@ function ListaTickets(props) {
 
 }
 
-export default ListaTickets
+export default ListaTicketsPendentes
