@@ -419,11 +419,11 @@ function Financeiro() {
           </Divider>
           <div className="grid p-card-grid">
             <div className="col-fixed p-card-grid-col">
-              <Link className='p-card-grid-col-link' onClick={() => openNew(true)}>
+              <Link className='p-card-grid-col-link' to={'/financeiro/extratos'}>
                 <div className="grid nested-grid p-card-grid-col-link-grid">
                   <div className="grid p-card-grid-col-link-grid-grid">
                     <div className="col-10 p-card-grid-col-link-grid-grid-title">
-                   Extratos em faturamento
+                   Extratos abertos
                     </div>
                     <div className="col-2 p-card-grid-col-link-grid-grid-icon">
                       <i className="pi pi-file"></i>

@@ -4,9 +4,12 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { TreeTable } from 'primereact/treetable';
 
+import { Sidebar } from 'primereact/sidebar';
 //IMPORTANTO RECURSOS DE FRAMEWORKS E BIBLIOTECAS
 import { axiosApi } from '../../../services/axios';
 import { Link } from 'react-router-dom';
+
+import VisualizarOS from './view-os';
 
 export default function DataviewConteudo(props) {
     const [registros, setRegistros] = useState([]);
@@ -16,7 +19,6 @@ export default function DataviewConteudo(props) {
         axiosApi.get("/list_order_service_filter/" + props.data.id)
             .then((response) => {
                 setRegistros(response.data)
-                console.log(response.data)
             })
             .catch(function (error) {
             });
@@ -34,13 +36,23 @@ export default function DataviewConteudo(props) {
     }
     const statusBodyTemplate = (rowData) => {
 
-        return(
-        <div className="text-right" >
-            < Link to={{ pathname: `/ordem-de-servico/show/${rowData.id}` }} >
-                <span className={`text-right product-badge status-${rowData.status_descricao.toLowerCase().replace(/\s/g, '')}`}>{rowData.status_descricao}</span>
-            </Link >
-        </div>
+        return (
+            <div className="text-right" >
+                <Button label={rowData.status_descricao} className={` btn-border-none card-dataview-footer-opcoes-btn status-${rowData.status_descricao.toLowerCase().replace(/\s/g, '')}`} onClick={() => viewOS(rowData)}  >
+                </Button>
+            </div>
         )
+    }
+
+    const [visibleOS, setVisibleOS] = useState(false);
+    const [registroview, setVRegistroView] = useState([]);
+    const viewOS = (data) => {
+        setVRegistroView(data)
+        setVisibleOS(true)
+    }
+    const closedview = () => {
+        setVRegistroView([])
+        setVisibleOS(false)
     }
     return (
         <>
@@ -51,7 +63,9 @@ export default function DataviewConteudo(props) {
                 <Column field="produto" header="Produto"></Column>
                 <Column field="status" header="Status" body={statusBodyTemplate}></Column>
             </DataTable>
-
+            <Sidebar className='w-sidebar-right' header={<h3>{'Detalhes da Ordem de Serviço: '+registroview.id}</h3>} visible={visibleOS} position="right" blockScroll onHide={() => closedview()} style={{ width: '40em' }}>
+          <VisualizarOS registro={registroview}/>
+            </Sidebar>
         </>
     )
 }

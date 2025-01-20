@@ -27,6 +27,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { Rating } from 'primereact/rating';
 import 'primeicons/primeicons.css';
 
+import { DownloadTableExcel } from 'react-export-table-to-excel';
 //IMPORTANTO RECURSOS DE FRAMEWORKS E BIBLIOTECAS
 import { useForm, Controller } from 'react-hook-form';
 import { axiosApi } from '../../../services/axios';
@@ -38,6 +39,7 @@ function Extrato(props) {
   const [loading, setLoading] = useState(false);
   const nomePagina = 'EXTRATO DETALHADO SERVIÇOS E PRODUTOS ENTREGUES'
 
+  const tableRef = useRef(null);
 
   const toast = useRef(null);
 
@@ -79,11 +81,16 @@ function Extrato(props) {
   //-------------------------------------------------------------------------------------------------------------|
 
   return (
-    <>
+    <><div className="d-flex flex-row-reverse bd-highlight" expand="lg" variant="light" bg="light">
+    <div className="p-2"> <DownloadTableExcel filename={client.nome} sheet="users" currentTableRef={tableRef.current}>
+      <Button className='float-right' size="sm"> Exportar </Button>
+    </DownloadTableExcel></div>
+   </div>
+    
       <div className="flex" style={{justifyContent: 'center!important'}}>
         <div className="flex">
           <div classNameName='col-md-12 col-sm-12 form-group' id="dvData">
-            <table >
+            <table id="datatable" className='extract-table' ref={tableRef}>
               <tr>
                 <td className="" colspan="7"
                   style={{

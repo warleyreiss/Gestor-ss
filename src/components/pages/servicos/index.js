@@ -36,12 +36,16 @@ import { Link } from 'react-router-dom';
 
 //IMPORTANDO COMPONENTES PERSONALIZADOS
 import ServicosCru from './form-cru';
+import ServicosOS from './form-os';
 import FormHistorico from './form-historico';
 import DataviewConteudo from './dataview-conteudo';
+import VisualizarOS from './view-os';
+import VisualizarServico from './view-servico';
 
 const Servicos = () => {
 
   //STATES E INSTANCIAS DA PAGINA -----------------------------------------------------------------------------|
+  const [servicoAtualOS, setServicoAtualOS] = useState(null);
   const [visibleMenuRight, setVisibleMenuRight] = useState(false);
   const nomePagina = 'Serviços em Aberto'
   const [registros, setRegistros] = useState(null);
@@ -57,17 +61,8 @@ const Servicos = () => {
   const toastBR = useRef(null);
   //------------------------------------------------------------------------------------------------------------|
 
-
-  //CHAMADA DE REQUISIÇÃO E CARREGAMENTO DAS FUNCOES DO DATAVIEW DO FRAMEWORK ----------------------------------|
-  useEffect(() => {
-    if (isMounted.current) {
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
-    }
-  }, [loading]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
+  const buscarRegistros = () => {
+    setLoading(true)
     setTimeout(() => {
       isMounted.current = true;
       axiosApi.get("/list_service")
@@ -82,7 +77,20 @@ const Servicos = () => {
         });
       setLoading(false)
     }, 2000);
+  }
+  //CHAMADA DE REQUISIÇÃO E CARREGAMENTO DAS FUNCOES DO DATAVIEW DO FRAMEWORK ----------------------------------|
+
+
+  useEffect(() => {
+    buscarRegistros()
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (isMounted.current) {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    }
+  }, [loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onPage = (event) => {
     setLoading(true);
@@ -98,6 +106,13 @@ const Servicos = () => {
     }, 2000);
   }
   //------------------------------------------------------------------------------------------------------------|
+
+
+  //FUNÇÃO PARA REFRESH DA LISTA DE CADASTRO DA PAGINA-----------------------------------------------------------|
+  const refresh = () => {
+    buscarRegistros()
+  }
+  //--------------------------------------------------------------------------------------------------------------|
 
   //OPÇÃO DE FILTRO/PESQUISA -----------------------------------------------------------------------------------|
   //states
@@ -125,6 +140,7 @@ const Servicos = () => {
 
   const rightContents = (
     <React.Fragment>
+      <Button icon="pi pi-refresh" onClick={() => refresh()} className='p-button-outlined p-button-info' />
       <InputText value={filterValue} icon="pi pi-search" onChange={filterChange} placeholder="Filtrar..." style={{ marginLeft: '10px' }} />
       <Button icon="pi pi-th-large" onClick={() => setVisibleMenuRight(true)} className='p-button-outlined p-button-primary' />
     </React.Fragment>
@@ -156,7 +172,7 @@ const Servicos = () => {
       <Card className='relative card-dataview' title={headerCard(data)} style={{ width: '100em', height: 'auto' }} >
         <div class="absolute top-0 right-0 flex align-items-center justify-content-center card-dataview-content ">
           <div class="text-right card-dataview-buttons" >
-            <Button icon="pi pi-chart-line" className="p-button-rounded p-button-success p-button-outlined p-button-sm" aria-label="Editar" />
+            <Button icon="pi pi-chart-line" className="p-button-rounded p-button-success p-button-outlined p-button-sm" onClick={e => { viewRegistro(data) }}/>
             <Button icon="pi pi-pencil" className="p-button-rounded p-button-outlined p-button-sm" aria-label="Editar" onClick={e => { editeRegistro(data) }} />
           </div>
         </div>
@@ -170,6 +186,7 @@ const Servicos = () => {
           <div class="flex justify-content-end flex-wrap">
             <div class="flex align-items-center justify-content-center">
               <span className="p-buttonset">
+                <Button label="Criar OS" className='p-button-primary card-dataview-footer-opcoes-btn' icon="pi pi-plus" onClick={() => newOS(data)} />
                 <Button label="Cancelar" className='p-button-danger card-dataview-footer-opcoes-btn' icon="pi pi-times" onClick={() => delete confirmDeleteregistro(data)} />
                 <Button label="Finalizar" className='p-button-success card-dataview-footer-opcoes-btn' icon="pi pi-check" onClick={() => finalizar(data)} />
               </span>
@@ -182,6 +199,7 @@ const Servicos = () => {
 
   //template do dataview
   const itemTemplate = (product) => {
+    setServicoAtualOS(product)
     if (!product) {
       return;
     }
@@ -196,9 +214,9 @@ const Servicos = () => {
     id: null
   };
   const [registro, setRegistro] = useState(emptyregistro);
-  const [id, setId] = useState(false);
+  const [registroServico, setRegistroServico] = useState([]);
   const [visibleCRUD, setVisibleCRUD] = useState(false);
-
+  const [visibleServico, setVisibleServico] = useState(false);
   //função para novo adastro
   const openNew = () => {
     setRegistro(emptyregistro);
@@ -218,12 +236,15 @@ const Servicos = () => {
     setRegistro(_registro)
     setVisibleCRUD(true)
   }
+  const viewRegistro= (registro) => {
+    setRegistroServico(registro)
+    setVisibleServico(true)
+  }
   //função que recebe os dados de um novo cadastro
   const recebidoDoFilhoPost = (registro) => {
     console.log(registro)
     let _registros = [...registros];
     let _registro = { ...registro };
-    _registro.id = registro.id
     _registros.push(_registro);
     setRegistro(emptyregistro);
     setVisibleCRUD(false)
@@ -233,14 +254,16 @@ const Servicos = () => {
   const recebidoDoFilhoPatch = (registro) => {
     let _registros = [...registros];
     let _registro = { ...registro };
-    const index = findIndexById(registro.id);
-    _registros[index] = _registro;
+    _registros.push(_registro);
     setRegistros(_registros);
     setRegistro(emptyregistro);
     setVisibleCRUD(false)
     setVisibleMenuRight(false)
   }
-
+  const recebidoDoFilhoPostOS = (registro) => {
+   // itemTemplate(servicoAtualOS)
+    setVisibleOS(false)
+  }
   //função para retonar qual o indice do registro da tabela para alteracao
   const findIndexById = (id) => {
     let index = -1;
@@ -284,6 +307,7 @@ const Servicos = () => {
   }
   //função para popular state registro com o motivo do cancelamento do serviço
   const onInputChangeDelete = (e, name) => {
+    _registro[`motivo`] = '';
     const val = (e.target && e.target.value) || '';
     let _registro = { ...registro };
     _registro[`${name}`] = val;
@@ -293,12 +317,12 @@ const Servicos = () => {
   const deleteregistro = () => {
     axiosApi.patch("/service_cancel/", registro)
       .then((response) => {
-        let _registros = registros.filter(val => val.id == registro.id);
+        let _registros = registros.filter(val => val.id !== registro.id);
         setRegistros(_registros);
         setDeleteregistroDialog(false);
         setRegistro(emptyregistro);
         toastBR.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Serviço cancelado', life: 3000 });
-  
+
       })
       .catch(function (error) {
         toastBR.current.show({ severity: 'warn', summary: 'Pendência', detail: error.response.data.msg, life: 3000 });
@@ -307,14 +331,28 @@ const Servicos = () => {
   //--------------------------------------------------------------------------------------------------------------|
 
   //LAYOUT RODAPÉ MODAL CANCELAMENTO -----------------------------------------------------------------------------|
-    const deleteregistroDialogFooter = (
-      <React.Fragment>
-        <Button label="Cancelar" icon="pi pi-times" className="p-button-outlined p-button-danger" onClick={hideDeleteregistroDialog} />
-        <Button label="Confirmar" icon="pi pi-check" className="p-button-outlined p-button-success" onClick={deleteregistro} />
-      </React.Fragment>
-    );
+  const deleteregistroDialogFooter = (
+    <React.Fragment>
+      <Button label="Cancelar" icon="pi pi-times" className="p-button-outlined p-button-danger" onClick={hideDeleteregistroDialog} />
+      <Button label="Confirmar" icon="pi pi-check" className="p-button-outlined p-button-success" onClick={deleteregistro} />
+    </React.Fragment>
+  );
   //--------------------------------------------------------------------------------------------------------------|
 
+  //VIEW OS ----------------------------------------------------------------------------------------------|
+ 
+  //states
+  let emptyregistroOS = {
+    id: null
+  };
+  const [registroOS, setRegistroOS] = useState(emptyregistro);
+  const [visibleOS, setVisibleOS] = useState(false);
+  //função para novo adastro
+  const newOS = (data) => {
+    setRegistroOS(data);
+    setVisibleOS(true)
+  }
+  //--------------------------------------------------------------------------------------------------------------|
   //MENSAGENS AO USUARIO------------------------------------------------------------------------------------------|
 
   const showSuccess = (detail) => {
@@ -323,8 +361,8 @@ const Servicos = () => {
   //--------------------------------------------------------------------------------------------------------------|
 
   return (
-    <> 
-      <Toast ref={toastBR}  position="bottom-right"/>
+    <>
+      <Toast ref={toastBR} position="bottom-right" />
       <div className="dataview">
         <div className="card dataview-card" style={{ backgroundColor: 'withe' }}>
           <DataView value={registros} layout={layout} header={header}
@@ -435,13 +473,13 @@ const Servicos = () => {
                 <div className="grid nested-grid p-card-grid-col-link-grid">
                   <div className="grid p-card-grid-col-link-grid-grid">
                     <div className="col-10 p-card-grid-col-link-grid-grid-title">
-                      Extratos de faturamento
+                      Extratos abertos
                     </div>
                     <div className="col-2 p-card-grid-col-link-grid-grid-icon">
                       <i className="pi pi-file"></i>
                     </div>
                     <div className="col-12 p-card-grid-col-link-grid-grid-desc">
-                      Veja Extratos já criados
+                      Acompanhe os extratos de faturamento criados
                     </div>
                   </div>
                 </div>
@@ -451,9 +489,13 @@ const Servicos = () => {
         </div>
       </Sidebar>
       <Sidebar className='w-sidebar-right' header={<h3>{nomePagina.toUpperCase()}</h3>} visible={visibleCRUD} position="right" blockScroll onHide={() => closedNew()} style={{ width: '100em' }}>
-        <ServicosCru registro={registro} filhoParaPaiPost={recebidoDoFilhoPost} filhoParaPaiPatch={recebidoDoFilhoPatch} />
       </Sidebar>
-
+      <Sidebar className='w-sidebar-right w-sidebar-right ' header={<h3>Cadastrar Ordem de Serviço</h3>} visible={visibleOS} position="right" blockScroll dismissable={true} onHide={() => setVisibleOS(false)} style={{ width: '550px' }}>
+      <ServicosOS registro={registroOS} filhoParaPaiPostOS={recebidoDoFilhoPostOS}/>
+      </Sidebar>
+      <Sidebar className='w-sidebar-right w-sidebar-right ' header={<h3>{'Detalhamento de serviço: '+registroServico.id}</h3>} visible={visibleServico} blockScroll fullScreen  onHide={() => setVisibleServico(false)}>
+      <VisualizarServico registro={registroServico} filhoParaPaiPostOS={recebidoDoFilhoPostOS}/>
+      </Sidebar>
       <Dialog className='w-dialog-delete' visible={deleteregistroDialog} style={{ width: '450px' }} modal footer={deleteregistroDialogFooter} onHide={hideDeleteregistroDialog}>
         <div className="confirmation-content">
           <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />

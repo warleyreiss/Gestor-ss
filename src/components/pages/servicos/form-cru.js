@@ -103,8 +103,8 @@ function ServicosCru(props) {
   }
 
   const onInputMultiSelectChange = (e, name) => {
-    
-const val = e.map(c => c.value)
+
+    const val = e.map(c => c.value)
     let _registro = { ...registro };
     _registro[`${name}`] = val;
     console.log(_registro)
@@ -120,13 +120,21 @@ const val = e.map(c => c.value)
 
   //envio do formulario CRUD
   const saveRegistro = () => {
-    if (registro.cliente_id) {
+    let _validacao = []
+    if (registro.chamado == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe número do chamado', life: 3000 }) }
+    if (registro.cliente_id == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o nome do cliente', life: 3000 }) }
+    if (registro.inicio == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a data prevista para início', life: 3000 }) }
+    if (registro.termino == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a data prevista para término', life: 3000 }) }
+    if (registro.turno == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o turno de trablho', life: 3000 }) }
+    
+    if (registro.km == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a previsão de km à ser percorrido', life: 3000 }) }
+    if (registro.usuario_id == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe pelo ao menos 1 técnico no serviço', life: 3000 }) }
+
+    if (_validacao.length == 0) {
       if (registro.id) {
 
         axiosApi.patch("/update_service", registro)
           .then((response) => {
-            console.log(registro)
-            console.log(response.data)
             props.filhoParaPaiPatch(response.data)
             toastBR.current.show({ severity: 'success', summary: 'Successo', detail: 'Serviço editado', life: 3000 });
           })
@@ -135,32 +143,37 @@ const val = e.map(c => c.value)
           });
       }
       else {
-       axiosApi.post("/create_service", registro)
+        axiosApi.post("/create_service", registro)
           .then((response) => {
-            console.log(response.data)
             props.filhoParaPaiPost(response.data)
             toastBR.current.show({ severity: 'success', summary: 'Successo', detail: 'Serviço criado', life: 3000 });
           })
           .catch(function (error) {
             toastBR.current.show({ severity: 'error', summary: 'Erro', detail: 'Tente novamente!', life: 3000 });
           });
-      
-      }
 
+      }
+    } else {
+      toastBR.current.show(_validacao);
     }
-  };
+
+
+
+
+  }
+
 
 
   return (
     <>
-     <Toast ref={toastBR}  position="bottom-right"/>
+      <Toast ref={toastBR} position="bottom-right" />
       <div className="card w-card" >
         <div className="p-fluid w-form" >
           <div className="p-fluid grid">
             <InputText value={registro.id} onChange={(e) => onInputChange(e, 'id')} hidden />
             <div className="field w-field col-12 md:col-12">
               <label class="font-medium text-900">Chamado nº:</label>
-              <div className="p-inputgroup w-inputgroup-select">
+              <div className="p-inputgroup">
                 <span className="p-inputgroup-addon">
                   <i className="pi pi-tag"></i>
                 </span>
@@ -225,7 +238,7 @@ const val = e.map(c => c.value)
                 </span>
                 <Select
 
-                  //  defaultValue={registro.usuario_id.map(sup => ({ value: sup }))}
+                  //  defaultValue={registro.usuario_id.map(sup => ({ value: sup }))} registros.filter(val => val.id !== data.id);
                   options={registrosTecnicos.map(sup => ({ value: sup.id, label: sup.nome }))}
                   onChange={(e) => { onInputMultiSelectChange(e, 'usuario_id') }}
                   placeholder=''

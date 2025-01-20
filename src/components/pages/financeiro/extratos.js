@@ -25,6 +25,7 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Divider } from 'primereact/divider';
 import { Inplace, InplaceDisplay, InplaceContent } from 'primereact/inplace';
 
+import { DownloadTableExcel } from 'react-export-table-to-excel';
 import { Dropdown } from 'primereact/dropdown';
 import 'primeicons/primeicons.css';
 
@@ -44,6 +45,7 @@ function FinanceiroExtratos() {
   const nomePagina = 'Faturamentos em aberto'
   const toast = useRef(null);
 
+  const tableRef = useRef(null);
   //FUNÇÃO PARA BUSCAR REGISTROS DO BANCO DE DADOS-------------------------------------------------------------------|
 
   //state
@@ -396,12 +398,9 @@ function FinanceiroExtratos() {
 
   const customIcons = (
     <React.Fragment>
-        <button className="p-sidebar-icon p-link mr-1">
-            <span className="pi pi-print" />
-        </button>
-        <button className="p-sidebar-icon p-link mr-1">
-            <span className="pi pi-cloud-download" />
-        </button>
+     
+
+        
     </React.Fragment>
 );
   return (
