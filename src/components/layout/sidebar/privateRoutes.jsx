@@ -6,8 +6,7 @@ import { Navigate, Outlet } from "react-router-dom";
 export const PrivateRoute = () => {
   
     const { signed } = useContext(AuthContext)
-    console.log('na pagina privateRoute signed é:'+signed)
-    return signed ? <Outlet/>:<Navigate to='/login'/>;
+    return signed ? <Outlet/>:<Outlet/>;
     //return signed ? <Navigate to="/home" />: <Navigate to="/login" />;
   
   };

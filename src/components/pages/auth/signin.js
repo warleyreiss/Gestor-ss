@@ -22,7 +22,6 @@ function Signin() {
 
   const { signIn } = useContext(AuthContext)
   const { signed } = useContext(AuthContext)
-  console.log('na pagina login signed é:' + signed)
   const { register, handleSubmit, reset, setValue/*, formStates:{erros}*/ } = useForm();
 
   const form = async (formContent) => {
@@ -32,9 +31,7 @@ function Signin() {
     setValue('password', value)
   }
   //
-  if (signed) {
-    navigate('/')
-  } else {
+
     return (
       < >
       <div style={{position:'absolute',top:'0px',left:'0px'}}>
@@ -345,7 +342,7 @@ function Signin() {
         </div>
       </>
     );
-  }
+ 
 }
 
 export default Signin

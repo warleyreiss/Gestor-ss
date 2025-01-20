@@ -39,7 +39,6 @@ import ServicosCru from './form-cru';
 import ServicosOS from './form-os';
 import FormHistorico from './form-historico';
 import DataviewConteudo from './dataview-conteudo';
-import VisualizarOS from './view-os';
 import VisualizarServico from './view-servico';
 
 const Servicos = () => {
@@ -186,7 +185,7 @@ const Servicos = () => {
           <div class="flex justify-content-end flex-wrap">
             <div class="flex align-items-center justify-content-center">
               <span className="p-buttonset">
-                <Button label="Criar OS" className='p-button-primary card-dataview-footer-opcoes-btn' icon="pi pi-plus" onClick={() => newOS(data)} />
+                
                 <Button label="Cancelar" className='p-button-danger card-dataview-footer-opcoes-btn' icon="pi pi-times" onClick={() => delete confirmDeleteregistro(data)} />
                 <Button label="Finalizar" className='p-button-success card-dataview-footer-opcoes-btn' icon="pi pi-check" onClick={() => finalizar(data)} />
               </span>
@@ -344,7 +343,7 @@ const Servicos = () => {
   let emptyregistroOS = {
     id: null
   };
-  const [registroOS, setRegistroOS] = useState(emptyregistro);
+  const [registroOS, setRegistroOS] = useState(emptyregistroOS);
   const [visibleOS, setVisibleOS] = useState(false);
   //função para novo adastro
   const newOS = (data) => {
@@ -488,6 +487,7 @@ const Servicos = () => {
         </div>
       </Sidebar>
       <Sidebar className='w-sidebar-right' header={<h3>{nomePagina.toUpperCase()}</h3>} visible={visibleCRUD} position="right" blockScroll onHide={() => closedNew()} style={{ width: '100em' }}>
+      <ServicosCru registro={registro} filhoParaPaiPostOS={recebidoDoFilhoPostOS}/>
       </Sidebar>
       <Sidebar className='w-sidebar-right w-sidebar-right ' header={<h3>Cadastrar Ordem de Serviço</h3>} visible={visibleOS} position="right" blockScroll dismissable={true} onHide={() => setVisibleOS(false)} style={{ width: '550px' }}>
       <ServicosOS registro={registroOS} filhoParaPaiPostOS={recebidoDoFilhoPostOS}/>

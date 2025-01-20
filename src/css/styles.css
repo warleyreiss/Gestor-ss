@@ -591,27 +591,27 @@ font-size: 17px;
     background-color: rgb(232, 113, 113);
     padding: 0rem 0.5rem 0rem 0.5rem;
     color: black;
-    border-radius: 5px;
+    border-radius: 3px;
 }
 
 .status-disponível , .status-finalizado, .status-não{
     background-color: rgb(113, 232, 125);
     padding: 0rem 0.5rem 0rem 0.5rem;
     color: black;
-    border-radius: 5px;
+    border-radius: 3px;
 
 }
 .status-avaliado {
     background-color: rgb(113, 204, 232);
     padding: 0rem 0.5rem 0rem 0.5rem;
     color: black;
-    border-radius: 5px;
+    border-radius: 3px;
 }
 .status-executado {
     background-color: rgb(196, 232, 113);
     padding: 0rem 0.5rem 0rem 0.5rem;
     color: black;
-    border-radius: 5px;
+    border-radius: 3px;
 }
 .btn-border-none{
     border: none;

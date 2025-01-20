@@ -38,7 +38,6 @@ function ServicosOS(props) {
   //STATES PARA FUNCIONAMENTO GERAL DA PAGINA
   const [loading, setLoading] = useState(false);
   const nomePagina = 'Cadastros de Servços'
-
   const toastBR = useRef(null);
 
   //FUNÇÃO PARA BUSCAR REGISTROS DO BANCO DE DADOS-------------------------------------------------------------------|
@@ -51,7 +50,7 @@ function ServicosOS(props) {
   //requisição 
   const buscarRegistros = () => {
     setLoading(true);
-    axiosApi.get("/list_vehicle_input/" + props.registro.id)
+    axiosApi.get("/list_vehicle_input/" + props.registro)
       .then((response) => {
         setRegistrosVeiculos(response.data)
       })
@@ -65,7 +64,7 @@ function ServicosOS(props) {
   useEffect(() => {
     buscarRegistros()
     let _registro = { ...registro }
-    _registro.servico_id = props.registro.id
+    _registro.servico_id = props.registro
     setRegistro(_registro)
   }, [])
   //-------------------------------------------------------------------------------------------------------------|
@@ -106,7 +105,6 @@ function ServicosOS(props) {
   ];
   //envio do formulario CRUD
   const saveRegistro = () => {
-
     console.log(registro)
     let _validacao = []
     if (registro.tipo == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o tipo de atividade', life: 3000 }) }
