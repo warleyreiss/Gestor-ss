@@ -37,14 +37,14 @@ import { Card } from '@mui/material';
 
 function VisualizarServico(props) {
   const [registros, setRegistros] = useState([]);
-  const [registroDelete, setRegistroDelete] = useState(null);
+  const [registroDelete, setRegistroDelete] = useState([]);
   const [ordemServicos, setOrdemServicos] = useState([]);
   const [visitas, setVisitas] = useState([]);
   const [ajuste, setAjuste] = useState(false);
   const toastBR = useRef(null);
- 
   //REQUISIÇÃO COM A BIBLIOTECA AXIOS PARA SOLICITAR LISTA DOS DADOS DO REGISTRO DO SERVICO
   useEffect(() => {
+    
     //REQUISIÇÃO COM A BIBLIOTECA AXIOS
     axiosApi.get("/service_show/" + props.registro.id)
       .then((response) => {
@@ -55,10 +55,8 @@ function VisualizarServico(props) {
       .catch(function (error) {
       });
   }, [])
-  console.log(props.registro)
   //--------------------------------------------------------------------------------------------------------------|
   const actionBodyTemplate = (rowData) => {
-    console.log(rowData)
     if (rowData.status != '0') {
       return (
         <React.Fragment>
@@ -77,13 +75,13 @@ function VisualizarServico(props) {
     );
   }
   const statusBodyTemplate = (rowData) => {
-
-    return (
-      <div className="text-right" >
-        <Button label={rowData.status_descricao} className={` btn-border-none card-dataview-footer-opcoes-btn status-${rowData.status_descricao.toLowerCase().replace(/\s/g, '')}`} >
-        </Button>
-      </div>
-    )
+    if (rowData.ajuste == 'SIM') {
+      return (
+        <React.Fragment>
+         <span> <i className="pi pi-exclamation-circle"></i></span>
+        </React.Fragment>
+      );
+    }
   }
     //função para popular state registro com o motivo do cancelamento do serviço
     const onInputChangeDelete = (e, name) => {
@@ -122,12 +120,12 @@ function VisualizarServico(props) {
   const deleteregistro = () => {
     console.log(registroDelete)
     let _registros = [...ordemServicos];
-    axiosApi.delete("/order_service_cancel",registroDelete)
+    axiosApi.patch("/order_service_cancel",registroDelete)
       .then((response) => {
         const index = findIndexById(registroDelete.id);
         _registros[index] = response.data;
         setDeleteregistroDialog(false);
-        setRegistroDelete(null);
+        setRegistroDelete([]);
         toastBR.current.show({ severity: 'success', summary: 'Successful', detail: 'Cliente deletado', life: 3000 });
       })
       .catch(function (error) {
@@ -135,14 +133,13 @@ function VisualizarServico(props) {
       });
   }
 
-  //botoes de acao do alerta de confirmacao pelo usuario
+  //LAYOUT RODAPÉ MODAL CANCELAMENTO -----------------------------------------------------------------------------|
   const deleteregistroDialogFooter = (
     <React.Fragment>
-      <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteregistroDialog} />
-      <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={deleteregistro} />
+      <Button label="Cancelar" icon="pi pi-times" className="p-button-outlined p-button-danger" onClick={hideDeleteregistroDialog} />
+      <Button label="Confirmar" icon="pi pi-check" className="p-button-outlined p-button-success" onClick={deleteregistro} />
     </React.Fragment>
   );
-
 
   //--------------------------------------------------------------------------------------------------------------|
 
@@ -172,7 +169,7 @@ function VisualizarServico(props) {
           </div>
         </div>
         <div className="card w-card" >
-          <h3>ordens de servços</h3>
+          <h3>Ordens de servços</h3>
           <div>
             <div className="card">
               <DataTable value={ordemServicos} responsiveLayout="scroll">
@@ -180,7 +177,6 @@ function VisualizarServico(props) {
                 <Column field="produto" header="Produto:"></Column>
                 <Column header={'Veículo:'} body={carBodyTemplate} />
                 <Column field="nome" header="Executante:"></Column>
-                <Column header={'Status:'} body={statusBodyTemplate} />
                 <Column header={'opções:'} body={actionBodyTemplate} />
               </DataTable>
             </div>
@@ -188,6 +184,12 @@ function VisualizarServico(props) {
         </div>
         <div className="card w-card" >
           <h3>Visitas Realizadas</h3>
+          <DataTable value={visitas} responsiveLayout="scroll">
+                <Column field="inicio" header="início:"></Column>
+                <Column field="termino" header="Término:"></Column>
+                <Column field="nome" header="Nome:"></Column>
+                <Column header={''} body={statusBodyTemplate} />
+              </DataTable>
         </div>
       </div >
 
@@ -206,7 +208,7 @@ function VisualizarServico(props) {
                     <span className="p-inputgroup-addon">
                       <i className="pi pi-tag"></i>
                     </span>
-                    <InputTextarea value={registroDelete.motivo} onChange={(e) => onInputChangeDelete(e, 'motivo')} />
+                    <InputTextarea value={registroDelete.motivo_cancelamento} onChange={(e) => onInputChangeDelete(e, 'motivo_cancelamento')} />
                   </div>
                 </div>
               </div>

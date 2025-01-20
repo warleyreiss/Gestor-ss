@@ -307,7 +307,6 @@ const Servicos = () => {
   }
   //função para popular state registro com o motivo do cancelamento do serviço
   const onInputChangeDelete = (e, name) => {
-    _registro[`motivo`] = '';
     const val = (e.target && e.target.value) || '';
     let _registro = { ...registro };
     _registro[`${name}`] = val;

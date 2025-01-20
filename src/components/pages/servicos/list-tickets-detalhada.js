@@ -424,8 +424,7 @@ props.filhoParaPaiPost(props.registro.servico_id)
         >
           <Column selectionMode="multiple" headerStyle={{ width: '3em' }}></Column>
           {columnComponents}
-          <Column header={'Opções:'} body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
-        </DataTable>
+       </DataTable>
       </div>
 
     </>
