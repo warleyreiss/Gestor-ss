@@ -45,7 +45,6 @@ function ServicosOS(props) {
   //state
   const [registrosVeiculos, setRegistrosVeiculos] = useState([]);
   const [registro, setRegistro] = useState([]);
-  //console.log(props.registro)
 
   //requisição 
   const buscarRegistros = () => {
@@ -82,7 +81,6 @@ function ServicosOS(props) {
     const val = e.map(c => c.value)
     let _registro = { ...registro };
     _registro[`${name}`] = val;
-    console.log(_registro)
     setRegistro(_registro);
   }
   //array de opções dos inputs selects
@@ -105,11 +103,10 @@ function ServicosOS(props) {
   ];
   //envio do formulario CRUD
   const saveRegistro = () => {
-    console.log(registro)
     let _validacao = []
     if (registro.tipo == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o tipo de atividade', life: 3000 }) }
     if (registro.produto == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o produto fornecido', life: 3000 }) }
-    if (registro.veiculo_id == null || registro.veiculo_id.length == 0) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe pelo ao menos um veículo', life: 3000 }) }
+    if (registro.veiculo_id2 == null || registro.veiculo_id2.length == 0) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe pelo ao menos um veículo', life: 3000 }) }
     if (_validacao.length == 0) {
       axiosApi.post("/create_order_service", registro)
         .then((response) => {
@@ -165,7 +162,7 @@ function ServicosOS(props) {
                 </span>
                 <Select
                   options={registrosVeiculos.map(sup => ({ value: sup.id, label: sup.placa + " - " + sup.frota }))}
-                  onChange={(e) => { onInputMultiSelectChange(e, 'veiculo_id') }}
+                  onChange={(e) => { onInputMultiSelectChange(e, 'veiculo_id2') }}
                   placeholder=''
                   isMulti
                 />

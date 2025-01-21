@@ -282,7 +282,6 @@ function Materiais() {
     }
     //função que recebe os dados de um novo cadastro
     const recebidoDoFilhoPost = (registro) => {
-      console.log(registro)
       let _registros = [...registros];
       let _registro = { ...registro };
       _registro.id = registro.id
@@ -326,7 +325,6 @@ function Materiais() {
           setRegistro(emptyregistro);
         })
         .catch(function (error) {
-          console.log(error)
         });
     }
     //--------------------------------------------------------------------------------------------------------------|
@@ -375,7 +373,6 @@ function Materiais() {
           setRegistro(emptyregistro);
         })
         .catch(function (error) {
-          console.log(error)
         });
     }
     //--------------------------------------------------------------------------------------------------------------|

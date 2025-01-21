@@ -179,7 +179,7 @@ const Servicos = () => {
           <DataviewConteudo data={data} className='card-dataview-body-panel-os-content' style={{ border: 'none' }} />
         </Panel>
         <div class="text-left card-dataview-body-obs">
-          {data.observacoes ? data.observacoes : "Sem orientações"}
+          {data.observacao ? data.observacao : "Sem orientações"}
         </div>
         <div class="text-center card-dataview-footer-opcoes">
           <div class="flex justify-content-end flex-wrap">
@@ -228,7 +228,6 @@ const Servicos = () => {
   }
   //função para editar dados de um cadastro existente
   const editeRegistro = (registro) => {
-    console.log(registro)
     let _registro = { ...registro };
     _registro.inicio = new Date(_registro.inicio)
     _registro.termino = new Date(_registro.termino)
@@ -241,23 +240,26 @@ const Servicos = () => {
   }
   //função que recebe os dados de um novo cadastro
   const recebidoDoFilhoPost = (registro) => {
-    console.log(registro)
     let _registros = [...registros];
     let _registro = { ...registro };
     _registros.push(_registro);
     setRegistro(emptyregistro);
     setVisibleCRUD(false)
     setVisibleMenuRight(false)
+    buscarRegistros()
+    toastBR.current.show({ severity: 'success', summary: 'Successo', detail: 'Serviço criado', life: 3000 });
   }
   //função que recebi os dados de um cadastro editado
   const recebidoDoFilhoPatch = (registro) => {
     let _registros = [...registros];
     let _registro = { ...registro };
-    _registros.push(_registro);
+    const index = findIndexById(registro.id);
+    _registros[index] = _registro;
     setRegistros(_registros);
     setRegistro(emptyregistro);
     setVisibleCRUD(false)
     setVisibleMenuRight(false)
+    toastBR.current.show({ severity: 'success', summary: 'Successo', detail: 'Serviço editado', life: 3000 });
   }
   const recebidoDoFilhoPostOS = (registro) => {
    // itemTemplate(servicoAtualOS)
@@ -313,6 +315,9 @@ const Servicos = () => {
   }
   //funcao que deleta o registro do banco de dados e da tabela
   const deleteregistro = () => {
+    let _validacao = []
+    if (registro.motivo == '' ||registro.motivo==null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o motivo do cancelamento', life: 3000 }) }
+    if (_validacao.length == 0) {
     axiosApi.patch("/service_cancel/", registro)
       .then((response) => {
         let _registros = registros.filter(val => val.id !== registro.id);
@@ -325,6 +330,9 @@ const Servicos = () => {
       .catch(function (error) {
         toastBR.current.show({ severity: 'warn', summary: 'Pendência', detail: error.response.data.msg, life: 3000 });
       });
+    }else {
+      toastBR.current.show(_validacao);
+    }
   }
   //--------------------------------------------------------------------------------------------------------------|
 
@@ -487,13 +495,13 @@ const Servicos = () => {
         </div>
       </Sidebar>
       <Sidebar className='w-sidebar-right' header={<h3>{nomePagina.toUpperCase()}</h3>} visible={visibleCRUD} position="right" blockScroll onHide={() => closedNew()} style={{ width: '100em' }}>
-      <ServicosCru registro={registro} filhoParaPaiPostOS={recebidoDoFilhoPostOS}/>
+      <ServicosCru registro={registro} filhoParaPaiPost={recebidoDoFilhoPost} filhoParaPaiPatch={recebidoDoFilhoPatch}/>
       </Sidebar>
       <Sidebar className='w-sidebar-right w-sidebar-right ' header={<h3>Cadastrar Ordem de Serviço</h3>} visible={visibleOS} position="right" blockScroll dismissable={true} onHide={() => setVisibleOS(false)} style={{ width: '550px' }}>
       <ServicosOS registro={registroOS} filhoParaPaiPostOS={recebidoDoFilhoPostOS}/>
       </Sidebar>
       <Sidebar className='w-sidebar-right w-sidebar-right ' header={<h3>{'Detalhamento de serviço: '+registroServico.id}</h3>} visible={visibleServico} blockScroll fullScreen  onHide={() => setVisibleServico(false)}>
-      <VisualizarServico registro={registroServico} filhoParaPaiPostOS={recebidoDoFilhoPostOS}/>
+      <VisualizarServico registro={registroServico} />
       </Sidebar>
       <Dialog className='w-dialog-delete' visible={deleteregistroDialog} style={{ width: '450px' }} modal footer={deleteregistroDialogFooter} onHide={hideDeleteregistroDialog}>
         <div className="confirmation-content">

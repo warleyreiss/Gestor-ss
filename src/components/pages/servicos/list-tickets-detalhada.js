@@ -265,7 +265,6 @@ function ListaDetalhadaTicketsPendentes(props) {
   }
   //função que recebe os dados de um novo cadastro
   const recebidoDoFilhoPost = (registro) => {
-    console.log(registro)
     let _registros = [...registros];
     let _registro = { ...registro };
     _registro.id = registro.id

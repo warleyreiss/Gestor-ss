@@ -136,10 +136,10 @@ function SideBar() {
         })
         .catch(function (error) {
         });
-      console.log('inical visivel')
+    
       setAlter(false)
     } else {
-      console.log(caixaAtual)
+   
       axiosApi.post("/controle_caixas/resumos", caixaAtual)
         .then((response) => {
           setResumoOrdensPagamentos(response.data.resumoOrdensPagamentos)
@@ -148,7 +148,7 @@ function SideBar() {
         })
         .catch(function (error) {
         });
-      console.log('final visivel')
+     
       setAlter(true)
     }
     setValue('status_caixa', value)

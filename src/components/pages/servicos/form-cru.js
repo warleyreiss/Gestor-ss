@@ -39,7 +39,6 @@ function ServicosCru(props) {
   const [loading, setLoading] = useState(false);
   const nomePagina = 'Cadastros de Servços'
 
-
   const toastBR = useRef(null);
 
   //FUNÇÃO PARA BUSCAR REGISTROS DO BANCO DE DADOS-------------------------------------------------------------------|
@@ -49,7 +48,6 @@ function ServicosCru(props) {
   const [registrosTecnicos, setRegistrosTecnicos] = useState([]);
 
   const [registro, setRegistro] = useState(props.registro);
-  //console.log(props.registro)
 
   //requisição 
   const buscarRegistros = () => {
@@ -86,19 +84,15 @@ function ServicosCru(props) {
     setRegistro(_registro);
   }
   const onInputNumberChange = (e, name) => {
-    console.log(e)
     const val = e.value || 0;
     let _registro = { ...registro };
     _registro[`${name}`] = val;
-    console.log(_registro)
     setRegistro(_registro);
   }
   const onInputSimpleSelectChange = (e, name) => {
-    console.log(e)
     const val = e['value'] || 0;
     let _registro = { ...registro };
     _registro[`${name}`] = val;
-    console.log(_registro)
     setRegistro(_registro);
   }
 
@@ -107,7 +101,6 @@ function ServicosCru(props) {
     const val = e.map(c => c.value)
     let _registro = { ...registro };
     _registro[`${name}`] = val;
-    console.log(_registro)
     setRegistro(_registro);
   }
   //array de opções dos inputs selects
@@ -121,20 +114,20 @@ function ServicosCru(props) {
   //envio do formulario CRUD
   const saveRegistro = () => {
     let _validacao = []
-    if (registro.chamado == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe número do chamado', life: 3000 }) }
-    if (registro.cliente_id == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o nome do cliente', life: 3000 }) }
-    if (registro.inicio == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a data prevista para início', life: 3000 }) }
-    if (registro.termino == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a data prevista para término', life: 3000 }) }
-    if (registro.turno == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o turno de trablho', life: 3000 }) }
+    if (registro.chamado == null ||registro.chamado == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe número do chamado', life: 3000 }) }
+    if (registro.cliente_id == null || registro.cliente_id == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o nome do cliente', life: 3000 }) }
+    if (registro.inicio == null || registro.inicio =='') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a data prevista para início', life: 3000 }) }
+    if (registro.termino == null ||registro.termino == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a data prevista para término', life: 3000 }) }
+    if (registro.turno == null ||registro.turno == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o turno de trablho', life: 3000 }) }
     
-    if (registro.km == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a previsão de km à ser percorrido', life: 3000 }) }
-    if (registro.usuario_id == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe pelo ao menos 1 técnico no serviço', life: 3000 }) }
-
+    if (registro.km == null ||registro.km == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a previsão de km à ser percorrido', life: 3000 }) }
+    if (registro.usuario_id == null || registro.usuario_id==[] || registro.usuario_id[0]==null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe pelo ao menos 1 técnico no serviço', life: 3000 }) }
     if (_validacao.length == 0) {
       if (registro.id) {
 
         axiosApi.patch("/update_service", registro)
           .then((response) => {
+            
             props.filhoParaPaiPatch(response.data)
             toastBR.current.show({ severity: 'success', summary: 'Successo', detail: 'Serviço editado', life: 3000 });
           })
@@ -144,6 +137,7 @@ function ServicosCru(props) {
       }
       else {
         axiosApi.post("/create_service", registro)
+    
           .then((response) => {
             props.filhoParaPaiPost(response.data)
             toastBR.current.show({ severity: 'success', summary: 'Successo', detail: 'Serviço criado', life: 3000 });
@@ -200,7 +194,7 @@ function ServicosCru(props) {
                 <span className="p-inputgroup-addon">
                   <i className="pi pi-map-marker"></i>
                 </span>
-                <InputNumber value={registro.km} onChange={(e) => onInputChange(e, 'km')} mode="decimal" useGrouping={false} />
+                <InputNumber value={registro.km} onChange={(e) => onInputNumberChange(e, 'km')}  useGrouping={false} />
               </div>
             </div>
             <div className="field w-field col-12 md:col-4">

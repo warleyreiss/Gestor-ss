@@ -251,7 +251,6 @@ function ListaTickets(props) {
     const [visibleCRUD, setVisibleCRUD] = useState(false);
   
     const setSelectedRow=(value)=>{
-      console.log(value['id'])
       setVisibleCRUD(true)
       setSelectedProducts(value)
     }
@@ -274,7 +273,6 @@ function ListaTickets(props) {
     }
     //função que recebe os dados de um novo cadastro
     const recebidoDoFilhoPost = (registro) => {
-      console.log(registro)
       let _registros = [...registros];
       let _registro = { ...registro };
       _registro.id = registro.id
@@ -318,7 +316,6 @@ function ListaTickets(props) {
           setRegistro(emptyregistro);
         })
         .catch(function (error) {
-          console.log(error)
         });
     }
     //--------------------------------------------------------------------------------------------------------------|
@@ -367,7 +364,6 @@ function ListaTickets(props) {
           setRegistro(emptyregistro);
         })
         .catch(function (error) {
-          console.log(error)
         });
     }
     //--------------------------------------------------------------------------------------------------------------|

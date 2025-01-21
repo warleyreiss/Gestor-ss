@@ -56,7 +56,6 @@ function ListaTicketsPendentes() {
     axiosApi.get("/list_ticket_pendente_tecnico")
       .then((response) => {
         setRegistros(response.data)
-        console.log(response.data)
       })
       .catch(function (error) {
       });
@@ -233,6 +232,14 @@ function ListaTicketsPendentes() {
       </React.Fragment>
     );
   }
+   //linhas opçes
+   const dateBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+       {new Date(rowData.data_finalizado).toLocaleDateString("pt-br")}
+       </React.Fragment>
+    );
+  }
   //rodapé
   const footer = `Total de ${registros ? registros.length : 0} registros.`;
 
@@ -309,7 +316,6 @@ function ListaTicketsPendentes() {
           setRegistro(emptyregistro);
         })
         .catch(function (error) {
-          console.log(error)
         });
     }
     //--------------------------------------------------------------------------------------------------------------|
@@ -358,7 +364,6 @@ function ListaTicketsPendentes() {
           setRegistro(emptyregistro);
         })
         .catch(function (error) {
-          console.log(error)
         });
     }
     //--------------------------------------------------------------------------------------------------------------|
@@ -407,6 +412,7 @@ function ListaTicketsPendentes() {
           rows={10}
           rowsPerPageOptions={[10, 20, 50]}>
           {columnComponents}
+          <Column header={'Data conclusão:'} body={dateBodyTemplate}></Column>
           <Column header={'Opções:'} body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
         </DataTable>
       </div>

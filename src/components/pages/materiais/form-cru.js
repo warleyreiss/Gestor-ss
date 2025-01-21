@@ -47,7 +47,6 @@ function FormCru(props) {
   //state
   const [registrosTipos, setRegistrosTipos] = useState([]);
   const [registro, setRegistro] = useState(props.registro);
-  //console.log(props.registro)
 
   //requisição 
   const buscarRegistros = () => {
@@ -87,19 +86,15 @@ function FormCru(props) {
     setRegistro(_registro);
   }
   const onInputNumberChange = (e, name) => {
-    console.log(e)
     const val = e.value || 0;
     let _registro = { ...registro };
     _registro[`${name}`] = val;
-    console.log(_registro)
     setRegistro(_registro);
   }
   const onInputSimpleSelectChange = (e, name) => {
-    console.log(e)
     const val = e['value'] || 0;
     let _registro = { ...registro };
     _registro[`${name}`] = val;
-    console.log(_registro)
     setRegistro(_registro);
   }
 
@@ -108,7 +103,6 @@ function FormCru(props) {
     const val = e.map(c => c.value)
     let _registro = { ...registro };
     _registro[`${name}`] = val;
-    console.log(_registro)
     setRegistro(_registro);
   }
   //array de opções dos inputs selects
@@ -126,7 +120,6 @@ function FormCru(props) {
 
         axiosApi.patch("/update_service", registro)
           .then((response) => {
-            console.log('editado')
             props.filhoParaPaiPatch(response.data)
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Veículo alterado!', life: 3000 });
           })
@@ -137,12 +130,10 @@ function FormCru(props) {
       else {
         axiosApi.post("/create_service", registro)
           .then((response) => {
-            console.log(response.data)
             props.filhoParaPaiPost(response.data)
 
           })
           .catch(function (error) {
-            console.log(error)
           });
 
       }

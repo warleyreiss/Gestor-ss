@@ -56,7 +56,6 @@ function Extrato(props) {
   const [CSL, setCSL] = useState('');
   const [vencimento, setVenciemnto] = useState('');
   const [registro, setRegistro] = useState(props.registro);
-  //console.log(props.registro)
 
   //requisição 
   const buscarRegistros = () => {

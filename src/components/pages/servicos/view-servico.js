@@ -118,7 +118,6 @@ function VisualizarServico(props) {
 
   //funcao que deleta o registro do banco de dados e da tabela
   const deleteregistro = () => {
-    console.log(registroDelete)
     let _registros = [...ordemServicos];
     axiosApi.patch("/order_service_cancel",registroDelete)
       .then((response) => {
@@ -126,7 +125,7 @@ function VisualizarServico(props) {
         _registros[index] = response.data;
         setDeleteregistroDialog(false);
         setRegistroDelete([]);
-        toastBR.current.show({ severity: 'success', summary: 'Successful', detail: 'Cliente deletado', life: 3000 });
+        toastBR.current.show({ severity: 'success', summary: 'Successful', detail: 'OS excluída', life: 3000 });
       })
       .catch(function (error) {
         toastBR.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });

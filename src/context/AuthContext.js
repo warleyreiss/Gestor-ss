@@ -34,7 +34,6 @@ export const AuthProvider = ({ children }) => {
 
       // se existir, altero o status de user
       if (storageUser && storageToken) {
-        //console.log(userId)
         setUser(storageUser);
         setUserId(storageUserId);
         setUserTipo(storageUserTipo);
@@ -42,7 +41,6 @@ export const AuthProvider = ({ children }) => {
         setUserClient(storageUserClient);
         setVehicleId(storageVehicleId);
         setVehicleDesc(storageVehicleDesc);
-        //console.log(axiosApi.defaults.headers)
         axiosApi.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${storageToken}`;
@@ -61,7 +59,7 @@ export const AuthProvider = ({ children }) => {
         ] = JSON.parse(localStorage.getItem("@Auth:vehicleDesc"));
         
       } else {
-        //console.log('sem login')
+
       }
     };
     loadingStoreData();
@@ -80,7 +78,6 @@ export const AuthProvider = ({ children }) => {
       } else {
         setUser(response.data);
         //6- altero a confifuração da instancia do axios, inserindo os dados do header
-        //console.log(axiosApi.defaults.headers)
         axiosApi.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${response.data.token}`;

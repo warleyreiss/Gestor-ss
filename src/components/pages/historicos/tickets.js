@@ -57,7 +57,6 @@ function HistoricoTickets() {
     axiosApi.get("/history/ticket/" + inicio + "/" + fim)
       .then((response) => {
         setRegistros(response.data)
-        console.log(response.data)
       })
       .catch(function (error) {
       });

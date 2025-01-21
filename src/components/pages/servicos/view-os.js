@@ -36,7 +36,6 @@ import { Link } from 'react-router-dom';
 
 function VisualizarOS(props) {
   const [registro, setRegistro] = useState(props.registro);
-  console.log(props.registro)
   //--------------------------------------------------------------------------------------------------------------|
 
   return (

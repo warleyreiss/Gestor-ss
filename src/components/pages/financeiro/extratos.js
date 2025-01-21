@@ -258,7 +258,6 @@ function FinanceiroExtratos() {
   const [visibleExtrato, setVisibleExtrato] = useState(false);
 
   const setSelectedRow = (value) => {
-    console.log(value['id'])
     setVisibleExtrato(true)
     setSelectedProducts(value)
   }
@@ -281,7 +280,6 @@ function FinanceiroExtratos() {
   }
   //função que recebe os dados de um novo cadastro
   const recebidoDoFilhoPost = (registro) => {
-    console.log(registro)
     let _registros = [...registros];
     let _registro = { ...registro };
     _registro.id = registro.id
@@ -324,7 +322,6 @@ function FinanceiroExtratos() {
         setRegistro(emptyregistro);
       })
       .catch(function (error) {
-        console.log(error)
       });
   }
   //--------------------------------------------------------------------------------------------------------------|
@@ -373,7 +370,6 @@ function FinanceiroExtratos() {
         setRegistro(emptyregistro);
       })
       .catch(function (error) {
-        console.log(error)
       });
   }
   //--------------------------------------------------------------------------------------------------------------|
