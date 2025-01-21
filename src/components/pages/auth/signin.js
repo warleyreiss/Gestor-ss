@@ -34,7 +34,7 @@ function Signin() {
 
     return (
       < >
-      <div style={{position:'absolute',top:'0px',left:'0px'}}>
+      <div style={{position:'absolute',top:'0px',left:'0px'}} hidden={signed}>
         <section className='page-login-background-section'>
           <span className="page-login-background-section-span" ></span>
           <span className="page-login-background-section-span" ></span>
