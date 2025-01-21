@@ -159,7 +159,7 @@ const Servicos = () => {
   const headerCard = (data) => {
     return (
       <div>
-        <span className='p-card-title card-dataview-header-title'>{data.nome}</span>
+        <span className='p-card-title card-dataview-header-title'>{data.id+" - "+data.nome}</span>
         <span className='p-card-subtitle card-dataview-header-subtitle'>{new Date(data.inicio).toLocaleDateString("pt-br") + " - " + new Date(data.termino).toLocaleDateString("pt-br")}</span>
       </div>
     )

@@ -390,12 +390,12 @@ props.filhoParaPaiPost(props.registro.servico_id)
           <div className="col-4">
             <div className="p-inputgroup p-inputgroup-divider">
               <Calendar value={registro.vencimento} onChange={(e) => onInputChange(e, 'vencimento')} />
-              <Button label="Extrato " icon="pi pi-check" className="w-form-button p-button-warning" iconPos='right' onClick={()=>{extrato()}}/>
+              <Button label="Extrato " icon="pi pi-file-export" className="w-form-button p-button-warning" iconPos='right' onClick={()=>{extrato()}}/>
             </div>
           </div>
           <div className="col-2">
             <div className="p-inputgroup p-inputgroup-divider">
-              <Button label="Aprovar" icon="pi pi-file-export" className="w-form-button p-button-primary" iconPos='right' style={{ justifyContent: 'flex-end!important', width: '100%' }} onClick={()=>{aprovar()}} />
+              <Button label="Aprovar" icon="pi pi-check" className="w-form-button p-button-primary" iconPos='right' style={{ justifyContent: 'flex-end!important', width: '100%' }} onClick={()=>{aprovar()}} />
             </div>
           </div>
 

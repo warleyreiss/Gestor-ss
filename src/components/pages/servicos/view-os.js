@@ -70,15 +70,15 @@ function VisualizarOS(props) {
         </div>
         <li className="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
           <div className="view-os-titulo font-medium">Efeito da falha?:</div>
-          <div className="view-os-detalhe">{registro.efeito_falha ? registro.efeito_falha : '---'}</div>
+          <div className="view-os-detalhe">{registro.efeito_falha ? registro.efeito_falha.replace('{"','').replace('"}','') : '---'}</div>
         </li>
         <li className="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
           <div className="view-os-titulo font-medium">Causa da falha?:</div>
-          <div className="view-os-detalhe">{registro.causa_falha ? registro.causa_falha : '---'}</div>
+          <div className="view-os-detalhe">{registro.causa_falha ? registro.causa_falha.replace('{"','').replace('"}','') : '---'}</div>
         </li>
         <li className="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
           <div className="view-os-titulo font-medium">Responsável da falha?:</div>
-          <div className="view-os-detalhe">{registro.responsavel_falha ? registro.responsavel_falha : '--'}</div>
+          <div className="view-os-detalhe">{registro.responsavel_falha ? registro.responsavel_falha.replace('{"','').replace('"}','') : '--'}</div>
         </li>
         <li className="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
           <div className="view-os-titulo font-medium">Equipamento utilizado?:</div>
@@ -99,7 +99,7 @@ function VisualizarOS(props) {
 
               {
                 registro.registro_fotograficos ?
-                  registro.registro_fotograficregistro.map((foto) =>
+                  registro.registro_fotograficos.map((foto) =>
                     <>
                       <img src={foto} alt="registros" width={'300px'} />
                       <Divider />

@@ -35,6 +35,7 @@ import { Link } from 'react-router-dom';
 
 function ServicosCru(props) {
 
+
   //STATES PARA FUNCIONAMENTO GERAL DA PAGINA
   const [loading, setLoading] = useState(false);
   const nomePagina = 'Cadastros de Servços'
@@ -73,7 +74,6 @@ function ServicosCru(props) {
     buscarRegistros()
   }, [])
   //-------------------------------------------------------------------------------------------------------------|
-
   //FORMULARIO CRUD ----------------------------------------------------------------------------------------------|
   //funções de preenchimento do formulario
   const onInputChange = (e, name) => {
@@ -113,19 +113,21 @@ function ServicosCru(props) {
 
   //envio do formulario CRUD
   const saveRegistro = () => {
+    let _registro = { ...registro };
+    _registro[`usuario_id`] = false;
     let _validacao = []
-    if (registro.chamado == null ||registro.chamado == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe número do chamado', life: 3000 }) }
-    if (registro.cliente_id == null || registro.cliente_id == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o nome do cliente', life: 3000 }) }
-    if (registro.inicio == null || registro.inicio =='') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a data prevista para início', life: 3000 }) }
-    if (registro.termino == null ||registro.termino == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a data prevista para término', life: 3000 }) }
-    if (registro.turno == null ||registro.turno == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o turno de trablho', life: 3000 }) }
+    if (_registro.chamado == null ||_registro.chamado == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe número do chamado', life: 3000 }) }
+    if (_registro.cliente_id == null || _registro.cliente_id == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o nome do cliente', life: 3000 }) }
+    if (_registro.inicio == null || _registro.inicio =='') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a data prevista para início', life: 3000 }) }
+    if (_registro.termino == null ||_registro.termino == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a data prevista para término', life: 3000 }) }
+    if (_registro.turno == null ||_registro.turno == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o turno de trablho', life: 3000 }) }
     
-    if (registro.km == null ||registro.km == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a previsão de km à ser percorrido', life: 3000 }) }
-    if (registro.usuario_id == null || registro.usuario_id==[] || registro.usuario_id[0]==null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe pelo ao menos 1 técnico no serviço', life: 3000 }) }
+    if (_registro.km == null ||_registro.km == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a previsão de km à ser percorrido', life: 3000 }) }
+    if (_registro.usuario_id2 == null ||_registro.usuario_id2==[] || registro.usuario_id2[0]==null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe pelo ao menos 1 técnico no serviço', life: 3000 }) }
     if (_validacao.length == 0) {
-      if (registro.id) {
+      if (_registro.id) {
 
-        axiosApi.patch("/update_service", registro)
+        axiosApi.patch("/update_service", _registro)
           .then((response) => {
             
             props.filhoParaPaiPatch(response.data)
@@ -136,7 +138,7 @@ function ServicosCru(props) {
           });
       }
       else {
-        axiosApi.post("/create_service", registro)
+        axiosApi.post("/create_service", _registro)
     
           .then((response) => {
             props.filhoParaPaiPost(response.data)
@@ -234,7 +236,7 @@ function ServicosCru(props) {
 
                   //  defaultValue={registro.usuario_id.map(sup => ({ value: sup }))} registros.filter(val => val.id !== data.id);
                   options={registrosTecnicos.map(sup => ({ value: sup.id, label: sup.nome }))}
-                  onChange={(e) => { onInputMultiSelectChange(e, 'usuario_id') }}
+                  onChange={(e) => { onInputMultiSelectChange(e, 'usuario_id2') }}
                   placeholder=''
                   isMulti
                 />
