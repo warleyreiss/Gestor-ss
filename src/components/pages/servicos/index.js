@@ -139,9 +139,9 @@ const Servicos = () => {
 
   const rightContents = (
     <React.Fragment>
-      <Button icon="pi pi-refresh" onClick={() => refresh()} className='p-button-outlined p-button-info' />
-      <InputText value={filterValue} icon="pi pi-search" onChange={filterChange} placeholder="Filtrar..." style={{ marginLeft: '10px' }} />
-      <Button icon="pi pi-th-large" onClick={() => setVisibleMenuRight(true)} className='p-button-outlined p-button-primary' />
+      <Button icon="pi pi-refresh" onClick={() => refresh()} className='p-button-outlined p-button-info' tooltip="Atualizar registro" tooltipOptions={{position: 'bottom'}}/>
+      <InputText value={filterValue} icon="pi pi-search" onChange={filterChange} placeholder="Filtrar..." style={{ marginLeft: '10px' }} tooltip="Fitlrar por cliente" tooltipOptions={{position: 'bottom'}} />
+      <Button icon="pi pi-th-large" onClick={() => setVisibleMenuRight(true)} className='p-button-outlined p-button-primary' tooltip="Menu de opçoes" tooltipOptions={{position: 'bottom'}} style={{marginLeft:'10px'}}/>
     </React.Fragment>
   );
 
@@ -160,7 +160,7 @@ const Servicos = () => {
     return (
       <div>
         <span className='p-card-title card-dataview-header-title'>{data.id+" - "+data.nome}</span>
-        <span className='p-card-subtitle card-dataview-header-subtitle'>{new Date(data.inicio).toLocaleDateString("pt-br") + " - " + new Date(data.termino).toLocaleDateString("pt-br")}</span>
+        <span className='p-card-subtitle card-dataview-header-subtitle'>{data.inicio + " - " + data.termino}</span>
       </div>
     )
   }
@@ -171,8 +171,8 @@ const Servicos = () => {
       <Card className='relative card-dataview' title={headerCard(data)} style={{ width: '100em', height: 'auto' }} >
         <div class="absolute top-0 right-0 flex align-items-center justify-content-center card-dataview-content ">
           <div class="text-right card-dataview-buttons" >
-            <Button icon="pi pi-chart-line" className="p-button-rounded p-button-success p-button-outlined p-button-sm" onClick={e => { viewRegistro(data) }}/>
-            <Button icon="pi pi-pencil" className="p-button-rounded p-button-outlined p-button-sm" aria-label="Editar" onClick={e => { editeRegistro(data) }} />
+            <Button icon="pi pi-chart-line" className="p-button-rounded p-button-success p-button-outlined p-button-sm" onClick={e => { viewRegistro(data) }} tooltip="Detalhamento do Serviço" tooltipOptions={{position: 'bottom'}}/>
+            <Button icon="pi pi-pencil" className="p-button-rounded p-button-outlined p-button-sm" aria-label="Editar" onClick={e => { editeRegistro(data) }} tooltip="Editar dados do Serviço" tooltipOptions={{position: 'bottom'}}/>
           </div>
         </div>
         <Panel className='flex flex-column-reverse card-dataview-body-panel-os' toggleable collapsed style={{ border: 'none' }}>
@@ -205,78 +205,78 @@ const Servicos = () => {
     return renderListItem(product);
   }
 
-  //FORMULARIO CRUD ----------------------------------------------------------------------------------------------|
-  //OBS: FORMULARIO É IMPORTADO COMO COMPONENTE PERSONALIZADO
+    //FORMULARIO CRUD ----------------------------------------------------------------------------------------------|
+    //OBS: FORMULARIO É IMPORTADO COMO COMPONENTE PERSONALIZADO
 
-  //states
-  let emptyregistro = {
-    id: null
-  };
-  const [registro, setRegistro] = useState(emptyregistro);
-  const [registroServico, setRegistroServico] = useState([]);
-  const [visibleCRUD, setVisibleCRUD] = useState(false);
-  const [visibleServico, setVisibleServico] = useState(false);
-  //função para novo adastro
-  const openNew = () => {
-    setRegistro(emptyregistro);
-    setVisibleCRUD(true)
-  }
-  //função para cancelar um novo cadastro ou edição
-  const closedNew = () => {
-    setVisibleCRUD(false)
-    setVisibleMenuRight(false)
-  }
-  //função para editar dados de um cadastro existente
-  const editeRegistro = (registro) => {
-    let _registro = { ...registro };
-    _registro.inicio = new Date(_registro.inicio)
-    _registro.termino = new Date(_registro.termino)
-    setRegistro(_registro)
-    setVisibleCRUD(true)
-  }
-  const viewRegistro= (registro) => {
-    setRegistroServico(registro)
-    setVisibleServico(true)
-  }
-  //função que recebe os dados de um novo cadastro
-  const recebidoDoFilhoPost = (registro) => {
-    let _registros = [...registros];
-    let _registro = { ...registro };
-    _registros.push(_registro);
-    setRegistro(emptyregistro);
-    setVisibleCRUD(false)
-    setVisibleMenuRight(false)
-    buscarRegistros()
-    toastBR.current.show({ severity: 'success', summary: 'Successo', detail: 'Serviço criado', life: 3000 });
-  }
-  //função que recebi os dados de um cadastro editado
-  const recebidoDoFilhoPatch = (registro) => {
-    let _registros = [...registros];
-    let _registro = { ...registro };
-    const index = findIndexById(registro.id);
-    _registros[index] = _registro;
-    setRegistros(_registros);
-    setRegistro(emptyregistro);
-    setVisibleCRUD(false)
-    setVisibleMenuRight(false)
-    toastBR.current.show({ severity: 'success', summary: 'Successo', detail: 'Serviço editado', life: 3000 });
-  }
-  const recebidoDoFilhoPostOS = (registro) => {
-   // itemTemplate(servicoAtualOS)
-    setVisibleOS(false)
-  }
-  //função para retonar qual o indice do registro da tabela para alteracao
-  const findIndexById = (id) => {
-    let index = -1;
-    for (let i = 0; i < registros.length; i++) {
-      if (registros[i].id === id) {
-        index = i;
-        break;
-      }
+    //states
+    let emptyregistro = {
+      id: null
+    };
+    const [registro, setRegistro] = useState(emptyregistro);
+    const [registroServico, setRegistroServico] = useState([]);
+    const [visibleCRUD, setVisibleCRUD] = useState(false);
+    const [visibleServico, setVisibleServico] = useState(false);
+    //função para novo adastro
+    const openNew = () => {
+      setRegistro(emptyregistro);
+      setVisibleCRUD(true)
     }
-    return index;
-  }
-  //--------------------------------------------------------------------------------------------------------------|
+    //função para cancelar um novo cadastro ou edição
+    const closedNew = () => {
+      setVisibleCRUD(false)
+      setVisibleMenuRight(false)
+    }
+    //função para editar dados de um cadastro existente
+    const editeRegistro = (registro) => {
+      let _registro = { ...registro };
+      _registro.inicio = new Date(_registro.inicio)
+      _registro.termino = new Date(_registro.termino)
+      setRegistro(_registro)
+      setVisibleCRUD(true)
+    }
+    const viewRegistro= (registro) => {
+      setRegistroServico(registro)
+      setVisibleServico(true)
+    }
+    //função que recebe os dados de um novo cadastro
+    const recebidoDoFilhoPost = (registro) => {
+      let _registros = [...registros];
+      let _registro = { ...registro };
+      _registros.push(_registro);
+      setRegistro(emptyregistro);
+      setVisibleCRUD(false)
+      setVisibleMenuRight(false)
+      buscarRegistros()
+      toastBR.current.show({ severity: 'success', summary: 'Successo', detail: 'Serviço criado', life: 3000 });
+    }
+    //função que recebi os dados de um cadastro editado
+    const recebidoDoFilhoPatch = (registro) => {
+      let _registros = [...registros];
+      let _registro = { ...registro };
+      const index = findIndexById(registro.id);
+      _registros[index] = _registro;
+      setRegistros(_registros);
+      setRegistro(emptyregistro);
+      setVisibleCRUD(false)
+      setVisibleMenuRight(false)
+      toastBR.current.show({ severity: 'success', summary: 'Successo', detail: 'Serviço editado', life: 3000 });
+    }
+    const recebidoDoFilhoPostOS = (registro) => {
+     // itemTemplate(servicoAtualOS)
+      setVisibleOS(false)
+    }
+    //função para retonar qual o indice do registro da tabela para alteracao
+    const findIndexById = (id) => {
+      let index = -1;
+      for (let i = 0; i < registros.length; i++) {
+        if (registros[i].id === id) {
+          index = i;
+          break;
+        }
+      }
+      return index;
+    }
+    //--------------------------------------------------------------------------------------------------------------|
 
   //FINALIZAÇÃO DE UM SERVIÇO -----------------------------------------------------------------------------|
   const finalizar = (data) => {

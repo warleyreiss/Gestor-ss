@@ -47,8 +47,11 @@ export const AppRouter = () => {
         <Route path="/financeiro/extratos" element={<PrivateRoute />} >
           <Route path="/financeiro/extratos" element={<FinanceiroExtratos/>} />
         </Route>
-        <Route path="/financeiro/visualizar_ticket" element={<PrivateRoute />} >
-          <Route path="/financeiro/visualizar_ticket" element={<VisualizarTicket/>} />
+        <Route path="/financeiro/visualizar_ticket/:id" element={<PrivateRoute />} >
+          <Route path="/financeiro/visualizar_ticket/:id" element={<VisualizarTicket/>} />
+        </Route>
+        <Route path="/financeiro/tickets_retornados" element={<PrivateRoute />} >
+          <Route path="/financeiro/tickets_retornados" element={<VisualizarTicket/>} />
         </Route>
         <Route path="/frota_interna" element={<PrivateRoute />} >
           <Route path="/frota_interna" element={<FrotaInterna/>} />

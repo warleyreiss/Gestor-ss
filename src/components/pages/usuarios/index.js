@@ -23,6 +23,8 @@ import { mask } from 'primereact/utils';
 import Select from 'react-select'
 import { Dropdown } from 'primereact/dropdown';
 import { InputNumber } from 'primereact/inputnumber';
+
+import { Password } from 'primereact/password';
 import 'primeicons/primeicons.css';
 
 //IMPORTANTO RECURSOS DE FRAMEWORKS E BIBLIOTECAS
@@ -35,7 +37,7 @@ function Usuarios() {
 
   //STATES PARA FUNCIONAMENTO GERAL DA PAGINA
   const [loading, setLoading] = useState(false);
-  const nomePagina = 'Cadastros de veículos'
+  const nomePagina = 'Cadastros Usuários'
 
   const toast = useRef(null);
 
@@ -65,14 +67,14 @@ function Usuarios() {
 
 
   //FUNÇÃO PARA REFRESH DA LISTA DE CADASTRO DA PAGINA-----------------------------------------------------------|
-  const refresh =()=>{
+  const refresh = () => {
     buscarRegistros()
   }
- //--------------------------------------------------------------------------------------------------------------|
+  //--------------------------------------------------------------------------------------------------------------|
   //OPÇÃO DE COL TOGGLE DA INTERFACE DO USUARIO------------------------------------------------------------------|
   //definição das colunas
   const columns = [
-    { field: 'nome+', header: 'Nome:' },
+    { field: 'nome', header: 'Nome:' },
     { field: 'tipo', header: 'tipo de usuário:' },
     { field: 'setor', header: 'Setor/tipo:' },
     { field: 'email', header: 'Email:' },
@@ -163,7 +165,7 @@ function Usuarios() {
   const [registrosClientes, setRegistrosClientes] = useState([]);
   const openNew = () => {
     setLoading(true);
-   
+
     axiosApi.get("/list_client_input")
       .then((response) => {
         setRegistrosClientes(response.data)
@@ -197,7 +199,7 @@ function Usuarios() {
 
   const rightContents = (
     <React.Fragment>
-       <Button icon="pi pi-refresh" onClick={() => refresh()} className='p-button-outlined p-button-info' />
+      <Button icon="pi pi-refresh" onClick={() => refresh()} className='p-button-outlined p-button-info' />
       <InputText value={globalFilterValue1} icon="pi pi-search" onChange={onGlobalFilterChange1} placeholder="Filtrar..." />
       <Button icon="pi pi-plus" onClick={() => openNew(true)} className='p-button-outlined p-button-success' />
       <Button type="button" icon="pi pi-chevron-down" iconPos="right" onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="p-button-outlined p-button-info " />
@@ -274,7 +276,7 @@ function Usuarios() {
   }
 
   //array de opções dos inputs selects
-  const setores= [
+  const setores = [
     { label: 'Compras', value: 'COMPRAS' },
     { label: 'Faturamento', value: 'FATURAMENTO' },
     { label: 'Materiais', value: 'MATERIAIS' },
@@ -282,12 +284,11 @@ function Usuarios() {
     { label: 'Técnico', value: 'TECNICO' },
     { label: 'Hardware', value: 'hHARDWARE' },
     { label: 'Clientes', value: 'CLIENTE' }
-];
+  ];
 
   //envio do formulario CRUD
   const saveRegistro = () => {
-
-    if (registro.email.trim() ||reset) {
+    if (registro.email.trim()) {
       let _registros = [...registros];
       let _registro = { ...registro };
       if (registro.id) {
@@ -295,8 +296,8 @@ function Usuarios() {
           .then((response) => {
             const index = findIndexById(registro.id);
             _registros[index] = _registro;
-           
-            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Usuárioalterado!', life: 3000 });
+
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Usuário alterado!', life: 3000 });
 
           })
           .catch(function (error) {
@@ -304,7 +305,7 @@ function Usuarios() {
           });
       }
       else {
-        registro.senha='12345678'
+        registro.senha = '12345678'
         axiosApi.post("/create_user", registro)
           .then((response) => {
             _registro.id = response.data.id
@@ -314,21 +315,35 @@ function Usuarios() {
           .catch(function (error) {
             toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
           });
-        }
+      }
       setRegistros(_registros);
       setRegistro(emptyregistro);
       setVisibleRight(false)
-      
+
     }
+  };
+  const resetPass = () => {
+    let _registros = [...registros];
+    let _registro = { ...registro };
+    _registro.senha='12345678'
+    axiosApi.patch("/reset_user", _registro)
+      .then((response) => {
+    
+        const index = findIndexById(_registro.id);
+        _registros[index] = _registro;
+        setRegistro(_registro)
+        setRegistros(_registros)
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Senha resetada!', life: 3000 });
+
+      })
+      .catch(function (error) {
+        console.log(error)
+        toast.current.show({ severity: 'error', summary: 'Successful', detail: 'Tente novamente!', life: 3000 });
+      });
+
   };
 
 
-  //funcao preenchimento do formulario para edicao 
-  const [reset, setReset] = useState(false);
-  const resetSenha = (registro) => {
-    setReset(true)
-    saveRegistro()
-  }
   //funcao preenchimento do formulario para edicao 
   const editregistro = (registro) => {
     setRegistro({ ...registro });
@@ -417,8 +432,8 @@ function Usuarios() {
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-user"></i>
                   </span>
-                  <Dropdown value={registro.setor} options={setores} onChange={(e) => onInputChange(e, 'setor')}/>
-                
+                  <Dropdown value={registro.setor} options={setores} onChange={(e) => onInputChange(e, 'setor')} />
+
                 </div>
               </div>
               <div className="field w-field col-12 md:col-6">
@@ -436,11 +451,11 @@ function Usuarios() {
                   <span className="p-inputgroup-addon">
                     <i className="pi pi-key"></i>
                   </span>
-                  <InputText value={'12345678'} required disabled/>
-                  <Button label="Resetar " className="w-form-button" icon="pi pi-refresh" iconPos='right' onClick={resetSenha} />
+                  <Password value={registro.senha} onChange={(e) => onInputChange(e, 'senha')} required toggleMask />
+                  <Button  className="w-form-button" icon="pi pi-refresh" onClick={() => { resetPass() }} />
                 </div>
               </div>
-             
+
 
               <div className="field w-field col-12 md:col-12">
                 <label class="font-medium text-900">Cliente/almoxarifado:</label>
@@ -449,7 +464,7 @@ function Usuarios() {
                     <i className="pi pi-building"></i>
                   </span>
                   <Select
-                  defaultValue={ {value: registro.cliente_id, label: registro.nome_clientes }}
+                    defaultValue={{ value: registro.cliente_id, label: registro.nome_clientes }}
                     options={registrosClientes.map(sup => ({ value: sup.id, label: sup.nome }))}
                     onChange={(e) => { onInputNumberChange(e, 'cliente_id') }}
                     placeholder=''
@@ -457,7 +472,7 @@ function Usuarios() {
                 </div>
               </div>
               <div className="field w-field col-12 md:col-12">
-                <Button label="Salvar cadastro" className="w-form-button" icon="pi pi-save" iconPos='right' onClick={saveRegistro}/>
+                <Button label="Salvar cadastro" className="w-form-button" icon="pi pi-save" iconPos='right' onClick={saveRegistro} />
               </div>
             </div>
           </div>

@@ -49,7 +49,7 @@ function ListaTicketsPendentes() {
 
   //state
   const [registros, setRegistros] = useState([]);
-  const [registrosAccept, setRegistrosAccepts] = useState([]);
+  const [registrosAccept, setRegistrosAccept] = useState([]);
   //requisição 
   const buscarRegistros = () => {
     setLoading(true);
@@ -61,6 +61,15 @@ function ListaTicketsPendentes() {
       });
     setLoading(false)
     initFilters1();
+
+    axiosApi.get("/list_ticket_return")
+      .then((response) => {
+        setRegistrosAccept(response.data)
+        return response.data.length > 0 ? setRegistrosAccept(false) : setRegistrosAccept(true)
+
+      })
+      .catch(function (error) {
+      });
   }
   
   //requisisção 
@@ -185,7 +194,7 @@ function ListaTicketsPendentes() {
   const rightContents = (
     <React.Fragment>
       {registrosAccept.length > 0 ? <Link className='btn-secondary' to={{ pathname: `/equipment/accept` }}>
-        <Button icon='pi pi-exclamation-triangle' label='há equipamentos aguardando aprovação ' className='p-button p-button-danger' iconPos='right' />
+        <Button icon='pi pi-exclamation-triangle' label='há tickets retornados' className='p-button p-button-danger' iconPos='right' />
       </Link> : <></>}
       <Button icon="pi pi-refresh" onClick={() => refresh()} className='p-button-outlined p-button-info' />
       <InputText value={globalFilterValue1} icon="pi pi-search" onChange={onGlobalFilterChange1} placeholder="Filtrar..." />
@@ -228,7 +237,7 @@ function ListaTicketsPendentes() {
   const actionBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <Button icon="pi pi-eye" className="p-button-outlined p-button-info" onClick={e => { viewRegistro(rowData) }} />
+        <Button icon="pi pi-eye" className="p-button-outlined p-button-info" onClick={e => { viewRegistro(rowData) }} tooltip="Ver tickets Gerados" tooltipOptions={{position: 'bottom'}} />
       </React.Fragment>
     );
   }

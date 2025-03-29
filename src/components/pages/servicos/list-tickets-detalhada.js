@@ -77,7 +77,6 @@ function ListaDetalhadaTicketsPendentes(props) {
   //OPÇÃO DE COL TOGGLE DA INTERFACE DO USUARIO------------------------------------------------------------------|
   //definição das colunas
   const columns = [
-    { field: 'id', header: 'Id:' },
     { field: 'tipo', header: 'Tipo:' },
     { field: 'descricao', header: 'Descrição:' },
     { field: 'valor', header: 'Valor:' }
@@ -184,20 +183,7 @@ function ListaDetalhadaTicketsPendentes(props) {
   );
   const rightContents = (
     <React.Fragment>
-      {registrosAccept.length > 0 ? <Link className='btn-secondary' to={{ pathname: `/equipment/accept` }}>
-        <Button icon='pi pi-exclamation-triangle' label='há equipamentos aguardando aprovação ' className='p-button p-button-danger' iconPos='right' />
-      </Link> : <></>}
-      <InputText value={globalFilterValue1} icon="pi pi-search" onChange={onGlobalFilterChange1} placeholder="Filtrar..." />
-      <Button type="button" icon="pi pi-chevron-down" iconPos="right" onClick={(e) => op.current.toggle(e)} aria-haspopup aria-controls="overlay_panel" className="p-button-outlined p-button-info " />
-      <OverlayPanel ref={op} showCloseIcon id="overlay_panel" style={{ width: '450px' }} className="overlaypanel-demo">
-        <Accordion activeIndex={0}>
-          <AccordionTab header="Exportar:">
-            <Button type="button" label='.csv' icon="pi pi-file-excel" onClick={() => exportCSV(false)} className='p-button-outlined p-button-secondary' data-pr-tooltip="CSV" />
-            <Button type="button" label='.xls' icon="pi pi-file-excel" onClick={exportExcel} className='p-button-outlined p-button-secondary' data-pr-tooltip="XLS" />
-          </AccordionTab>
-        </Accordion>
-      </OverlayPanel>
-
+     
     </React.Fragment>
   );
 
@@ -221,7 +207,12 @@ function ListaDetalhadaTicketsPendentes(props) {
   const actionBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        {/* <Button icon="pi pi-pencil" className="p-button-outlined p-button-info" onClick={e => { viewRegistro(rowData) }} />*/}
+        <div className='flex justify-content-end"'> 
+        <Link to={"/financeiro/visualizar_ticket/" + rowData.id} className="item" target="_blank">
+          <Button icon="pi pi-window-maximize" className="p-button-outlined p-button-info" tooltip="Ver ticket" tooltipOptions={{ position: 'bottom' }} />
+        </Link>
+        </div>
+       
       </React.Fragment>
     );
   }
@@ -300,9 +291,9 @@ function ListaDetalhadaTicketsPendentes(props) {
 
   //APROVAÇÃO DOS TICKETS-----------------------------------------------------------------------------------------|
   let emptyregistro = {
-    cliente_id:props.registro.cliente_id,
+    cliente_id: props.registro.cliente_id,
     vencimento: null,
-    motivo:null,
+    motivo: null,
   };
   const [registro, setRegistro] = useState(emptyregistro);
 
@@ -315,17 +306,17 @@ function ListaDetalhadaTicketsPendentes(props) {
   const aprovar = () => {
     let _registro = { ...registro };
     _registro[`faturamento_id`] = selected;
-      axiosApi.post('/accept_ticket',_registro)
-        .then(function (response) {
-          toastBR.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Tickets aprovados', life: 3000 });
-setRegistro(emptyregistro)
-props.filhoParaPaiPost(props.registro.servico_id)
-        })
-        .catch(function (error) {
-          toastBR.current.show({ severity: 'warn', summary: 'Pendência', detail: error.response.data.msg, life: 3000 });
+    axiosApi.post('/accept_ticket', _registro)
+      .then(function (response) {
+        toastBR.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Tickets aprovados', life: 3000 });
+        setRegistro(emptyregistro)
+        props.filhoParaPaiPost(props.registro.servico_id)
+      })
+      .catch(function (error) {
+        toastBR.current.show({ severity: 'warn', summary: 'Pendência', detail: error.response.data.msg, life: 3000 });
 
-        });
-  
+      });
+
   }
   const extrato = () => {
     let _validacao = []
@@ -336,8 +327,8 @@ props.filhoParaPaiPost(props.registro.servico_id)
     } else {
       let _registro = { ...registro };
       _registro[`faturamento_id`] = selected;
-  
-      axiosApi.post('/create_ticket',_registro)
+
+      axiosApi.post('/create_ticket', _registro)
         .then(function (response) {
           toastBR.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Extrato criado!', life: 3000 });
           setRegistro(emptyregistro)
@@ -347,55 +338,49 @@ props.filhoParaPaiPost(props.registro.servico_id)
           toastBR.current.show({ severity: 'warn', summary: 'Pendência', detail: error.response.data.msg, life: 3000 });
 
         });
-      }
+    }
   }
   const excluir = () => {
-    let _validacao = []
 
-    if (registro.justificativa == null) {
-      _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'Informe o motivo do cancelamento', life: 3000 })
-      toastBR.current.show(_validacao);
-    } else {
-      let _registro = { ...registro };
-      _registro[`faturamento_id`] = selected;
-   
-      axiosApi.post('/refuse_ticket',_registro)
-        .then(function (response) {
-          toastBR.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Tickets cancelados', life: 3000 });
-          setRegistro(emptyregistro)
-          props.filhoParaPaiPost(props.registro.servico_id)
-        })
-        .catch(function (error) {
-          toastBR.current.show({ severity: 'warn', summary: 'Pendência', detail: error.response.data.msg, life: 3000 });
+    let _registro = { ...registro };
+    _registro[`faturamento_id`] = selected;
 
-        });
-      }
+    axiosApi.post('/refuse_ticket', _registro)
+      .then(function (response) {
+        toastBR.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Tickets cancelados', life: 3000 });
+        setRegistro(emptyregistro)
+        props.filhoParaPaiPost(props.registro.servico_id)
+      })
+      .catch(function (error) {
+        toastBR.current.show({ severity: 'warn', summary: 'Pendência', detail: error.response.data.msg, life: 3000 });
+
+      });
   }
-  
+
   //--------------------------------------------------------------------------------------------------------------|
 
   return (
     <>
 
-      <Toast ref={toastBR} position="top-right" style={{zIndex:'100000'}} />
+      <Toast ref={toastBR} position="top-right" style={{ zIndex: '100000' }} />
       <Sidebar header={selectProducts.length + " Tickets selecionados"} visible={visibleCRUD} position="bottom" style={{ height: '23vh', width: '50em', position: 'absolute', right: '0px', padding: '10px' }} onHide={() => closedNew()} modal={false} showCloseIcon={false} closeOnEscape={false} dismissable={false}>
 
         <div className="grid p-fluid" style={{ marginTop: "10px", justifyContent: "flex-end" }}>
+          <div className="col-5">
+            <div className="p-inputgroup p-inputgroup-divider">
+              <Calendar value={registro.vencimento} onChange={(e) => onInputChange(e, 'vencimento')} />
+              <Button label="Extrato " icon="pi pi-file-export" className="w-form-button p-button-warning" iconPos='right' style={{ justifyContent: 'flex-end!important', width: '35%' }} onClick={() => { extrato() }} />
+            </div>
+          </div>
+          <div className="col-2">
+            <div className="p-inputgroup p-inputgroup-divider">
+              <Button label="Exlcuir " icon="pi pi-trash" className="w-form-button p-button-danger" iconPos='right' style={{ justifyContent: 'flex-end!important', width: '100%' }} onClick={() => { excluir() }} />
+            </div>
+          </div>
 
           <div className="col-2">
             <div className="p-inputgroup p-inputgroup-divider">
-              <Button label="Exlcuir " icon="pi pi-trash" className="w-form-button p-button-danger" iconPos='right' style={{ justifyContent: 'flex-end!important', width: '100%' }} onClick={()=>{excluir()}}/>
-            </div>
-          </div>
-          <div className="col-4">
-            <div className="p-inputgroup p-inputgroup-divider">
-              <Calendar value={registro.vencimento} onChange={(e) => onInputChange(e, 'vencimento')} />
-              <Button label="Extrato " icon="pi pi-file-export" className="w-form-button p-button-warning" iconPos='right' onClick={()=>{extrato()}}/>
-            </div>
-          </div>
-          <div className="col-2">
-            <div className="p-inputgroup p-inputgroup-divider">
-              <Button label="Aprovar" icon="pi pi-check" className="w-form-button p-button-primary" iconPos='right' style={{ justifyContent: 'flex-end!important', width: '100%' }} onClick={()=>{aprovar()}} />
+              <Button label="Aprovar" icon="pi pi-check" className="w-form-button p-button-primary" iconPos='right' style={{ justifyContent: 'flex-end!important', width: '100%' }} onClick={() => { aprovar() }} />
             </div>
           </div>
 
@@ -423,7 +408,8 @@ props.filhoParaPaiPost(props.registro.servico_id)
         >
           <Column selectionMode="multiple" headerStyle={{ width: '3em' }}></Column>
           {columnComponents}
-       </DataTable>
+          <Column header={'Opções:'} body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
+        </DataTable>
       </div>
 
     </>

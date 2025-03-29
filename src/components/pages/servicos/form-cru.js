@@ -35,7 +35,6 @@ import { Link } from 'react-router-dom';
 
 function ServicosCru(props) {
 
-
   //STATES PARA FUNCIONAMENTO GERAL DA PAGINA
   const [loading, setLoading] = useState(false);
   const nomePagina = 'Cadastros de Servços'
@@ -47,22 +46,27 @@ function ServicosCru(props) {
   //state
   const [registrosClientes, setRegistrosClientes] = useState([]);
   const [registrosTecnicos, setRegistrosTecnicos] = useState([]);
-
   const [registro, setRegistro] = useState(props.registro);
-
+  const [registroTecnico, setRegistroTecnico] = useState([]);
   //requisição 
   const buscarRegistros = () => {
     setLoading(true);
     axiosApi.get("/list_client_input")
       .then((response) => {
         setRegistrosClientes(response.data)
+
       })
       .catch(function (error) {
       });
     axiosApi.get("/list_user_input")
       .then((response) => {
         setRegistrosTecnicos(response.data)
-        //aqui preciso criar um array que preencha a lista de tecnicos
+
+        let teste = response.data.filter(item => props.registro.usuario_id.includes(item.id))
+        teste = teste.map(sup => ({ value: sup.id, label: sup.nome }))
+        setRegistroTecnico(teste)
+
+
       })
       .catch(function (error) {
       });
@@ -72,8 +76,11 @@ function ServicosCru(props) {
   //requisisção 
   useEffect(() => {
     buscarRegistros()
+    console.log(registro)
+    //setRegistroTecnico(registrosTecnicos.filter(item => registro.usuario_id.includes(item.id)))
   }, [])
   //-------------------------------------------------------------------------------------------------------------|
+
   //FORMULARIO CRUD ----------------------------------------------------------------------------------------------|
   //funções de preenchimento do formulario
   const onInputChange = (e, name) => {
@@ -97,11 +104,15 @@ function ServicosCru(props) {
   }
 
   const onInputMultiSelectChange = (e, name) => {
-
     const val = e.map(c => c.value)
     let _registro = { ...registro };
     _registro[`${name}`] = val;
     setRegistro(_registro);
+
+    let _teste={registroTecnico}
+    _teste=(e)
+    setRegistroTecnico(_teste)
+    console.log(_teste,_registro)
   }
   //array de opções dos inputs selects
   const turnos = [
@@ -116,20 +127,20 @@ function ServicosCru(props) {
     let _registro = { ...registro };
     _registro[`usuario_id`] = false;
     let _validacao = []
-    if (_registro.chamado == null ||_registro.chamado == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe número do chamado', life: 3000 }) }
+    if (_registro.chamado == null || _registro.chamado == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe número do chamado', life: 3000 }) }
     if (_registro.cliente_id == null || _registro.cliente_id == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o nome do cliente', life: 3000 }) }
-    if (_registro.inicio == null || _registro.inicio =='') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a data prevista para início', life: 3000 }) }
-    if (_registro.termino == null ||_registro.termino == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a data prevista para término', life: 3000 }) }
-    if (_registro.turno == null ||_registro.turno == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o turno de trablho', life: 3000 }) }
-    
-    if (_registro.km == null ||_registro.km == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a previsão de km à ser percorrido', life: 3000 }) }
-    if (_registro.usuario_id2 == null ||_registro.usuario_id2==[] || registro.usuario_id2[0]==null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe pelo ao menos 1 técnico no serviço', life: 3000 }) }
+    if (_registro.inicio == null || _registro.inicio == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a data prevista para início', life: 3000 }) }
+    if (_registro.termino == null || _registro.termino == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a data prevista para término', life: 3000 }) }
+    if (_registro.turno == null || _registro.turno == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe o turno de trablho', life: 3000 }) }
+
+    if (_registro.km == null || _registro.km == '') { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe a previsão de km à ser percorrido', life: 3000 }) }
+    if (_registro.usuario_id2 == null || _registro.usuario_id2 == [] || registro.usuario_id2[0] == null) { _validacao.push({ severity: 'info', summary: 'Pendente', detail: 'informe pelo ao menos 1 técnico no serviço', life: 3000 }) }
     if (_validacao.length == 0) {
       if (_registro.id) {
 
         axiosApi.patch("/update_service", _registro)
           .then((response) => {
-            
+
             props.filhoParaPaiPatch(response.data)
             toastBR.current.show({ severity: 'success', summary: 'Successo', detail: 'Serviço editado', life: 3000 });
           })
@@ -139,7 +150,7 @@ function ServicosCru(props) {
       }
       else {
         axiosApi.post("/create_service", _registro)
-    
+
           .then((response) => {
             props.filhoParaPaiPost(response.data)
             toastBR.current.show({ severity: 'success', summary: 'Successo', detail: 'Serviço criado', life: 3000 });
@@ -196,7 +207,7 @@ function ServicosCru(props) {
                 <span className="p-inputgroup-addon">
                   <i className="pi pi-map-marker"></i>
                 </span>
-                <InputNumber value={registro.km} onChange={(e) => onInputNumberChange(e, 'km')}  useGrouping={false} />
+                <InputNumber value={registro.km} onChange={(e) => onInputNumberChange(e, 'km')} useGrouping={false} />
               </div>
             </div>
             <div className="field w-field col-12 md:col-4">
@@ -232,14 +243,16 @@ function ServicosCru(props) {
                 <span className="p-inputgroup-addon">
                   <i className="pi pi-users"></i>
                 </span>
-                <Select
-
-                  //  defaultValue={registro.usuario_id.map(sup => ({ value: sup }))} registros.filter(val => val.id !== data.id);
-                  options={registrosTecnicos.map(sup => ({ value: sup.id, label: sup.nome }))}
-                  onChange={(e) => { onInputMultiSelectChange(e, 'usuario_id2') }}
-                  placeholder=''
-                  isMulti
-                />
+             
+              <Select
+              value={registroTecnico}
+              options={registrosTecnicos.map(sup => ({ value: sup.id, label: sup.nome }))}
+              onChange={(e) => { onInputMultiSelectChange(e, 'usuario_id2') }}
+              placeholder=''
+              isMulti
+            />
+         
+               
               </div>
             </div>
             <div className="field w-field col-12 md:col-12">

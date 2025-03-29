@@ -44,13 +44,14 @@ function VisualizarServico(props) {
   const toastBR = useRef(null);
   //REQUISIÇÃO COM A BIBLIOTECA AXIOS PARA SOLICITAR LISTA DOS DADOS DO REGISTRO DO SERVICO
   useEffect(() => {
-    
+
     //REQUISIÇÃO COM A BIBLIOTECA AXIOS
     axiosApi.get("/service_show/" + props.registro.id)
       .then((response) => {
         setRegistros(response.data.service)
         setOrdemServicos(response.data.ordem_service)
         setVisitas(response.data.visit)
+        console.log(response.data.visit)
       })
       .catch(function (error) {
       });
@@ -60,7 +61,14 @@ function VisualizarServico(props) {
     if (rowData.status != '0') {
       return (
         <React.Fragment>
-          <Button icon="pi pi pi-trash" className="p-button-outlined p-button-danger" onClick={() => delete confirmDeleteregistro(rowData)} />
+          <Button label='Cancelar ' icon="pi pi pi-trash" className="p-button-outlined p-button-warning" onClick={() => delete confirmDeleteregistro(rowData)} iconPos='right'/>
+        </React.Fragment>
+      );
+    }
+    if (rowData.status == '0') {
+      return (
+        <React.Fragment>
+          <Button label='Cancelada ' icon="pi pi pi-ban" className="p-button-outlined p-button-danger" onClick={() => delete confirmDeleteregistro(rowData)}  iconPos='right'/>
         </React.Fragment>
       );
     }
@@ -78,18 +86,18 @@ function VisualizarServico(props) {
     if (rowData.ajuste == 'SIM') {
       return (
         <React.Fragment>
-         <span> <i className="pi pi-exclamation-circle"></i></span>
+          <span> <i className="pi pi-exclamation-circle"></i></span>
         </React.Fragment>
       );
     }
   }
-    //função para popular state registro com o motivo do cancelamento do serviço
-    const onInputChangeDelete = (e, name) => {
-      const val = (e.target && e.target.value) || '';
-      let _registro = { ...registroDelete};
-      _registro[`${name}`] = val
-      setRegistroDelete(_registro);
-    }
+  //função para popular state registro com o motivo do cancelamento do serviço
+  const onInputChangeDelete = (e, name) => {
+    const val = (e.target && e.target.value) || '';
+    let _registro = { ...registroDelete };
+    _registro[`${name}`] = val
+    setRegistroDelete(_registro);
+  }
 
   //funcao para retonar qual o indice do registro da tabela para alteracao
   const findIndexById = (id) => {
@@ -119,11 +127,12 @@ function VisualizarServico(props) {
   //funcao que deleta o registro do banco de dados e da tabela
   const deleteregistro = () => {
     let _registros = [...ordemServicos];
-    axiosApi.patch("/order_service_cancel",registroDelete)
+    axiosApi.patch("/order_service_cancel", registroDelete)
       .then((response) => {
         const index = findIndexById(registroDelete.id);
         _registros[index] = response.data;
         setDeleteregistroDialog(false);
+        setOrdemServicos(_registros)
         setRegistroDelete([]);
         toastBR.current.show({ severity: 'success', summary: 'Successful', detail: 'OS excluída', life: 3000 });
       })
@@ -146,7 +155,7 @@ function VisualizarServico(props) {
     <>
 
       <Toast ref={toastBR} position="bottom-right" />
-      <div style={{ marginTop: '10px' }}>
+      <div style={{ margin: '10px' }}>
 
         <div className="card w-card" >
           <div className="p-fluid w-form" >
@@ -167,28 +176,24 @@ function VisualizarServico(props) {
 
           </div>
         </div>
-        <div className="card w-card" >
+        <div className="card" style={{height:'50vh', marginBottom:'30px'}}>
           <h3>Ordens de servços</h3>
-          <div>
-            <div className="card">
-              <DataTable value={ordemServicos} responsiveLayout="scroll">
-                <Column field="tipo" header="Tipo:"></Column>
-                <Column field="produto" header="Produto:"></Column>
-                <Column header={'Veículo:'} body={carBodyTemplate} />
-                <Column field="nome" header="Executante:"></Column>
-                <Column header={'opções:'} body={actionBodyTemplate} />
-              </DataTable>
-            </div>
-          </div>
+          <DataTable value={ordemServicos}  scrollable scrollHeight="flex">
+            <Column field="tipo" header="Tipo:"></Column>
+            <Column field="produto" header="Produto:"></Column>
+            <Column header={'Veículo:'} body={carBodyTemplate} />
+            <Column field="nome" header="Executante:"></Column>
+            <Column header={'opções:'} body={actionBodyTemplate} />
+          </DataTable>
         </div>
-        <div className="card w-card" >
+        <div className="card" style={{height:'30vh'}}>
           <h3>Visitas Realizadas</h3>
-          <DataTable value={visitas} responsiveLayout="scroll">
-                <Column field="inicio" header="início:"></Column>
-                <Column field="termino" header="Término:"></Column>
-                <Column field="nome" header="Nome:"></Column>
-                <Column header={''} body={statusBodyTemplate} />
-              </DataTable>
+          <DataTable value={visitas}  scrollable scrollHeight="flex">
+            <Column field="inicio" header="início:"></Column>
+            <Column field="termino" header="Término:"></Column>
+            <Column field="nome" header="Nome:"></Column>
+            <Column header={''} body={statusBodyTemplate} />
+          </DataTable>
         </div>
       </div >
 
