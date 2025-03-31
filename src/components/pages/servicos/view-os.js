@@ -32,6 +32,7 @@ import 'primeicons/primeicons.css';
 import { useForm, Controller } from 'react-hook-form';
 import { axiosApi } from '../../../services/axios';
 import { Link } from 'react-router-dom';
+import { Chip } from '@mui/material';
 
 
 function VisualizarOS(props) {
@@ -82,19 +83,59 @@ function VisualizarOS(props) {
         </li>
         <li className="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
           <div className="view-os-titulo font-medium">Solução aplicada?:</div>
-          <div className="view-os-detalhe">{registro.solucao?? '--'}</div>
+          <div className="view-os-detalhe">
+          {
+                                                registro.solucao ?
+                                                    registro.solucao.map((chip) =>
+                                                        <>
+                                                            <Chip label={chip} className="mr-2 mb-2" />
+                                                        </>
+                                                    )
+                                                    : <h7>Nenhuma solucao aplicada</h7>
+                                            }
+          </div>
         </li>
         <li className="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
           <div className="view-os-titulo font-medium">Equipamento utilizado?:</div>
-          <div className="view-os-detalhe">{registro.material_usado?? '--'}</div>
+          <div className="view-os-detalhe">
+          {
+                                               registro.material_usado ?
+                                                    registro.material_usado.map((chip) =>
+                                                        <>
+                                                            <Chip label={chip} className="mr-2 mb-2" />
+                                                        </>
+                                                    )
+                                                    : <h7>Nenhum equipamento utilizado</h7>
+                                            }
+          </div>
         </li>
         <li className="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
           <div className="view-os-titulo font-medium">Equipamento removido?:</div>
-          <div className="view-os-detalhe">{registro.material_retirado ?? '---'}</div>
+          <div className="view-os-detalhe">
+          {
+                                                registro.material_retirado ?
+                                                    registro.material_retirado.map((chip) =>
+                                                        <>
+                                                            <Chip label={chip} className="mr-2 mb-2" />
+                                                        </>
+                                                    )
+                                                    : <h7>Nenhum equipamento removido</h7>
+                                            }
+          </div>
         </li>
         <li className="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
           <div className="view-os-titulo font-medium">Periferico?:</div>
-          <div className="view-os-detalhe">{registro.periferico ?? '--'}</div>
+          <div className="view-os-detalhe">
+            {
+                                               registro.periferico ?
+                                                   registro.periferico.map((chip) =>
+                                                        <>
+                                                            <Chip label={chip} className="mr-2 mb-2" />
+                                                        </>
+                                                    )
+                                                    : <h7>Nenhum material utilizado</h7>
+                                            }
+                                            </div>
         </li>
         <li className="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
           <div className="view-os-titulo font-medium">Registros fotográficos:</div>
