@@ -81,6 +81,10 @@ function VisualizarOS(props) {
           <div className="view-os-detalhe">{registro.responsavel_falha ? registro.responsavel_falha.replace('{"','').replace('"}','') : '--'}</div>
         </li>
         <li className="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+          <div className="view-os-titulo font-medium">Solução aplicada?:</div>
+          <div className="view-os-detalhe">{registro.solucao? '--'}</div>
+        </li>
+        <li className="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
           <div className="view-os-titulo font-medium">Equipamento utilizado?:</div>
           <div className="view-os-detalhe">{registro.material_usado?? '--'}</div>
         </li>

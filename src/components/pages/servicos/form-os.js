@@ -93,6 +93,7 @@ function ServicosOS(props) {
   const produtos = [
     { label: 'TELEMETRIA ÁUDIO', value: 'TELEMETRIA AUDIO' },
     { label: 'TELEMETRIA ÁUDIO ROTOGRAMA', value: 'TELEMETRIA AUDIO ROTOGRAMA' },
+    { label: 'TELEMETRIA BIPADA', value: 'TELEMETRIA BIPADA' },
     { label: 'RASTREAMENTO BÁSICO', value: 'RASTREAMENTO BASICO' },
     { label: 'RASTREAMENTO COM IDENTIFICAÇÃO', value: 'RASTREAMENTO COM IDENTIFICACAO' },
     { label: 'MONITORAMENTO FADIGA', value: 'MONITORAMENTO FADIGA' },
