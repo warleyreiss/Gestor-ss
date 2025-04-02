@@ -37,6 +37,7 @@ import { Chip } from '@mui/material';
 
 function VisualizarOS(props) {
   const [registro, setRegistro] = useState(props.registro);
+  console.log(registro)
   //--------------------------------------------------------------------------------------------------------------|
 
   return (
@@ -156,8 +157,12 @@ function VisualizarOS(props) {
           </div>
         </li>
         <li className="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+          <div className="view-os-titulo font-medium">Observações informadas:</div>
+          <div className="view-os-detalhe">{registro.observacao ? registro.observacao : '---'}</div>
+        </li>
+        <li className="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
           <div className="view-os-titulo font-medium">Nome do assinante:</div>
-          <div className="view-os-detalhe">{registro.name_signature ? registro.name_signature : 'Sem identificação'}</div>
+          <div className="view-os-detalhe">{registro.nome_assinatura ? registro.nome_assinatura : 'Sem identificação'}</div>
         </li>
         <li className="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
           <div className="view-os-titulo font-medium">Assinatura:</div>
